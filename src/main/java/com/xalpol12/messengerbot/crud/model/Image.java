@@ -19,6 +19,8 @@ public class Image {
 
     private String name;
 
+    private String type;
+
     @Lob
     private byte[] data;
 

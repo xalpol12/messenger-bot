@@ -2,19 +2,24 @@ package com.xalpol12.messengerbot.crud.service;
 
 import com.xalpol12.messengerbot.crud.model.Image;
 import com.xalpol12.messengerbot.crud.model.dto.ImageConfirmationDTO;
-import com.xalpol12.messengerbot.crud.model.dto.ImageUploadRequest;
+import com.xalpol12.messengerbot.crud.model.dto.ImageUploadDetails;
+import com.xalpol12.messengerbot.crud.model.mapper.ImageMapper;
 import com.xalpol12.messengerbot.crud.repository.ImageRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.IOException;
+import java.net.URI;
 import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
 public class ImageService {
     private final ImageRepository imageRepository;
-    private final ModelMapper modelMapper;
+    private final ImageMapper imageMapper;
 
     public Image getImage(String id) {
         Image image = imageRepository.findById(id)
@@ -26,20 +31,28 @@ public class ImageService {
         return imageRepository.findAll().stream();
     }
 
-    public ImageConfirmationDTO store(ImageUploadRequest imageUploadRequest) {
-        Image image = modelMapper.map(imageUploadRequest);
-        Image uploadedImage = imageRepository.save(image);
-        return modelMapper.map(uploadedImage);
+    public Image uploadImage(ImageUploadDetails fileDetails,
+                                            MultipartFile imageData) throws IOException {
+        Image image = imageMapper.mapToImage(fileDetails, imageData);
+        return imageRepository.save(image);
     }
 
-    public void deleteImage(String id) {
-        imageRepository.deleteById(id);
+    public void deleteImage(String id) throws EntityNotFoundException {
+        if (imageRepository.existsById(id)) {
+            imageRepository.deleteById(id);
+        } else {
+            throw new EntityNotFoundException();
+        };
     }
 
-    public void updateImage(ImageUploadRequest imageUploadRequest,
-                            String id) {
-        imageRepository.deleteById(id);
-        Image image = modelMapper.map(imageUploadRequest);
-        imageRepository.save(image);
+    public void updateImage(String id,
+                            ImageUploadDetails fileDetails,
+                            MultipartFile imageData) throws IOException {
+        deleteImage(id);
+        Image updatedImage = imageMapper.mapToImage(fileDetails, imageData);
+        imageRepository.save(updatedImage);
+    }
+
+    public void updateImageDetails(String id, ImageUploadDetails newDetails) {
     }
 }
