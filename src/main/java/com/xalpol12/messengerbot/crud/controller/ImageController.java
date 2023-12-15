@@ -1,11 +1,13 @@
 package com.xalpol12.messengerbot.crud.controller;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.xalpol12.messengerbot.crud.model.Image;
 import com.xalpol12.messengerbot.crud.model.dto.ImageResponse;
 import com.xalpol12.messengerbot.crud.model.dto.ImageUploadDetails;
 import com.xalpol12.messengerbot.crud.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,9 +26,11 @@ public class ImageController {
     private final ImageService imageService;
 
     @GetMapping("image/{id}")
-    public ResponseEntity<ImageResponse> getImage(@PathVariable("id") String imageId) {
-        ImageResponse image = imageService.getImage(imageId);
-        return ResponseEntity.ok(image);
+    public ResponseEntity<byte[]> getImageData(@PathVariable("id") String imageId) {
+        Image image = imageService.getImage(imageId);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + image.getName() + "\"")
+                .body(image.getData());
     }
 
     @GetMapping("/images")

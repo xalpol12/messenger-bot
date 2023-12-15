@@ -27,7 +27,8 @@ public class ImageMapper {
     public ImageResponse mapToImageResponse(Image image) {
         String fileDownloadUri = ServletUriComponentsBuilder
                 .fromCurrentContextPath()
-                .path("/images")
+                .path("/api/")
+                .path("/image/")
                 .path(image.getId())
                 .toUriString();
 

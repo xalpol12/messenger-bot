@@ -23,10 +23,9 @@ public class ImageService {
     private final ImageRepository imageRepository;
     private final ImageMapper imageMapper;
 
-    public ImageResponse getImage(String id) {
-        Image image = imageRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("No image found for this id:" + id));
-        return imageMapper.mapToImageResponse(image);
+    public Image getImage(String id) {
+        return imageRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("No image found for provided id:" + id));
     }
 
     public List<ImageResponse> getAllImages() {
