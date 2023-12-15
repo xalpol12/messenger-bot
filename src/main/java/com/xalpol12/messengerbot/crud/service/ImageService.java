@@ -2,6 +2,7 @@ package com.xalpol12.messengerbot.crud.service;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.xalpol12.messengerbot.crud.model.Image;
+import com.xalpol12.messengerbot.crud.model.dto.ImageResponse;
 import com.xalpol12.messengerbot.crud.model.dto.ImageUploadDetails;
 import com.xalpol12.messengerbot.crud.model.mapper.ImageMapper;
 import com.xalpol12.messengerbot.crud.repository.ImageRepository;
@@ -10,31 +11,41 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
+import java.net.URI;
+import java.util.List;
 import java.util.stream.Stream;
-
 @Service
 @RequiredArgsConstructor
 public class ImageService {
     private final ImageRepository imageRepository;
     private final ImageMapper imageMapper;
 
-    public Image getImage(String id) {
+    public ImageResponse getImage(String id) {
         Image image = imageRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No image found for this id:" + id));
-        return image;
+        return imageMapper.mapToImageResponse(image);
     }
 
-    // TODO: Add pagination
-    public Stream<Image> getAllImages() {
-        return imageRepository.findAll().stream();
+    public List<ImageResponse> getAllImages() {
+        Stream<Image> imageStream = imageRepository.findAll().stream();
+        return imageStream
+                .map(imageMapper::mapToImageResponse)
+                .toList();
     }
 
-    public Image uploadImage(ImageUploadDetails fileDetails,
+    public URI uploadImage(ImageUploadDetails fileDetails,
                              MultipartFile imageData) throws IOException {
-        Image image = imageMapper.mapToImage(fileDetails, imageData);
-        return imageRepository.save(image);
+        Image newImage = imageMapper.mapToImage(fileDetails, imageData);
+        Image savedEntity = imageRepository.save(newImage);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(savedEntity.getId())
+                .toUri();
+        return location;
     }
 
     public void deleteImage(String id) throws EntityNotFoundException {

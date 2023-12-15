@@ -3,9 +3,11 @@ package com.xalpol12.messengerbot.crud.model.mapper;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xalpol12.messengerbot.crud.model.Image;
+import com.xalpol12.messengerbot.crud.model.dto.ImageResponse;
 import com.xalpol12.messengerbot.crud.model.dto.ImageUploadDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
 
@@ -21,6 +23,20 @@ public class ImageMapper {
                 .build();
     }
 
+    public ImageResponse mapToImageResponse(Image image) {
+        String fileDownloadUri = ServletUriComponentsBuilder
+                .fromCurrentContextPath()
+                .path("/images")
+                .path(image.getId())
+                .toUriString();
+
+        return ImageResponse.builder()
+                .name(image.getName())
+                .url(fileDownloadUri)
+                .type(image.getType())
+                .size(image.getData().length)
+                .build();
+    }
     public Image mapUpdatedDetailsToImage(Image image, ImageUploadDetails details) throws JsonMappingException {
         mapper.updateValue(image, details);
         return image;
