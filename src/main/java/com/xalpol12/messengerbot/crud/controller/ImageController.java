@@ -25,6 +25,7 @@ public class ImageController {
 
     @GetMapping("/images")
     public ResponseEntity<?> getAllImages() {
+        log.trace("GET /images called");
         return ResponseEntity.ok().build();
     }
 
@@ -32,6 +33,7 @@ public class ImageController {
     public ResponseEntity<?> uploadImage(@RequestPart ImageUploadDetails fileDetails,
                                          @RequestPart MultipartFile file) throws IOException {
         Image savedEntity = imageService.uploadImage(fileDetails, file);
+        log.trace("POST /images/upload called for file with name: {}", fileDetails.name());
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -44,6 +46,7 @@ public class ImageController {
 
     @DeleteMapping("image/{id}")
     public ResponseEntity<?> deleteImage(@PathVariable("id") String imageId) {
+        log.trace("DELETE image/{id} called for entity with id: {}", imageId);
         imageService.deleteImage(imageId);
         return ResponseEntity.noContent().build();
     }
@@ -53,12 +56,14 @@ public class ImageController {
                                          @RequestPart ImageUploadDetails fileDetails,
                                          @RequestPart MultipartFile file) throws IOException {
         imageService.updateImage(imageId, fileDetails, file);
+        log.trace("PUT image/{id} called for entity with id: {}", imageId);
         return ResponseEntity.ok().build();
     }
 
     @PatchMapping("image/{id}")
     public ResponseEntity<?> updateImageDetails(@PathVariable("id") String imageId,
                                                 @RequestBody ImageUploadDetails newDetails) throws JsonMappingException {
+        log.trace("PATCH image/{id} image details called for entity with id: {}", imageId);
         imageService.patchImageDetails(imageId, newDetails);
         return null;
     }
@@ -66,6 +71,7 @@ public class ImageController {
     @PatchMapping("image/{id}")
     public ResponseEntity<?> updateImageData(@PathVariable("id") String imageId,
                                              @RequestPart MultipartFile file) throws IOException {
+        log.trace("PATCH image/{id} image data called for entity with id: {}", imageId);
         imageService.patchImageData(imageId, file);
         return null;
     }
