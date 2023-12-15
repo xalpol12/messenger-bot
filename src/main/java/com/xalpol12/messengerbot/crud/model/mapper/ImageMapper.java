@@ -16,8 +16,9 @@ public class ImageMapper {
     private final ObjectMapper mapper = new ObjectMapper();
 
     public Image mapToImage(ImageUploadDetails details, MultipartFile file) throws IOException {
+        String imageName = details.name() != null ? details.name() : file.getName();
         return Image.builder()
-                .name(details.name())
+                .name(imageName)
                 .data(file.getBytes())
                 .type(file.getContentType())
                 .build();

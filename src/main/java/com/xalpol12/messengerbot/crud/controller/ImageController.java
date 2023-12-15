@@ -60,7 +60,7 @@ public class ImageController {
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("image/{id}")
+    @PatchMapping("image/{id}/details")
     public ResponseEntity<?> updateImageDetails(@PathVariable("id") String imageId,
                                                 @RequestBody ImageUploadDetails newDetails) throws JsonMappingException {
         log.trace("PATCH image/{id} image details called for entity with id: {}", imageId);
@@ -68,7 +68,7 @@ public class ImageController {
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("image/{id}")
+    @PatchMapping("image/{id}/data")
     public ResponseEntity<?> updateImageData(@PathVariable("id") String imageId,
                                              @RequestPart MultipartFile file) throws IOException {
         log.trace("PATCH image/{id} image data called for entity with id: {}", imageId);

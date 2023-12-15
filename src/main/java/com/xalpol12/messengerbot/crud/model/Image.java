@@ -12,8 +12,7 @@ import org.hibernate.annotations.GenericGenerator;
 @Entity
 public class Image {
     @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", type = org.hibernate.id.uuid.UuidGenerator.class)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "image_id")
     private String id;
 
