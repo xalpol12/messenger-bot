@@ -25,11 +25,30 @@ public class ImageController {
 
     private final ImageService imageService;
 
-    @GetMapping("image/{id}")
+    @GetMapping("/image/{id}")
+    public ResponseEntity<byte[]> displayImageData(@PathVariable("id") String imageId) {
+        Image image = imageService.getImage(imageId);
+
+        MediaType mediaType = MediaType.parseMediaType(image.getType());
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(mediaType);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(image.getData());
+    }
+
+    @GetMapping("/image/{id}/download")
     public ResponseEntity<byte[]> getImageData(@PathVariable("id") String imageId) {
         Image image = imageService.getImage(imageId);
+        MediaType mediaType = MediaType.parseMediaType(image.getType());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(mediaType);
+        headers.setContentDispositionFormData("attachment", image.getName() + "." + image.getType().split("/")[1]);
+
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + image.getName() + "\"")
+                .headers(headers)
                 .body(image.getData());
     }
 
@@ -48,14 +67,14 @@ public class ImageController {
         return ResponseEntity.created(savedLocation).build();
     }
 
-    @DeleteMapping("image/{id}")
+    @DeleteMapping("/image/{id}")
     public ResponseEntity<?> deleteImage(@PathVariable("id") String imageId) {
         log.trace("DELETE image/{id} called for entity with id: {}", imageId);
         imageService.deleteImage(imageId);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping(value = "image/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/image/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateImage(@PathVariable("id") String imageId,
                                          @RequestPart ImageUploadDetails fileDetails,
                                          @RequestPart MultipartFile file) throws IOException {
@@ -64,7 +83,7 @@ public class ImageController {
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("image/{id}/details")
+    @PatchMapping("/image/{id}/details")
     public ResponseEntity<?> updateImageDetails(@PathVariable("id") String imageId,
                                                 @RequestBody ImageUploadDetails newDetails) throws JsonMappingException {
         log.trace("PATCH image/{id} image details called for entity with id: {}", imageId);
@@ -72,7 +91,7 @@ public class ImageController {
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("image/{id}/data")
+    @PatchMapping("/image/{id}/data")
     public ResponseEntity<?> updateImageData(@PathVariable("id") String imageId,
                                              @RequestPart MultipartFile file) throws IOException {
         log.trace("PATCH image/{id} image data called for entity with id: {}", imageId);
