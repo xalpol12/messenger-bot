@@ -4,5 +4,7 @@ import jakarta.annotation.Nullable;
 
 public record ImageUploadDetails(
         @Nullable
-        String name
+        String name,
+        @Nullable
+        String customUri
 ) { }

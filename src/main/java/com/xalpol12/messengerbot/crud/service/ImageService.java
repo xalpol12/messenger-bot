@@ -24,8 +24,7 @@ public class ImageService {
     private final ImageMapper imageMapper;
 
     public Image getImage(String id) {
-        return imageRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("No image found for provided id:" + id));
+        return findByCustomUriOrId(id);
     }
 
     public List<ImageResponse> getAllImages() {
@@ -39,20 +38,29 @@ public class ImageService {
                              MultipartFile imageData) throws IOException {
         Image newImage = imageMapper.mapToImage(fileDetails, imageData);
         Image savedEntity = imageRepository.save(newImage);
+        String uriOrId = savedEntity.getCustomUri() != null ? savedEntity.getCustomUri() : savedEntity.getId();
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(savedEntity.getId())
+                .buildAndExpand(uriOrId)
                 .toUri();
         return location;
     }
 
     public void deleteImage(String id) throws EntityNotFoundException {
-        if (imageRepository.existsById(id)) {
-            imageRepository.deleteById(id);
-        } else {
-            throw new EntityNotFoundException();
-        };
+        Image image = findByCustomUriOrId(id);
+        imageRepository.deleteById(image.getId());
+    }
+
+    private Image findByCustomUriOrId(String customUriOrId) {
+        Image image = imageRepository.findById(customUriOrId)
+                .orElse(
+                        imageRepository.findImageByCustomUri(customUriOrId)
+                                .orElseThrow(
+                                        () -> new EntityNotFoundException("No image found for: " + customUriOrId)
+                                )
+                );
+        return image;
     }
 
     @Transactional

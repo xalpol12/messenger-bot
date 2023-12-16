@@ -16,8 +16,9 @@ public class ImageMapper {
     private final ObjectMapper mapper = new ObjectMapper();
 
     public Image mapToImage(ImageUploadDetails details, MultipartFile file) throws IOException {
-        String imageName = details.name() != null ? details.name() : file.getName();
+        String imageName = details.name() != null ? details.name() : file.getOriginalFilename();
         return Image.builder()
+                .customUri(details.customUri())
                 .name(imageName)
                 .data(file.getBytes())
                 .type(file.getContentType())
@@ -25,11 +26,12 @@ public class ImageMapper {
     }
 
     public ImageResponse mapToImageResponse(Image image) {
+        String uriOrId = image.getCustomUri() != null ? image.getCustomUri() : image.getId();
         String fileDownloadUri = ServletUriComponentsBuilder
                 .fromCurrentContextPath()
                 .path("/api/")
                 .path("/image/")
-                .path(image.getId())
+                .path(uriOrId)
                 .toUriString();
 
         return ImageResponse.builder()
