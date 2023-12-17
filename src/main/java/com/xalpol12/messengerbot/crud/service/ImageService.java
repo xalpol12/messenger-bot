@@ -6,9 +6,7 @@ import com.xalpol12.messengerbot.crud.model.dto.ImageResponse;
 import com.xalpol12.messengerbot.crud.model.dto.ImageUploadDetails;
 import com.xalpol12.messengerbot.crud.model.mapper.ImageMapper;
 import com.xalpol12.messengerbot.crud.repository.ImageRepository;
-import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +24,6 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class ImageService {
 
-    @PersistenceContext
-    private EntityManager entityManager;
     private final ImageRepository imageRepository;
     private final ImageMapper imageMapper;
 
@@ -84,7 +80,7 @@ public class ImageService {
     }
 
     @Transactional
-    public void patchImageDetails(String customUriOrId, ImageUploadDetails newDetails) throws JsonMappingException {
+    public void patchImageDetails(String customUriOrId, ImageUploadDetails newDetails) {
         Image imageToPatch = findByCustomUriOrId(customUriOrId);
         imageMapper.updateImageDetails(imageToPatch, newDetails);
         log.info("Patched image details for entity with identifier: {}", customUriOrId);

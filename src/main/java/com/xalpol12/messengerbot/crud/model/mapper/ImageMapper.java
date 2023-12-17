@@ -1,6 +1,5 @@
 package com.xalpol12.messengerbot.crud.model.mapper;
 
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.xalpol12.messengerbot.crud.model.Image;
 import com.xalpol12.messengerbot.crud.model.dto.ImageResponse;
 import com.xalpol12.messengerbot.crud.model.dto.ImageUploadDetails;
@@ -79,6 +78,6 @@ public class ImageMapper {
 
     public void updateImageData(Image image, MultipartFile file) throws IOException {
         byte[] data = file.getBytes();
-        mapper.map(file, image);
+        mapper.map(data, image);
     }
 }
