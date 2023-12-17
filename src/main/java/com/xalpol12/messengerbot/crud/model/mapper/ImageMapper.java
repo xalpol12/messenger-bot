@@ -1,28 +1,59 @@
 package com.xalpol12.messengerbot.crud.model.mapper;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xalpol12.messengerbot.crud.model.Image;
 import com.xalpol12.messengerbot.crud.model.dto.ImageResponse;
 import com.xalpol12.messengerbot.crud.model.dto.ImageUploadDetails;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.config.Configuration;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
+import java.util.Objects;
 
 @Component
 public class ImageMapper {
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ModelMapper mapper;
+
+    ImageMapper() {
+        mapper = new ModelMapper();
+        mapper.getConfiguration().setFieldMatchingEnabled(true)
+                .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE)
+                .setMatchingStrategy(MatchingStrategies.STRICT);
+    }
 
     public Image mapToImage(ImageUploadDetails details, MultipartFile file) throws IOException {
-        String imageName = details.name() != null ? details.name() : file.getOriginalFilename();
+        String imageName = details.getName() != null ? details.getName() : extractFilenameWithoutExtension(file);
         return Image.builder()
-                .customUri(details.customUri())
+                .customUri(details.getCustomUri())
                 .name(imageName)
                 .data(file.getBytes())
                 .type(file.getContentType())
                 .build();
+    }
+
+    public Image mapToImage(String id, ImageUploadDetails details, MultipartFile file) throws IOException {
+        String imageName = details.getName() != null ? details.getName() : extractFilenameWithoutExtension(file);
+        return Image.builder()
+                .id(id)
+                .customUri(details.getCustomUri())
+                .name(imageName)
+                .data(file.getBytes())
+                .type(file.getContentType())
+                .build();
+    }
+
+    private String extractFilenameWithoutExtension(MultipartFile file) {
+        String originalFilename = Objects.requireNonNull(file.getOriginalFilename());
+        int lastDotIndex = originalFilename.lastIndexOf(".");
+        if (lastDotIndex != -1) {
+            return originalFilename.substring(0, lastDotIndex);
+        } else {
+            return originalFilename;
+        }
     }
 
     public ImageResponse mapToImageResponse(Image image) {
@@ -41,13 +72,13 @@ public class ImageMapper {
                 .size(image.getData().length)
                 .build();
     }
-    public Image mapUpdatedDetailsToImage(Image image, ImageUploadDetails details) throws JsonMappingException {
-        mapper.updateValue(image, details);
-        return image;
+
+    public void updateImageDetails(Image image, ImageUploadDetails details) {
+        mapper.map(details, image);
     }
 
-    public Image mapUpdatedImageDataToImage(Image image, MultipartFile file) throws IOException {
+    public void updateImageData(Image image, MultipartFile file) throws IOException {
         byte[] data = file.getBytes();
-        return mapper.updateValue(image, data);
+        mapper.map(file, image);
     }
 }

@@ -6,7 +6,9 @@ import com.xalpol12.messengerbot.crud.model.dto.ImageResponse;
 import com.xalpol12.messengerbot.crud.model.dto.ImageUploadDetails;
 import com.xalpol12.messengerbot.crud.model.mapper.ImageMapper;
 import com.xalpol12.messengerbot.crud.repository.ImageRepository;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +25,9 @@ import java.util.stream.Stream;
 @Service
 @RequiredArgsConstructor
 public class ImageService {
+
+    @PersistenceContext
+    private EntityManager entityManager;
     private final ImageRepository imageRepository;
     private final ImageMapper imageMapper;
 
@@ -47,18 +52,21 @@ public class ImageService {
                 .path("/{id}")
                 .buildAndExpand(uriOrId)
                 .toUri();
+        log.info("Successfully saved entity with identifier: {} in a database", uriOrId);
         return location;
     }
 
     public void deleteImage(String id) throws EntityNotFoundException {
         Image image = findByCustomUriOrId(id);
         imageRepository.deleteById(image.getId());
+        log.info("Image with identifier: {} has been deleted from the database", id);
     }
 
     private Image findByCustomUriOrId(String customUriOrId) {
         Image image;
         if (imageRepository.existsById(customUriOrId)) {
             image = imageRepository.findById(customUriOrId).get();
+            log.info("No custom uri found for entity with id: {}", customUriOrId);
         } else {
             image = imageRepository.findImageByCustomUri(customUriOrId)
                     .orElseThrow(() -> new EntityNotFoundException("No image found for: " + customUriOrId));
@@ -67,24 +75,25 @@ public class ImageService {
     }
 
     @Transactional
-    public void updateImage(String id,
+    public void updateImage(String customUriOrId,
                             ImageUploadDetails fileDetails,
                             MultipartFile imageData) throws IOException {
-        deleteImage(id);
-        Image updatedImage = imageMapper.mapToImage(fileDetails, imageData);
+        deleteImage(customUriOrId);
+        Image updatedImage = imageMapper.mapToImage(customUriOrId, fileDetails, imageData);
         imageRepository.save(updatedImage);
     }
 
     @Transactional
-    public void patchImageDetails(String id, ImageUploadDetails newDetails) throws JsonMappingException {
-        Image imageToPatch = imageRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("No image found for this id:" + id));
-        imageMapper.mapUpdatedDetailsToImage(imageToPatch, newDetails);
+    public void patchImageDetails(String customUriOrId, ImageUploadDetails newDetails) throws JsonMappingException {
+        Image imageToPatch = findByCustomUriOrId(customUriOrId);
+        imageMapper.updateImageDetails(imageToPatch, newDetails);
+        log.info("Patched image details for entity with identifier: {}", customUriOrId);
     }
 
-    public void patchImageData(String id, MultipartFile file) throws IOException {
-        Image imageToPatch = imageRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("No image found for this id:" + id));
-        imageMapper.mapUpdatedImageDataToImage(imageToPatch, file);
+    @Transactional
+    public void patchImageData(String customUriOrId, MultipartFile file) throws IOException {
+        Image imageToPatch = findByCustomUriOrId(customUriOrId);
+        imageMapper.updateImageData(imageToPatch, file);
+        log.info("Patched image data for entity with identifier: {}", customUriOrId);
     }
 }

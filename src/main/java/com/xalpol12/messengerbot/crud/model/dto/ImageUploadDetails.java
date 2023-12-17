@@ -1,10 +1,14 @@
 package com.xalpol12.messengerbot.crud.model.dto;
 
 import jakarta.annotation.Nullable;
+import lombok.Data;
 
-public record ImageUploadDetails(
+@Data
+public class ImageUploadDetails {
+
         @Nullable
-        String name,
+        String name;
         @Nullable
-        String customUri
-) { }
+        String customUri;
+}
+

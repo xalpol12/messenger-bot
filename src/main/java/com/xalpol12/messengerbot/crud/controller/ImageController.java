@@ -25,8 +25,8 @@ public class ImageController {
 
     private final ImageService imageService;
 
-    @GetMapping("/image/{id}")
-    public ResponseEntity<byte[]> displayImageData(@PathVariable("id") String imageId) {
+    @GetMapping("/image/{uri}")
+    public ResponseEntity<byte[]> displayImageData(@PathVariable("uri") String imageId) {
         Image image = imageService.getImage(imageId);
 
         MediaType mediaType = MediaType.parseMediaType(image.getType());
@@ -38,8 +38,8 @@ public class ImageController {
                 .body(image.getData());
     }
 
-    @GetMapping("/image/{id}/download")
-    public ResponseEntity<byte[]> getImageData(@PathVariable("id") String imageId) {
+    @GetMapping("/image/{uri}/download")
+    public ResponseEntity<byte[]> getImageData(@PathVariable("uri") String imageId) {
         Image image = imageService.getImage(imageId);
         MediaType mediaType = MediaType.parseMediaType(image.getType());
 
@@ -56,6 +56,7 @@ public class ImageController {
     public ResponseEntity<List<ImageResponse>> getAllImages() {
         log.trace("GET /images called");
         List<ImageResponse> images = imageService.getAllImages();
+        log.trace("/images returned {} elements", images.size());
         return ResponseEntity.ok(images);
     }
 
@@ -67,35 +68,35 @@ public class ImageController {
         return ResponseEntity.created(savedLocation).build();
     }
 
-    @DeleteMapping("/image/{id}")
-    public ResponseEntity<?> deleteImage(@PathVariable("id") String imageId) {
-        log.trace("DELETE image/{id} called for entity with id: {}", imageId);
+    @DeleteMapping("/image/{uri}")
+    public ResponseEntity<?> deleteImage(@PathVariable("uri") String imageId) {
+        log.trace("DELETE image/{uri} called for entity with uri: {}", imageId);
         imageService.deleteImage(imageId);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping(value = "/image/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> updateImage(@PathVariable("id") String imageId,
+    @PutMapping(value = "/image/{uri}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> updateImage(@PathVariable("uri") String imageId,
                                          @RequestPart ImageUploadDetails fileDetails,
                                          @RequestPart MultipartFile file) throws IOException {
         imageService.updateImage(imageId, fileDetails, file);
-        log.trace("PUT image/{id} called for entity with id: {}", imageId);
+        log.trace("PUT image/{uri} called for entity with uri: {}", imageId);
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("/image/{id}/details")
-    public ResponseEntity<?> updateImageDetails(@PathVariable("id") String imageId,
+    @PatchMapping("/image/{uri}/details")
+    public ResponseEntity<?> updateImageDetails(@PathVariable("uri") String uri,
                                                 @RequestBody ImageUploadDetails newDetails) throws JsonMappingException {
-        log.trace("PATCH image/{id} image details called for entity with id: {}", imageId);
-        imageService.patchImageDetails(imageId, newDetails);
+        log.trace("PATCH image/{uri} image details called for entity with uri: {}", uri);
+        imageService.patchImageDetails(uri, newDetails);
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("/image/{id}/data")
-    public ResponseEntity<?> updateImageData(@PathVariable("id") String imageId,
+    @PatchMapping("/image/{uri}/data")
+    public ResponseEntity<?> updateImageData(@PathVariable("uri") String uri,
                                              @RequestPart MultipartFile file) throws IOException {
-        log.trace("PATCH image/{id} image data called for entity with id: {}", imageId);
-        imageService.patchImageData(imageId, file);
+        log.trace("PATCH image/{uri} image data called for entity with uri: {}", uri);
+        imageService.patchImageData(uri, file);
         return ResponseEntity.ok().build();
     }
 }
