@@ -9,6 +9,7 @@ import com.xalpol12.messengerbot.crud.repository.ImageRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -17,6 +18,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Stream;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ImageService {
@@ -53,13 +56,13 @@ public class ImageService {
     }
 
     private Image findByCustomUriOrId(String customUriOrId) {
-        Image image = imageRepository.findById(customUriOrId)
-                .orElse(
-                        imageRepository.findImageByCustomUri(customUriOrId)
-                                .orElseThrow(
-                                        () -> new EntityNotFoundException("No image found for: " + customUriOrId)
-                                )
-                );
+        Image image;
+        if (imageRepository.existsById(customUriOrId)) {
+            image = imageRepository.findById(customUriOrId).get();
+        } else {
+            image = imageRepository.findImageByCustomUri(customUriOrId)
+                    .orElseThrow(() -> new EntityNotFoundException("No image found for: " + customUriOrId));
+        }
         return image;
     }
 
