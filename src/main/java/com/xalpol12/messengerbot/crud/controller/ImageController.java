@@ -60,7 +60,7 @@ public class ImageController {
         return ResponseEntity.ok(images);
     }
 
-    @PostMapping(path = "/images/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(path = "/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadImage(@RequestPart ImageUploadDetails fileDetails,
                                          @RequestPart MultipartFile file) throws IOException {
         URI savedLocation = imageService.uploadImage(fileDetails, file);
