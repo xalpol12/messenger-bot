@@ -3,9 +3,8 @@ package com.xalpol12.messengerbot.crud.model.mapper;
 import com.xalpol12.messengerbot.crud.model.Image;
 import com.xalpol12.messengerbot.crud.model.dto.ImageResponse;
 import com.xalpol12.messengerbot.crud.model.dto.ImageUploadDetails;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.config.Configuration;
-import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -14,15 +13,10 @@ import java.io.IOException;
 import java.util.Objects;
 
 @Component
+@RequiredArgsConstructor
 public class ImageMapper {
-    private final ModelMapper mapper;
 
-    ImageMapper() {
-        mapper = new ModelMapper();
-        mapper.getConfiguration().setFieldMatchingEnabled(true)
-                .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE)
-                .setMatchingStrategy(MatchingStrategies.STRICT);
-    }
+    private final ModelMapper mapper;
 
     public Image mapToImage(ImageUploadDetails details, MultipartFile file) throws IOException {
         String imageName = details.getName() != null ? details.getName() : extractFilenameWithoutExtension(file);
@@ -78,6 +72,6 @@ public class ImageMapper {
 
     public void updateImageData(Image image, MultipartFile file) throws IOException {
         byte[] data = file.getBytes();
-        mapper.map(data, image);
+        image.setData(data);
     }
 }
