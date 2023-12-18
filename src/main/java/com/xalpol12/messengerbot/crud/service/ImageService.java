@@ -1,6 +1,5 @@
 package com.xalpol12.messengerbot.crud.service;
 
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.xalpol12.messengerbot.crud.model.Image;
 import com.xalpol12.messengerbot.crud.model.dto.ImageResponse;
 import com.xalpol12.messengerbot.crud.model.dto.ImageUploadDetails;
@@ -74,9 +73,10 @@ public class ImageService {
     public void updateImage(String customUriOrId,
                             ImageUploadDetails fileDetails,
                             MultipartFile imageData) throws IOException {
-        deleteImage(customUriOrId);
-        Image updatedImage = imageMapper.mapToImage(customUriOrId, fileDetails, imageData);
-        imageRepository.save(updatedImage);
+        Image originalImage = findByCustomUriOrId(customUriOrId);
+        Image updatedImage = imageMapper.mapToImage(fileDetails, imageData);
+        imageMapper.updateImage(updatedImage, originalImage);
+        log.info("Updated entity with identifier: {}", customUriOrId);
     }
 
     @Transactional

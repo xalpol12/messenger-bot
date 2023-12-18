@@ -28,17 +28,6 @@ public class ImageMapper {
                 .build();
     }
 
-    public Image mapToImage(String id, ImageUploadDetails details, MultipartFile file) throws IOException {
-        String imageName = details.getName() != null ? details.getName() : extractFilenameWithoutExtension(file);
-        return Image.builder()
-                .id(id)
-                .customUri(details.getCustomUri())
-                .name(imageName)
-                .data(file.getBytes())
-                .type(file.getContentType())
-                .build();
-    }
-
     private String extractFilenameWithoutExtension(MultipartFile file) {
         String originalFilename = Objects.requireNonNull(file.getOriginalFilename());
         int lastDotIndex = originalFilename.lastIndexOf(".");
@@ -51,7 +40,7 @@ public class ImageMapper {
 
     public ImageResponse mapToImageResponse(Image image) {
         String uriOrId = image.getCustomUri() != null ? image.getCustomUri() : image.getId();
-        String fileDownloadUri = ServletUriComponentsBuilder
+        String imageUrl = ServletUriComponentsBuilder
                 .fromCurrentContextPath()
                 .path("/api/")
                 .path("/image/")
@@ -59,11 +48,16 @@ public class ImageMapper {
                 .toUriString();
 
         return ImageResponse.builder()
+                .id(image.getId())
                 .name(image.getName())
-                .url(fileDownloadUri)
+                .url(imageUrl)
                 .type(image.getType())
                 .size(image.getData().length)
                 .build();
+    }
+
+    public void updateImage(Image source, Image destination) {
+        mapper.map(source, destination);
     }
 
     public void updateImageDetails(Image image, ImageUploadDetails details) {

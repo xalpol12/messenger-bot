@@ -4,6 +4,7 @@ import lombok.Builder;
 
 @Builder
 public record ImageResponse (
+        String id,
         String name,
         String url,
         String type,
