@@ -53,6 +53,8 @@ public class ImageMapper {
                 .url(imageUrl)
                 .type(image.getType())
                 .size(image.getData().length)
+                .createdAt(image.getCreatedAt())
+                .lastModifiedAt(image.getUpdatedAt())
                 .build();
     }
 

@@ -9,7 +9,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.sql.Timestamp;
 import java.sql.Types;
 
 
@@ -17,7 +21,8 @@ import java.sql.Types;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity
+@Entity(name = "images")
+@EntityListeners(AuditingEntityListener.class)
 public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -38,4 +43,11 @@ public class Image {
     @JdbcTypeCode(Types.LONGVARBINARY)
     private byte[] data;
 
+    @Column(nullable = false, updatable = false)
+    @CreatedDate
+    Timestamp createdAt;
+
+    @Column(nullable = false)
+    @LastModifiedDate
+    Timestamp updatedAt;
 }
