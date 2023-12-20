@@ -1,7 +1,10 @@
 package com.xalpol12.messengerbot.crud.model.dto.scheduledmessage;
 
-public record ScheduledMessageDetails(
-        String scheduledDate,
-        String message,
-        String imageId
-) { }
+import lombok.Data;
+
+@Data
+public class ScheduledMessageDetails {
+    private String scheduledDate;
+    private String message;
+    private String imageId;
+}

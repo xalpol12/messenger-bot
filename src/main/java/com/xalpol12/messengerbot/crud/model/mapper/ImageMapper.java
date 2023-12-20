@@ -1,7 +1,7 @@
 package com.xalpol12.messengerbot.crud.model.mapper;
 
 import com.xalpol12.messengerbot.crud.model.Image;
-import com.xalpol12.messengerbot.crud.model.dto.image.ImageResponse;
+import com.xalpol12.messengerbot.crud.model.dto.image.ImageDTO;
 import com.xalpol12.messengerbot.crud.model.dto.image.ImageUploadDetails;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -38,7 +38,7 @@ public class ImageMapper {
         }
     }
 
-    public ImageResponse mapToImageResponse(Image image) {
+    public ImageDTO mapToImageResponse(Image image) {
         String uriOrId = image.getCustomUri() != null ? image.getCustomUri() : image.getId();
         String imageUrl = ServletUriComponentsBuilder
                 .fromCurrentContextPath()
@@ -47,7 +47,7 @@ public class ImageMapper {
                 .path(uriOrId)
                 .toUriString();
 
-        return ImageResponse.builder()
+        return ImageDTO.builder()
                 .id(image.getId())
                 .name(image.getName())
                 .url(imageUrl)

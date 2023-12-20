@@ -1,7 +1,7 @@
 package com.xalpol12.messengerbot.crud.service;
 
 import com.xalpol12.messengerbot.crud.model.Image;
-import com.xalpol12.messengerbot.crud.model.dto.image.ImageResponse;
+import com.xalpol12.messengerbot.crud.model.dto.image.ImageDTO;
 import com.xalpol12.messengerbot.crud.model.dto.image.ImageUploadDetails;
 import com.xalpol12.messengerbot.crud.model.mapper.ImageMapper;
 import com.xalpol12.messengerbot.crud.repository.ImageRepository;
@@ -30,7 +30,7 @@ public class ImageService {
         return findByCustomUriOrId(id);
     }
 
-    public List<ImageResponse> getAllImages() {
+    public List<ImageDTO> getAllImages() {
         Stream<Image> imageStream = imageRepository.findAll().stream();
         return imageStream
                 .map(imageMapper::mapToImageResponse)

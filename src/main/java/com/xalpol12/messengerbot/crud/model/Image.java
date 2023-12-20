@@ -52,6 +52,6 @@ public class Image {
     @LastModifiedDate
     LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "scheduled_messages", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "image", fetch = FetchType.LAZY)
     Set<ScheduledMessage> scheduledMessages;
 }

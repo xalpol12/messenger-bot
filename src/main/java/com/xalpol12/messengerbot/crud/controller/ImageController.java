@@ -2,7 +2,7 @@ package com.xalpol12.messengerbot.crud.controller;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.xalpol12.messengerbot.crud.model.Image;
-import com.xalpol12.messengerbot.crud.model.dto.image.ImageResponse;
+import com.xalpol12.messengerbot.crud.model.dto.image.ImageDTO;
 import com.xalpol12.messengerbot.crud.model.dto.image.ImageUploadDetails;
 import com.xalpol12.messengerbot.crud.service.ImageService;
 import lombok.RequiredArgsConstructor;
@@ -53,10 +53,10 @@ public class ImageController {
     }
 
     @GetMapping("/images")
-    public ResponseEntity<List<ImageResponse>> getAllImages() {
+    public ResponseEntity<List<ImageDTO>> getAllImages() {
         log.trace("GET /images called");
-        List<ImageResponse> images = imageService.getAllImages();
-        log.trace("/images returned {} elements", images.size());
+        List<ImageDTO> images = imageService.getAllImages();
+        log.trace("GET /images returned {} elements", images.size());
         return ResponseEntity.ok(images);
     }
 

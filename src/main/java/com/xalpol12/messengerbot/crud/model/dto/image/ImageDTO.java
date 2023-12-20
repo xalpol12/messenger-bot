@@ -5,7 +5,7 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 
 @Builder
-public record ImageResponse (
+public record ImageDTO(
         String id,
         String name,
         String url,
