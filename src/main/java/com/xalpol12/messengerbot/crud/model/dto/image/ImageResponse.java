@@ -1,8 +1,8 @@
-package com.xalpol12.messengerbot.crud.model.dto;
+package com.xalpol12.messengerbot.crud.model.dto.image;
 
 import lombok.Builder;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Builder
 public record ImageResponse (
@@ -11,6 +11,6 @@ public record ImageResponse (
         String url,
         String type,
         long size,
-        Timestamp createdAt,
-        Timestamp lastModifiedAt
+        LocalDateTime createdAt,
+        LocalDateTime lastModifiedAt
 ) { }

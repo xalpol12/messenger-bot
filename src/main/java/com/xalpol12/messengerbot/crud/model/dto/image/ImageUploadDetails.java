@@ -1,4 +1,4 @@
-package com.xalpol12.messengerbot.crud.model.dto;
+package com.xalpol12.messengerbot.crud.model.dto.image;
 
 import jakarta.annotation.Nullable;
 import lombok.Data;

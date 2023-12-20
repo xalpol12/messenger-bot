@@ -1,8 +1,8 @@
 package com.xalpol12.messengerbot.crud.model.mapper;
 
 import com.xalpol12.messengerbot.crud.model.Image;
-import com.xalpol12.messengerbot.crud.model.dto.ImageResponse;
-import com.xalpol12.messengerbot.crud.model.dto.ImageUploadDetails;
+import com.xalpol12.messengerbot.crud.model.dto.image.ImageResponse;
+import com.xalpol12.messengerbot.crud.model.dto.image.ImageUploadDetails;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;

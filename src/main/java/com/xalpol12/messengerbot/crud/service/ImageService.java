@@ -1,8 +1,8 @@
 package com.xalpol12.messengerbot.crud.service;
 
 import com.xalpol12.messengerbot.crud.model.Image;
-import com.xalpol12.messengerbot.crud.model.dto.ImageResponse;
-import com.xalpol12.messengerbot.crud.model.dto.ImageUploadDetails;
+import com.xalpol12.messengerbot.crud.model.dto.image.ImageResponse;
+import com.xalpol12.messengerbot.crud.model.dto.image.ImageUploadDetails;
 import com.xalpol12.messengerbot.crud.model.mapper.ImageMapper;
 import com.xalpol12.messengerbot.crud.repository.ImageRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -15,8 +15,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.URI;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Stream;
 

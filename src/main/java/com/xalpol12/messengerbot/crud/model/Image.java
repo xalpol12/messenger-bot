@@ -13,8 +13,9 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.sql.Timestamp;
 import java.sql.Types;
+import java.time.LocalDateTime;
+import java.util.Set;
 
 
 @Data
@@ -45,9 +46,12 @@ public class Image {
 
     @Column(nullable = false, updatable = false)
     @CreatedDate
-    Timestamp createdAt;
+    LocalDateTime createdAt;
 
     @Column(nullable = false)
     @LastModifiedDate
-    Timestamp updatedAt;
+    LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "scheduled_messages", fetch = FetchType.LAZY)
+    Set<ScheduledMessage> scheduledMessages;
 }

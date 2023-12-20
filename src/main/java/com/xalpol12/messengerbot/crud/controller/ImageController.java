@@ -2,8 +2,8 @@ package com.xalpol12.messengerbot.crud.controller;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.xalpol12.messengerbot.crud.model.Image;
-import com.xalpol12.messengerbot.crud.model.dto.ImageResponse;
-import com.xalpol12.messengerbot.crud.model.dto.ImageUploadDetails;
+import com.xalpol12.messengerbot.crud.model.dto.image.ImageResponse;
+import com.xalpol12.messengerbot.crud.model.dto.image.ImageUploadDetails;
 import com.xalpol12.messengerbot.crud.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
