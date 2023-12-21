@@ -1,5 +1,6 @@
 package com.xalpol12.messengerbot.crud.model;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,9 +24,11 @@ public class ScheduledMessage {
 
     private String message;
 
+    @Nullable
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "image_id")
     private Image image;
 
+    @Column(columnDefinition = "boolean default false")
     private boolean isSent;
 }
