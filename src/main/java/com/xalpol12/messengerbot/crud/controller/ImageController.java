@@ -20,12 +20,16 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
 public class ImageController {
+
+    public static class ImagePath {
+        public static final String value = "/api/image";
+        private ImagePath() {};
+    }
 
     private final ImageService imageService;
 
-    @GetMapping("/image/{uri}")
+    @GetMapping(ImagePath.value + "/{uri}")
     public ResponseEntity<byte[]> displayImageData(@PathVariable("uri") String imageId) {
         Image image = imageService.getImage(imageId);
 
@@ -38,7 +42,7 @@ public class ImageController {
                 .body(image.getData());
     }
 
-    @GetMapping("/image/{uri}/download")
+    @GetMapping(ImagePath.value + "/{uri}/download")
     public ResponseEntity<byte[]> getImageData(@PathVariable("uri") String imageId) {
         Image image = imageService.getImage(imageId);
         MediaType mediaType = MediaType.parseMediaType(image.getType());
@@ -52,7 +56,7 @@ public class ImageController {
                 .body(image.getData());
     }
 
-    @GetMapping("/images")
+    @GetMapping(ImagePath.value+ "s")
     public ResponseEntity<List<ImageDTO>> getAllImages() {
         log.trace("GET /images called");
         List<ImageDTO> images = imageService.getAllImages();
@@ -60,7 +64,7 @@ public class ImageController {
         return ResponseEntity.ok(images);
     }
 
-    @PostMapping(path = "/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(path = ImagePath.value, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadImage(@RequestPart ImageUploadDetails fileDetails,
                                          @RequestPart MultipartFile file) throws IOException {
         URI savedLocation = imageService.uploadImage(fileDetails, file);
@@ -68,14 +72,14 @@ public class ImageController {
         return ResponseEntity.created(savedLocation).build();
     }
 
-    @DeleteMapping("/image/{uri}")
+    @DeleteMapping(ImagePath.value + "/{uri}")
     public ResponseEntity<?> deleteImage(@PathVariable("uri") String imageId) {
         log.trace("DELETE image/{uri} called for entity with uri: {}", imageId);
         imageService.deleteImage(imageId);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping(value = "/image/{uri}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = ImagePath.value + "/{uri}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateImage(@PathVariable("uri") String imageId,
                                          @RequestPart ImageUploadDetails fileDetails,
                                          @RequestPart MultipartFile file) throws IOException {
@@ -84,7 +88,7 @@ public class ImageController {
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("/image/{uri}/details")
+    @PatchMapping(ImagePath.value + "/{uri}/details")
     public ResponseEntity<?> updateImageDetails(@PathVariable("uri") String uri,
                                                 @RequestBody ImageUploadDetails newDetails) throws JsonMappingException {
         log.trace("PATCH image/{uri} image details called for entity with uri: {}", uri);
@@ -92,7 +96,7 @@ public class ImageController {
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("/image/{uri}/data")
+    @PatchMapping(ImagePath.value + "/{uri}/data")
     public ResponseEntity<?> updateImageData(@PathVariable("uri") String uri,
                                              @RequestPart MultipartFile file) throws IOException {
         log.trace("PATCH image/{uri} image data called for entity with uri: {}", uri);

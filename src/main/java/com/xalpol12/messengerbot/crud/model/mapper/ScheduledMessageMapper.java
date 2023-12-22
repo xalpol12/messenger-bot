@@ -1,5 +1,6 @@
 package com.xalpol12.messengerbot.crud.model.mapper;
 
+import com.xalpol12.messengerbot.crud.controller.ImageController;
 import com.xalpol12.messengerbot.crud.model.Image;
 import com.xalpol12.messengerbot.crud.model.ScheduledMessage;
 import com.xalpol12.messengerbot.crud.model.dto.scheduledmessage.ScheduledMessageDTO;
@@ -9,14 +10,15 @@ import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.time.LocalDateTime;
 
 @Component
 public class ScheduledMessageMapper {
 
-    private ImageRepository imageRepository;
-    private ModelMapper mapper;
+    private final ImageRepository imageRepository;
+    private final ModelMapper mapper;
 
     public ScheduledMessageMapper (ImageRepository imageRepository, ModelMapper mapper) {
         this.imageRepository = imageRepository;
@@ -25,6 +27,8 @@ public class ScheduledMessageMapper {
     }
 
     private void configureModelMapper() {
+
+        // ScheduledMessageDetails -> ScheduledMessage
         TypeMap<ScheduledMessageDetails, ScheduledMessage> inputToEntityMapper =
                 this.mapper.createTypeMap(ScheduledMessageDetails.class, ScheduledMessage.class);
 
@@ -44,11 +48,22 @@ public class ScheduledMessageMapper {
             mapper.using(imageConverter).map(ScheduledMessageDetails::getImageId, ScheduledMessage::setImage);
         });
 
-
+        // ScheduledMessage -> ScheduledMessageDTO
         TypeMap<ScheduledMessage, ScheduledMessageDTO> entityToDTOMapper =
                 this.mapper.createTypeMap(ScheduledMessage.class, ScheduledMessageDTO.class);
         entityToDTOMapper.addMapping(ScheduledMessage::getId, ScheduledMessageDTO::setScheduledMessageId);
-        entityToDTOMapper.addMappings(mapper -> mapper.map(src -> src.getImage().getId(), ScheduledMessageDTO::setImageUrl)); // TODO: Fix, return full URL with custom URI or id
+        entityToDTOMapper.addMappings(mapper -> mapper.map(src -> {
+            Image image;
+            if (src.getImage() != null) {
+                image = src.getImage();
+                String uri = image.getCustomUri() != null ? image.getCustomUri() : image.getId();
+                return ServletUriComponentsBuilder
+                        .fromCurrentContextPath()
+                        .path(ImageController.ImagePath.value)
+                        .path("/" + uri)
+                        .toUriString();
+            } else return null;
+        }, ScheduledMessageDTO::setImageUrl));
     }
 
     public ScheduledMessage mapToScheduledMessage(ScheduledMessageDetails details) {

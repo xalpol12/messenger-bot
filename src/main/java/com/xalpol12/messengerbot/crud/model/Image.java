@@ -50,7 +50,7 @@ public class Image {
 
     @Column(nullable = false)
     @LastModifiedDate
-    LocalDateTime updatedAt;
+    LocalDateTime modifiedAt;
 
     @OneToMany(mappedBy = "image", fetch = FetchType.LAZY)
     Set<ScheduledMessage> scheduledMessages;

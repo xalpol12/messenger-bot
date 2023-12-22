@@ -1,5 +1,6 @@
 package com.xalpol12.messengerbot.crud.model.mapper;
 
+import com.xalpol12.messengerbot.crud.controller.ImageController;
 import com.xalpol12.messengerbot.crud.model.Image;
 import com.xalpol12.messengerbot.crud.model.dto.image.ImageDTO;
 import com.xalpol12.messengerbot.crud.model.dto.image.ImageUploadDetails;
@@ -42,9 +43,8 @@ public class ImageMapper {
         String uriOrId = image.getCustomUri() != null ? image.getCustomUri() : image.getId();
         String imageUrl = ServletUriComponentsBuilder
                 .fromCurrentContextPath()
-                .path("/api/")
-                .path("/image/")
-                .path(uriOrId)
+                .path(ImageController.ImagePath.value)
+                .path("/" + uriOrId)
                 .toUriString();
 
         return ImageDTO.builder()
@@ -54,7 +54,7 @@ public class ImageMapper {
                 .type(image.getType())
                 .size(image.getData().length)
                 .createdAt(image.getCreatedAt())
-                .lastModifiedAt(image.getUpdatedAt())
+                .lastModifiedAt(image.getModifiedAt())
                 .build();
     }
 
