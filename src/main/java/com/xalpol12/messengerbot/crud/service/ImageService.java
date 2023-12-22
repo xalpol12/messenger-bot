@@ -1,5 +1,6 @@
 package com.xalpol12.messengerbot.crud.service;
 
+import com.xalpol12.messengerbot.crud.exception.ImageAccessException;
 import com.xalpol12.messengerbot.crud.model.Image;
 import com.xalpol12.messengerbot.crud.model.dto.image.ImageDTO;
 import com.xalpol12.messengerbot.crud.model.dto.image.ImageUploadDetails;
@@ -38,8 +39,13 @@ public class ImageService {
     }
 
     public URI uploadImage(ImageUploadDetails fileDetails,
-                             MultipartFile imageData) throws IOException {
-        Image newImage = imageMapper.mapToImage(fileDetails, imageData);
+                             MultipartFile imageData) throws ImageAccessException {
+        Image newImage;
+        try {
+            newImage = imageMapper.mapToImage(fileDetails, imageData);
+        } catch (IOException e) {
+            throw new ImageAccessException("Could not access image with name:" + imageData.getOriginalFilename());
+        }
         Image savedEntity = imageRepository.save(newImage);
         String uriOrId = savedEntity.getCustomUri() != null ? savedEntity.getCustomUri() : savedEntity.getId();
         URI location = ServletUriComponentsBuilder

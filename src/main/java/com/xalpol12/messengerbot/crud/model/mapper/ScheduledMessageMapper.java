@@ -27,7 +27,6 @@ public class ScheduledMessageMapper {
     }
 
     private void configureModelMapper() {
-
         // ScheduledMessageDetails -> ScheduledMessage
         TypeMap<ScheduledMessageDetails, ScheduledMessage> inputToEntityMapper =
                 this.mapper.createTypeMap(ScheduledMessageDetails.class, ScheduledMessage.class);
@@ -47,23 +46,6 @@ public class ScheduledMessageMapper {
             };
             mapper.using(imageConverter).map(ScheduledMessageDetails::getImageId, ScheduledMessage::setImage);
         });
-
-        // ScheduledMessage -> ScheduledMessageDTO
-        TypeMap<ScheduledMessage, ScheduledMessageDTO> entityToDTOMapper =
-                this.mapper.createTypeMap(ScheduledMessage.class, ScheduledMessageDTO.class);
-        entityToDTOMapper.addMapping(ScheduledMessage::getId, ScheduledMessageDTO::setScheduledMessageId);
-        entityToDTOMapper.addMappings(mapper -> mapper.map(src -> {
-            Image image;
-            if (src.getImage() != null) {
-                image = src.getImage();
-                String uri = image.getCustomUri() != null ? image.getCustomUri() : image.getId();
-                return ServletUriComponentsBuilder
-                        .fromCurrentContextPath()
-                        .path(ImageController.ImagePath.value)
-                        .path("/" + uri)
-                        .toUriString();
-            } else return null;
-        }, ScheduledMessageDTO::setImageUrl));
     }
 
     public ScheduledMessage mapToScheduledMessage(ScheduledMessageDetails details) {
@@ -71,7 +53,25 @@ public class ScheduledMessageMapper {
     }
 
     public ScheduledMessageDTO mapToScheduledMessageDTO(ScheduledMessage scheduledMessage) {
-        return mapper.map(scheduledMessage, ScheduledMessageDTO.class);
+         return ScheduledMessageDTO.builder()
+                 .scheduledMessageId(scheduledMessage.getId())
+                 .scheduledDate(scheduledMessage.getScheduledDate())
+                 .message(scheduledMessage.getMessage())
+                 .imageUrl(getImageUrl(scheduledMessage))
+                 .isSent(scheduledMessage.isSent())
+                 .build();
+    }
+
+    private String getImageUrl(ScheduledMessage scheduledMessage) {
+        if (scheduledMessage.getImage() != null) {
+            Image image = scheduledMessage.getImage();
+            String uri = image.getCustomUri() != null ? image.getCustomUri() : image.getId();
+            return ServletUriComponentsBuilder
+                    .fromCurrentContextPath()
+                    .path(ImageController.ImagePath.value)
+                    .path("/" + uri)
+                    .toUriString();
+        } else return null;
     }
 
     public void updateScheduledMessage(ScheduledMessage source, ScheduledMessage destination) {
