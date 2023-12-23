@@ -83,8 +83,8 @@ public class ImageController {
     public ResponseEntity<?> updateImage(@PathVariable("uri") String imageId,
                                          @RequestPart ImageUploadDetails fileDetails,
                                          @RequestPart MultipartFile file) throws IOException {
-        imageService.updateImage(imageId, fileDetails, file);
         log.trace("PUT image/{uri} called for entity with uri: {}", imageId);
+        imageService.updateImage(imageId, fileDetails, file);
         return ResponseEntity.ok().build();
     }
 
