@@ -34,7 +34,7 @@ public class ImageService {
     public List<ImageDTO> getAllImages() {
         Stream<Image> imageStream = imageRepository.findAll().stream();
         return imageStream
-                .map(imageMapper::mapToImageResponse)
+                .map(imageMapper::mapToImageDTO)
                 .toList();
     }
 

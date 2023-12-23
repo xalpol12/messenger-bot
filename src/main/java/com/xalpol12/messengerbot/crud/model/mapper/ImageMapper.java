@@ -39,7 +39,7 @@ public class ImageMapper {
         }
     }
 
-    public ImageDTO mapToImageResponse(Image image) {
+    public ImageDTO mapToImageDTO(Image image) {
         String uriOrId = image.getCustomUri() != null ? image.getCustomUri() : image.getId();
         String imageUrl = ServletUriComponentsBuilder
                 .fromCurrentContextPath()
