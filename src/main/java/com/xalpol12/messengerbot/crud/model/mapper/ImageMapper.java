@@ -43,7 +43,7 @@ public class ImageMapper {
         String uriOrId = image.getCustomUri() != null ? image.getCustomUri() : image.getId();
         String imageUrl = ServletUriComponentsBuilder
                 .fromCurrentContextPath()
-                .path(ImageController.ImagePath.value)
+                .path(ImageController.ImagePath.ROOT)
                 .path("/" + uriOrId)
                 .toUriString();
 

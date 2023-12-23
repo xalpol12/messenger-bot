@@ -68,7 +68,7 @@ public class ScheduledMessageMapper {
             String uri = image.getCustomUri() != null ? image.getCustomUri() : image.getId();
             return ServletUriComponentsBuilder
                     .fromCurrentContextPath()
-                    .path(ImageController.ImagePath.value)
+                    .path(ImageController.ImagePath.ROOT)
                     .path("/" + uri)
                     .toUriString();
         } else return null;

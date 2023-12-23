@@ -17,41 +17,41 @@ import java.util.List;
 public class ScheduledMessageController {
 
     static class ScheduledMessagePath {
-        public static final String value = "/api/scheduled-message";
+        public static final String ROOT = "/api/scheduled-message";
         private ScheduledMessagePath() {};
     }
 
     private final ScheduledMessageService scheduledMessageService;
 
-    @GetMapping(ScheduledMessagePath.value + "s")
+    @GetMapping(ScheduledMessagePath.ROOT + "s")
     public ResponseEntity<List<ScheduledMessageDTO>> getAllScheduledMessages() {
         List<ScheduledMessageDTO> messages = scheduledMessageService.getAllScheduledMessages();
         log.trace("GET /scheduled-messages returned {} elements", messages.size());
         return ResponseEntity.ok(messages);
     }
 
-    @GetMapping(ScheduledMessagePath.value + "/{id}")
+    @GetMapping(ScheduledMessagePath.ROOT + "/{id}")
     public ResponseEntity<ScheduledMessageDTO> getScheduledMessage(@PathVariable("id") Long messageId) {
         ScheduledMessageDTO messageDTO = scheduledMessageService.getScheduledMessage(messageId);
         log.trace("GET /scheduled-message/{id} called for entity with id: {}", messageId);
         return ResponseEntity.ok(messageDTO);
     }
 
-    @PostMapping(ScheduledMessagePath.value)
+    @PostMapping(ScheduledMessagePath.ROOT)
     public ResponseEntity<ScheduledMessageDTO> uploadScheduledMessage(@RequestBody ScheduledMessageDetails scheduledMessageDetails) {
         ScheduledMessageDTO messageDTO = scheduledMessageService.addScheduledMessage(scheduledMessageDetails);
         log.trace("POST /scheduled-message called");
         return new ResponseEntity<>(messageDTO, HttpStatus.CREATED);
     }
 
-    @DeleteMapping(ScheduledMessagePath.value + "/{id}")
+    @DeleteMapping(ScheduledMessagePath.ROOT + "/{id}")
     public ResponseEntity<?> deleteScheduledMessage(@PathVariable("id") Long messageId) {
         scheduledMessageService.deleteScheduledMessage(messageId);
         log.trace("DELETE /scheduled-message/{id} called for entity with id: {}", messageId);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping(ScheduledMessagePath.value + "/{id}")
+    @PutMapping(ScheduledMessagePath.ROOT + "/{id}")
     public ResponseEntity<?> updateScheduledMessage(@PathVariable("id") Long messageId,
                                                     @RequestBody ScheduledMessageDetails messageDetails) {
         scheduledMessageService.updateScheduledMessage(messageId, messageDetails);
