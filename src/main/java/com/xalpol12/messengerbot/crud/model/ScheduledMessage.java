@@ -30,5 +30,5 @@ public class ScheduledMessage {
     private Image image;
 
     @Column(columnDefinition = "boolean default false")
-    private boolean isSent;
+    private boolean sent;
 }

@@ -23,18 +23,18 @@ public class ScheduledMessageController {
 
     private final ScheduledMessageService scheduledMessageService;
 
-    @GetMapping(ScheduledMessagePath.ROOT + "s")
-    public ResponseEntity<List<ScheduledMessageDTO>> getAllScheduledMessages() {
-        List<ScheduledMessageDTO> messages = scheduledMessageService.getAllScheduledMessages();
-        log.trace("GET /scheduled-messages returned {} elements", messages.size());
-        return ResponseEntity.ok(messages);
-    }
-
     @GetMapping(ScheduledMessagePath.ROOT + "/{id}")
     public ResponseEntity<ScheduledMessageDTO> getScheduledMessage(@PathVariable("id") Long messageId) {
         ScheduledMessageDTO messageDTO = scheduledMessageService.getScheduledMessage(messageId);
         log.trace("GET /scheduled-message/{id} called for entity with id: {}", messageId);
         return ResponseEntity.ok(messageDTO);
+    }
+
+    @GetMapping(ScheduledMessagePath.ROOT + "s")
+    public ResponseEntity<List<ScheduledMessageDTO>> getAllScheduledMessages() {
+        List<ScheduledMessageDTO> messages = scheduledMessageService.getAllScheduledMessages();
+        log.trace("GET /scheduled-messages returned {} elements", messages.size());
+        return ResponseEntity.ok(messages);
     }
 
     @PostMapping(ScheduledMessagePath.ROOT)
