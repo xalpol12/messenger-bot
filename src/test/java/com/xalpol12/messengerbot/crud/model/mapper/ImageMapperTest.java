@@ -1,6 +1,5 @@
 package com.xalpol12.messengerbot.crud.model.mapper;
 
-import com.xalpol12.messengerbot.crud.config.ProjectConfig;
 import com.xalpol12.messengerbot.crud.model.Image;
 import com.xalpol12.messengerbot.crud.model.dto.image.ImageDTO;
 import com.xalpol12.messengerbot.crud.model.dto.image.ImageUploadDetails;
@@ -17,17 +16,17 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
-class ImageMapperUnitTest {
+class ImageMapperTest {
 
+    private static ModelMapper modelMapper;
     private static ImageMapper imageMapper;
 
     @BeforeAll
     public static void setup() {
-        ProjectConfig config = new ProjectConfig(); // use current project config beans
-        ModelMapper mapper = config.modelMapper(); // get instance of ModelMapper with current settings
-        imageMapper = new ImageMapper(mapper);
+        modelMapper = mock(ModelMapper.class);
+        imageMapper = new ImageMapper(modelMapper);
 
         MockHttpServletRequest request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
@@ -139,5 +138,38 @@ class ImageMapperUnitTest {
             assertEquals(image.getCreatedAt(), result.getCreatedAt());
             assertEquals(image.getModifiedAt(), result.getLastModifiedAt());
         });
+    }
+
+    @Test
+    void updateImage_shouldMapSourceToDestination() {
+        Image source = new Image();
+        Image destination = new Image();
+
+        imageMapper.updateImage(source, destination);
+
+        verify(modelMapper, times(1)).map(source, destination);
+    }
+
+    @Test
+    void updateImageDetails_shouldMapDetailsToImage() {
+        Image image = new Image();
+        ImageUploadDetails details = new ImageUploadDetails();
+
+        imageMapper.updateImageDetails(image, details);
+
+        verify(modelMapper, times(1)).map(details, image);
+    }
+
+    @Test
+    void updateImageData_shouldSetDataInImage() throws IOException {
+        Image image = new Image();
+        byte[] data = "test data".getBytes();
+        MultipartFile file = mock(MultipartFile.class);
+
+        when(file.getBytes()).thenReturn(data);
+
+        imageMapper.updateImageData(image, file);
+
+        assertArrayEquals(data, image.getData());
     }
 }
