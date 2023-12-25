@@ -1,5 +1,6 @@
 package com.xalpol12.messengerbot.crud.service;
 
+import com.xalpol12.messengerbot.crud.controller.ImageController;
 import com.xalpol12.messengerbot.crud.exception.ImageAccessException;
 import com.xalpol12.messengerbot.crud.model.Image;
 import com.xalpol12.messengerbot.crud.model.dto.image.ImageDTO;
@@ -31,6 +32,18 @@ public class ImageService {
         return findByCustomUriOrId(id);
     }
 
+    private Image findByCustomUriOrId(String customUriOrId) {
+        Image image;
+        if (imageRepository.existsById(customUriOrId)) {
+            image = imageRepository.findById(customUriOrId).get();
+            log.info("No custom uri found for entity with id: {}", customUriOrId);
+        } else {
+            image = imageRepository.findImageByCustomUri(customUriOrId)
+                    .orElseThrow(() -> new EntityNotFoundException("No image found for: " + customUriOrId));
+        }
+        return image;
+    }
+
     public List<ImageDTO> getAllImages() {
         Stream<Image> imageStream = imageRepository.findAll().stream();
         return imageStream
@@ -50,6 +63,7 @@ public class ImageService {
         String uriOrId = savedEntity.getCustomUri() != null ? savedEntity.getCustomUri() : savedEntity.getId();
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
+                .path(ImageController.ImagePath.ROOT)
                 .path("/{id}")
                 .buildAndExpand(uriOrId)
                 .toUri();
@@ -63,17 +77,6 @@ public class ImageService {
         log.info("Image with identifier: {} has been deleted from the database", id);
     }
 
-    private Image findByCustomUriOrId(String customUriOrId) {
-        Image image;
-        if (imageRepository.existsById(customUriOrId)) {
-            image = imageRepository.findById(customUriOrId).get();
-            log.info("No custom uri found for entity with id: {}", customUriOrId);
-        } else {
-            image = imageRepository.findImageByCustomUri(customUriOrId)
-                    .orElseThrow(() -> new EntityNotFoundException("No image found for: " + customUriOrId));
-        }
-        return image;
-    }
 
     @Transactional
     public void updateImage(String customUriOrId,

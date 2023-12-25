@@ -1,5 +1,6 @@
 package com.xalpol12.messengerbot.crud.model.mapper;
 
+import com.xalpol12.messengerbot.crud.controller.ImageController;
 import com.xalpol12.messengerbot.crud.model.Image;
 import com.xalpol12.messengerbot.crud.model.dto.image.ImageDTO;
 import com.xalpol12.messengerbot.crud.model.dto.image.ImageUploadDetails;
@@ -11,8 +12,10 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
+import java.net.URI;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -91,9 +94,14 @@ class ImageMapperTest {
 
     @Test
     public void mapToImageDTO_shouldReturnImageDTO_customUriProvided() {
+        String customUri = "custom-uri";
+        URI expectedPath = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path(ImageController.ImagePath.ROOT)
+                .path("/{id}")
+                .buildAndExpand(customUri).toUri();
         Image image = Image.builder()
                 .id("id")
-                .customUri("custom-uri")
+                .customUri(customUri)
                 .name("name")
                 .type("image/jpeg")
                 .data(new byte[0])
@@ -107,7 +115,7 @@ class ImageMapperTest {
         assertAll(() -> {
             assertEquals(image.getId(), result.getId());
             assertEquals(image.getName(), result.getName());
-            assertEquals("http://localhost/api/image/" + image.getCustomUri(), result.getUrl());
+            assertEquals(expectedPath.toString(), result.getUrl());
             assertEquals(image.getType(), result.getType());
             assertEquals(image.getData().length, result.getSize());
             assertEquals(image.getCreatedAt(), result.getCreatedAt());
