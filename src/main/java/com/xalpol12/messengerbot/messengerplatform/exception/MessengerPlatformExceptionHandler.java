@@ -15,4 +15,9 @@ public class MessengerPlatformExceptionHandler {
     public ResponseEntity<?> handleWebhookVerificationExceptions(RuntimeException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
     }
+
+    @ExceptionHandler(value = {RequestSignatureValidationException.class})
+    public ResponseEntity<?> handleHashValidationException(RuntimeException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 }

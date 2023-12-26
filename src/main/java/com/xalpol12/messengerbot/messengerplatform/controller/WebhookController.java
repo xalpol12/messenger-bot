@@ -20,17 +20,20 @@ public class WebhookController {
     }
 
     @PostMapping(WebhookPath.ROOT)
-    public ResponseEntity<?> receiveWebhook(@RequestBody String body) {
+    public ResponseEntity<?> receiveWebhook(
+            @RequestHeader("x-hub-signature-256") String signature,
+            @RequestBody String body) {
         log.trace("Received webhook");
+        webhookService.verifyRequestSignature(signature, body);
         webhookService.process(body);
-        return ResponseEntity.ok().build();
+        return new ResponseEntity<>("EVENT_RECEIVED", HttpStatus.OK);
     }
 
     @GetMapping(WebhookPath.ROOT)
-    public ResponseEntity<?> verifyWebhook(@RequestParam("hub.mode") String mode,
-                                           @RequestParam("token") String token,
-                                           @RequestParam("hub.challenge")String challenge) {
-        String receivedChallenge = webhookService.verifyWebhook(mode, token, challenge);
+    public ResponseEntity<?> verifyWebhookSubscription(@RequestParam("hub.mode") String mode,
+                                                       @RequestParam("hub.verify_token") String token,
+                                                       @RequestParam("hub.challenge")String challenge) {
+        String receivedChallenge = webhookService.verifyWebhookSubscription(mode, token, challenge);
         return new ResponseEntity<>(receivedChallenge, HttpStatus.OK);
     }
 }
