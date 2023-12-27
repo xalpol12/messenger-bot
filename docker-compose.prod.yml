@@ -1,0 +1,34 @@
+version: '3.8'
+services:
+  messenger-bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - MESSENGER_APP_VERIFICATION_TOKEN=
+      - MESSENGER_APP_SECRET_KEY=
+    ports:
+      - "20174:8000"
+    volumes:
+      - ./:/app
+    depends_on:
+      - pg-db
+    networks:
+      - pg-network
+
+  database:
+    image: postgres:alpine
+    ports:
+      - '5432:5432'
+    environment:
+      - 'POSTGRES_DB=ms-bot'
+      - 'POSTGRES_USER='
+      - 'POSTGRES_PASSWORD='
+    netaworks:
+      - pg-network
+
+networks:
+  pg-network:
+    driver: bridge
