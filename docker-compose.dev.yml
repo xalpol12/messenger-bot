@@ -19,7 +19,7 @@ services:
       - db-network
 
   database:
-    image: postgres:latest
+    image: postgres:alpine
     ports:
       - '15432:5432'
     environment:
