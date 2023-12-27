@@ -6,7 +6,9 @@ services:
       dockerfile: Dockerfile
       target: development
     environment:
-      - DOCKER_ENV=true
+      - SPRING_PROFILES_ACTIVE=docker
+      - MESSENGER_APP_VERIFICATION_TOKEN=token
+      - MESSENGER_APP_SECRET_KEY=secret-key
     ports:
       - "18080:8080"
     volumes:
