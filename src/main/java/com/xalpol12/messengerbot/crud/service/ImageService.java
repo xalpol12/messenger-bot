@@ -62,9 +62,8 @@ public class ImageService {
         Image savedEntity = imageRepository.save(newImage);
         String uriOrId = savedEntity.getCustomUri() != null ? savedEntity.getCustomUri() : savedEntity.getId();
         URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path(ImageController.ImagePath.ROOT)
-                .path("/{id}")
+                .fromCurrentContextPath()
+                .path(ImageController.ImagePath.ROOT + "/{id}")
                 .buildAndExpand(uriOrId)
                 .toUri();
         log.info("Successfully saved entity with identifier: {} in a database", uriOrId);
