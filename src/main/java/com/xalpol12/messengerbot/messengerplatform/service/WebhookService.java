@@ -1,5 +1,6 @@
 package com.xalpol12.messengerbot.messengerplatform.service;
 
+import com.xalpol12.messengerbot.messengerplatform.config.secrets.SecretsConfig;
 import com.xalpol12.messengerbot.messengerplatform.exception.IncorrectTokenException;
 import com.xalpol12.messengerbot.messengerplatform.exception.IncorrectWebhookModeException;
 import com.xalpol12.messengerbot.messengerplatform.exception.RequestSignatureValidationException;
@@ -19,11 +20,7 @@ import java.security.NoSuchAlgorithmException;
 @RequiredArgsConstructor
 public class WebhookService {
 
-    @Value("${messenger.app.verification.token}")
-    private String VERIFICATION_TOKEN;
-
-    @Value("${messenger.app.secret.key}")
-    private String SECRET;
+    private final SecretsConfig secrets;
 
     private static final String HASHING_ALGORITHM = "HmacSHA256";
 
@@ -36,7 +33,7 @@ public class WebhookService {
 
     public String verifyWebhookSubscription(String mode, String token, String challenge) {
         if (mode.equals("subscribe") ) {
-            if (token.equals(VERIFICATION_TOKEN)) {
+            if (token.equals(secrets.getVerificationToken())) {
                 return challenge;
             } else throw new IncorrectTokenException("Received token does not match the expected token.");
         } else throw new IncorrectWebhookModeException("Webhook mode is not set to 'subscribe'.");
@@ -45,7 +42,7 @@ public class WebhookService {
     public void verifyRequestSignature(String receivedSignature, String payload) {
         String signatureHash = receivedSignature.split("=")[1];
         try {
-            String expectedHash = generateHmacSha256(payload, SECRET);
+            String expectedHash = generateHmacSha256(payload, secrets.getSecretKey());
             if (!signatureHash.equals(expectedHash)) {
                 throw new RequestSignatureValidationException("Couldn't validate the request signature");
             }
