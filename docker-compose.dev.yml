@@ -14,11 +14,11 @@ services:
     volumes:
       - ./:/app
     depends_on:
-      - database
+      - pg-db
     networks:
       - db-network
 
-  database:
+  pg-db:
     image: postgres:alpine
     ports:
       - '15432:5432'
