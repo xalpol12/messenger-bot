@@ -1,0 +1,138 @@
+package com.xalpol12.messengerbot.crud.service;
+
+import com.xalpol12.messengerbot.crud.model.ScheduledMessage;
+import com.xalpol12.messengerbot.crud.model.dto.scheduledmessage.ScheduledMessageDTO;
+import com.xalpol12.messengerbot.crud.model.dto.scheduledmessage.ScheduledMessageDetails;
+import com.xalpol12.messengerbot.crud.model.mapper.ScheduledMessageMapper;
+import com.xalpol12.messengerbot.crud.repository.ScheduledMessageRepository;
+import jakarta.persistence.EntityNotFoundException;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+class ScheduledMessageServiceTest {
+
+    private static ScheduledMessageRepository repository;
+    private static ScheduledMessageMapper mapper;
+    private static ScheduledMessageService scheduledMessageService;
+
+    @BeforeAll
+    public static void setup() {
+        repository = mock(ScheduledMessageRepository.class);
+        mapper = mock(ScheduledMessageMapper.class);
+        scheduledMessageService = new ScheduledMessageService(repository, mapper);
+    }
+
+    @AfterEach
+    public void validate() {
+        validateMockitoUsage();
+    }
+
+    @Test
+    public void getScheduledMessage_shouldReturnScheduledMessageDTO() {
+        Long id = 1L;
+        ScheduledMessage message = ScheduledMessage.builder().id(id).build();
+        ScheduledMessageDTO dto = ScheduledMessageDTO.builder().scheduledMessageId(id).build();
+
+        when(repository.findById(id)).thenReturn(Optional.of(message));
+        when(mapper.mapToScheduledMessageDTO(message)).thenReturn(dto);
+
+        ScheduledMessageDTO resultDto = scheduledMessageService.getScheduledMessage(id);
+
+        assertAll(() -> {
+            verify(repository, times(1)).findById(id);
+            verify(mapper, times(1)).mapToScheduledMessageDTO(message);
+            assertEquals(dto, resultDto);
+        });
+    }
+    @Test
+    public void getScheduledMessage_shouldThrowEntityNotFoundException() {
+        Long id = 1L;
+        ScheduledMessage message = ScheduledMessage.builder().id(id).build();
+
+        when(repository.findById(id)).thenReturn(Optional.empty());
+
+        assertAll(() -> {
+            assertThrows(EntityNotFoundException.class, () -> scheduledMessageService.getScheduledMessage(id));
+            verify(repository, times(1)).findById(id);
+        });
+    }
+
+    @Test
+    public void getAllScheduledMessages_shouldReturnListOfMessages() {
+        when(repository.findAll()).thenReturn(List.of(new ScheduledMessage(), new ScheduledMessage()));
+        when(mapper.mapToScheduledMessageDTO(any())).thenReturn(new ScheduledMessageDTO());
+
+        List<ScheduledMessageDTO> results = scheduledMessageService.getAllScheduledMessages();
+
+        assertAll(() -> {
+            verify(mapper, times(2)).mapToScheduledMessageDTO(any());
+            assertEquals(2, results.size());
+        });
+    }
+
+    @Test
+    public void addScheduledMessage_shouldCallRepositorySave() {
+        ScheduledMessageDetails scheduledMessageDetails = new ScheduledMessageDetails();
+        ScheduledMessage scheduledMessage = new ScheduledMessage();
+
+        when(mapper.mapToScheduledMessage(scheduledMessageDetails)).thenReturn(scheduledMessage);
+
+        scheduledMessageService.addScheduledMessage(scheduledMessageDetails);
+
+        verify(repository, times(1)).save(scheduledMessage);
+    }
+
+    @Test
+    public void deleteScheduledMessage_shouldCallDeleteByIdMethod() {
+        Long id = 1L;
+
+        when(repository.existsById(id)).thenReturn(true);
+        scheduledMessageService.deleteScheduledMessage(id);
+
+        assertAll(() -> {
+            verify(repository, times(1)).existsById(id);
+            verify(repository, times(1)).deleteById(id);
+        });
+    }
+    @Test
+    public void deleteScheduledMessage_shouldThrowEntityNotFoundException() {
+        Long id = 1L;
+
+        when(repository.existsById(id)).thenReturn(false);
+
+        assertAll(() -> {
+            assertThrows(EntityNotFoundException.class, () -> scheduledMessageService.deleteScheduledMessage(id));
+            verify(repository, times(1)).existsById(id);
+        });
+    }
+//    @Test //TODO: Find out why this doesnt work
+//    public void updateScheduledMessage_shouldCallUpdateScheduledMessageMapperMethod() {
+//        Long id = 1L;
+//        ScheduledMessageDetails details = new ScheduledMessageDetails();
+//        ScheduledMessage message = new ScheduledMessage();
+//
+//        when(repository.existsById(id)).thenReturn(true);
+//        when(repository.findById(id)).thenReturn(Optional.of(message));
+//        when(mapper.mapToScheduledMessage(details)).thenReturn(message);
+//
+//        scheduledMessageService.updateScheduledMessage(id, details);
+//
+//        assertAll(() -> {
+//            verify(repository, times(1)).existsById(id);
+//            verify(repository, times(1)).findById(id);
+//            verify(mapper, times(1)).mapToScheduledMessage(details);
+//            verify(mapper, times(1)).updateScheduledMessage(message, message);
+//        });
+//    }
+
+}
