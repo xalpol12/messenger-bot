@@ -1,17 +1,15 @@
 package com.xalpol12.messengerbot.messengerplatform.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xalpol12.messengerbot.messengerplatform.config.secrets.SecretsConfig;
 import com.xalpol12.messengerbot.messengerplatform.exception.IncorrectTokenException;
 import com.xalpol12.messengerbot.messengerplatform.exception.IncorrectWebhookModeException;
 import com.xalpol12.messengerbot.messengerplatform.exception.RequestSignatureValidationException;
 import com.xalpol12.messengerbot.messengerplatform.model.Webhook;
+import com.xalpol12.messengerbot.messengerplatform.model.composite.ChatEntry;
 import com.xalpol12.messengerbot.messengerplatform.model.composite.WebhookEntry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.Mac;
@@ -35,9 +33,10 @@ public class WebhookService {
     public void process(String webhookPayload) {
         try {
             Webhook webhook = objectMapper.readValue(webhookPayload, Webhook.class);
-            WebhookEntry entry = webhook.getEntry().get(0);
+            WebhookEntry webhookEntry = webhook.getEntry().get(0);
+            ChatEntry chatEntry = webhookEntry.getMessaging().get(0);
             log.info("Received expected webhookEntry structure, with sender id: {} and content: {}",
-                    entry.getSender().getId(), entry.getMessage().getText());
+                    chatEntry.getSender().getId(), chatEntry.getMessage().getText());
             // check if body.object === "page" like in js example - whatever that means
             // or throw new exception to send 404 not found if else
         } catch (Exception e) {

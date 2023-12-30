@@ -1,15 +1,12 @@
 package com.xalpol12.messengerbot.messengerplatform.model.composite;
 
-import com.xalpol12.messengerbot.messengerplatform.model.detail.Message;
-import com.xalpol12.messengerbot.messengerplatform.model.detail.Subject;
 import lombok.Data;
 
-import java.time.Instant;
+import java.util.List;
 
 @Data
 public class WebhookEntry {
-    private Subject sender;
-    private Subject recipient;
-    private Instant timestamp;
-    private Message message;
+    private String id;
+    private long time;
+    private List<ChatEntry> messaging;
 }
