@@ -8,7 +8,10 @@ import com.xalpol12.messengerbot.crud.repository.ScheduledMessageRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,20 +21,25 @@ import static org.mockito.Mockito.*;
 
 class ScheduledMessageServiceTest {
 
-    private static ScheduledMessageRepository repository;
-    private static ScheduledMessageMapper mapper;
-    private static ScheduledMessageService scheduledMessageService;
+    @Mock
+    private ScheduledMessageRepository repository;
+    @Mock
+    private ScheduledMessageMapper mapper;
 
-    @BeforeAll
-    public static void setup() {
-        repository = mock(ScheduledMessageRepository.class);
-        mapper = mock(ScheduledMessageMapper.class);
+    private ScheduledMessageService scheduledMessageService;
+
+    private AutoCloseable openMocks;
+
+    @BeforeEach
+    public void init() {
+        openMocks = MockitoAnnotations.openMocks(this);
         scheduledMessageService = new ScheduledMessageService(repository, mapper);
     }
 
     @AfterEach
-    public void validate() {
+    public void teardown() throws Exception {
         validateMockitoUsage();
+        openMocks.close();
     }
 
     @Test

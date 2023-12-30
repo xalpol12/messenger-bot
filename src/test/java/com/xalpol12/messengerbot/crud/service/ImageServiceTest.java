@@ -13,11 +13,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -180,15 +177,17 @@ class ImageServiceTest {
         String id = "id";
         Image image = mock(Image.class);
         ScheduledMessage message = mock(ScheduledMessage.class);
+        List<ScheduledMessage> messages = List.of(message);
 
         when(imageRepository.existsById(id)).thenReturn(true);
         when(imageRepository.findById(id)).thenReturn(Optional.of(image));
-        when(messageRepository.findAllByImageEquals(image)).thenReturn(List.of(message));
+        when(messageRepository.findAllByImageEquals(image)).thenReturn(messages);
 
         imageService.deleteImage(id);
 
         verify(messageRepository, times(1)).findAllByImageEquals(image);
-        verify(imageRepository, times(1)).deleteById(id);
+        verify(messageRepository, times(1)).deleteAll(messages);
+        verify(imageRepository, times(1)).delete(image);
     }
 
     @Test

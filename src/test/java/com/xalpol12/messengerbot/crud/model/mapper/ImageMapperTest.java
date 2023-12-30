@@ -4,8 +4,12 @@ import com.xalpol12.messengerbot.crud.controller.ImageController;
 import com.xalpol12.messengerbot.crud.model.Image;
 import com.xalpol12.messengerbot.crud.model.dto.image.ImageDTO;
 import com.xalpol12.messengerbot.crud.model.dto.image.ImageUploadDetails;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockMultipartFile;
@@ -23,16 +27,29 @@ import static org.mockito.Mockito.*;
 
 class ImageMapperTest {
 
-    private static ModelMapper modelMapper;
-    private static ImageMapper imageMapper;
+    @Mock
+    private ModelMapper modelMapper;
+
+    private ImageMapper imageMapper;
+
+    private AutoCloseable openMocks;
 
     @BeforeAll
     public static void setup() {
-        modelMapper = mock(ModelMapper.class);
-        imageMapper = new ImageMapper(modelMapper);
-
         MockHttpServletRequest request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+    }
+
+    @BeforeEach
+    public void init() {
+        openMocks = MockitoAnnotations.openMocks(this);
+        imageMapper = new ImageMapper(modelMapper);
+    }
+
+    @AfterEach
+    public void teardown() throws Exception {
+        validateMockitoUsage();
+        openMocks.close();
     }
 
     @Test

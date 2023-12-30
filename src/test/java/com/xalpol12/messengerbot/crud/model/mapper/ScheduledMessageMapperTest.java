@@ -5,8 +5,9 @@ import com.xalpol12.messengerbot.crud.model.ScheduledMessage;
 import com.xalpol12.messengerbot.crud.model.dto.scheduledmessage.ScheduledMessageDTO;
 import com.xalpol12.messengerbot.crud.model.dto.scheduledmessage.ScheduledMessageDetails;
 import com.xalpol12.messengerbot.crud.repository.ImageRepository;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -20,16 +21,30 @@ import static org.mockito.Mockito.*;
 
 class ScheduledMessageMapperTest {
 
-    private static ScheduledMessageMapper scheduledMessageMapper;
+    @Mock
+    private ImageRepository imageRepository;
+
+    private ScheduledMessageMapper scheduledMessageMapper;
+
+    private AutoCloseable openMocks;
 
     @BeforeAll
     public static void setup() {
-        ImageRepository imageRepository = mock(ImageRepository.class);
-        ModelMapper modelMapper = new ModelMapper();
-        scheduledMessageMapper = new ScheduledMessageMapper(imageRepository, modelMapper);
-
         MockHttpServletRequest request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+    }
+
+    @BeforeEach
+    public void init() {
+        openMocks = MockitoAnnotations.openMocks(this);
+        ModelMapper modelMapper = new ModelMapper();
+        scheduledMessageMapper = new ScheduledMessageMapper(imageRepository, modelMapper);
+    }
+
+    @AfterEach
+    public void teardown() throws Exception {
+        validateMockitoUsage();
+        openMocks.close();
     }
 
     @Test
