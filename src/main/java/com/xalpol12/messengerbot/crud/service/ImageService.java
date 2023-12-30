@@ -2,11 +2,14 @@ package com.xalpol12.messengerbot.crud.service;
 
 import com.xalpol12.messengerbot.crud.controller.ImageController;
 import com.xalpol12.messengerbot.crud.exception.ImageAccessException;
+import com.xalpol12.messengerbot.crud.exception.ImageNotFoundException;
 import com.xalpol12.messengerbot.crud.model.Image;
+import com.xalpol12.messengerbot.crud.model.ScheduledMessage;
 import com.xalpol12.messengerbot.crud.model.dto.image.ImageDTO;
 import com.xalpol12.messengerbot.crud.model.dto.image.ImageUploadDetails;
 import com.xalpol12.messengerbot.crud.model.mapper.ImageMapper;
 import com.xalpol12.messengerbot.crud.repository.ImageRepository;
+import com.xalpol12.messengerbot.crud.repository.ScheduledMessageRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +30,7 @@ import java.util.stream.Stream;
 public class ImageService {
 
     private final ImageRepository imageRepository;
+    private final ScheduledMessageRepository scheduledMessageRepository;
     private final ImageMapper imageMapper;
 
     @Cacheable("imageCache")
@@ -38,10 +42,10 @@ public class ImageService {
         Image image;
         if (imageRepository.existsById(customUriOrId)) {
             image = imageRepository.findById(customUriOrId).get();
-            log.info("No custom uri found for entity with id: {}", customUriOrId);
+            log.warn("No custom uri found for entity with id: {}", customUriOrId);
         } else {
             image = imageRepository.findImageByCustomUri(customUriOrId)
-                    .orElseThrow(() -> new EntityNotFoundException("No image found for: " + customUriOrId));
+                    .orElseThrow(() -> new ImageNotFoundException("No image found for: " + customUriOrId));
         }
         return image;
     }
@@ -53,6 +57,7 @@ public class ImageService {
                 .toList();
     }
 
+    @Cacheable("imageCache")
     public URI uploadImage(ImageUploadDetails fileDetails,
                              MultipartFile imageData) throws ImageAccessException {
         Image newImage;
@@ -68,25 +73,34 @@ public class ImageService {
                 .path(ImageController.ImagePath.ROOT + "/{id}")
                 .buildAndExpand(uriOrId)
                 .toUri();
-        log.info("Successfully saved entity with identifier: {} in a database", uriOrId);
+        log.info("Successfully saved entity with identifier: {}", uriOrId);
         return location;
     }
 
+    @Transactional
     public void deleteImage(String id) throws EntityNotFoundException {
         Image image = findByCustomUriOrId(id);
-        imageRepository.deleteById(image.getId());
-        log.info("Image with identifier: {} has been deleted from the database", id);
+        List<ScheduledMessage> messages = scheduledMessageRepository.findAllByImageEquals(image);
+        scheduledMessageRepository.deleteAll(messages);
+        log.info("All {} scheduled messages associated with image {} " +
+                "have been deleted", messages.size(), id);
+        imageRepository.delete(image);
+        log.info("Image with identifier: {} has been deleted", id);
     }
 
 
     @Transactional
     public void updateImage(String customUriOrId,
                             ImageUploadDetails fileDetails,
-                            MultipartFile imageData) throws IOException {
+                            MultipartFile imageData) {
         Image originalImage = findByCustomUriOrId(customUriOrId);
-        Image updatedImage = imageMapper.mapToImage(fileDetails, imageData);
-        imageMapper.updateImage(updatedImage, originalImage);
-        log.info("Updated entity with identifier: {}", customUriOrId);
+        try {
+            Image updatedImage = imageMapper.mapToImage(fileDetails, imageData);
+            imageMapper.updateImage(updatedImage, originalImage);
+            log.info("Updated entity with identifier: {}", customUriOrId);
+        } catch (IOException e) {
+            throw new ImageAccessException("Could not access image with name:" + imageData.getOriginalFilename());
+        }
     }
 
     @Transactional
@@ -97,9 +111,13 @@ public class ImageService {
     }
 
     @Transactional
-    public void patchImageData(String customUriOrId, MultipartFile file) throws IOException {
+    public void patchImageData(String customUriOrId, MultipartFile file) {
         Image imageToPatch = findByCustomUriOrId(customUriOrId);
-        imageMapper.updateImageData(imageToPatch, file);
-        log.info("Patched image data for entity with identifier: {}", customUriOrId);
+        try {
+            imageMapper.updateImageData(imageToPatch, file);
+            log.info("Patched image data for entity with identifier: {}", customUriOrId);
+        } catch (IOException e) {
+            throw new ImageAccessException("Could not access image with name:" + file.getOriginalFilename());
+        }
     }
 }

@@ -83,7 +83,7 @@ public class ImageController {
     @PutMapping(value = ImagePath.ROOT + "/{uri}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateImage(@PathVariable("uri") String uri,
                                          @RequestPart ImageUploadDetails fileDetails,
-                                         @RequestPart MultipartFile file) throws IOException {
+                                         @RequestPart MultipartFile file) {
         log.trace("PUT image/{uri} called for entity with uri: {}", uri);
         imageService.updateImage(uri, fileDetails, file);
         return ResponseEntity.ok().build();
@@ -91,7 +91,7 @@ public class ImageController {
 
     @PatchMapping(ImagePath.ROOT + "/{uri}/details")
     public ResponseEntity<?> updateImageDetails(@PathVariable("uri") String uri,
-                                                @RequestBody ImageUploadDetails newDetails) throws JsonMappingException {
+                                                @RequestBody ImageUploadDetails newDetails) {
         log.trace("PATCH image/{uri} image details called for entity with uri: {}", uri);
         imageService.patchImageDetails(uri, newDetails);
         return ResponseEntity.ok().build();
@@ -99,7 +99,7 @@ public class ImageController {
 
     @PatchMapping(ImagePath.ROOT + "/{uri}/data")
     public ResponseEntity<?> updateImageData(@PathVariable("uri") String uri,
-                                             @RequestPart MultipartFile file) throws IOException {
+                                             @RequestPart MultipartFile file) {
         log.trace("PATCH image/{uri} image data called for entity with uri: {}", uri);
         imageService.patchImageData(uri, file);
         return ResponseEntity.ok().build();

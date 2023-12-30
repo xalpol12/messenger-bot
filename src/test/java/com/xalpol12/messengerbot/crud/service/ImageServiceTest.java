@@ -1,16 +1,23 @@
 package com.xalpol12.messengerbot.crud.service;
 
 import com.xalpol12.messengerbot.crud.controller.ImageController;
+import com.xalpol12.messengerbot.crud.exception.ImageNotFoundException;
 import com.xalpol12.messengerbot.crud.model.Image;
+import com.xalpol12.messengerbot.crud.model.ScheduledMessage;
 import com.xalpol12.messengerbot.crud.model.dto.image.ImageDTO;
 import com.xalpol12.messengerbot.crud.model.dto.image.ImageUploadDetails;
 import com.xalpol12.messengerbot.crud.model.mapper.ImageMapper;
 import com.xalpol12.messengerbot.crud.repository.ImageRepository;
-import jakarta.persistence.EntityNotFoundException;
+import com.xalpol12.messengerbot.crud.repository.ScheduledMessageRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.mock.web.MockHttpServletMapping;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -28,23 +35,33 @@ import static org.mockito.Mockito.*;
 
 class ImageServiceTest {
 
+    @Mock
     private static ImageRepository imageRepository;
+    @Mock
+    private static ScheduledMessageRepository messageRepository;
+    @Mock
     private static ImageMapper imageMapper;
+
     private static ImageService imageService;
+
+    private AutoCloseable openMocks;
 
     @BeforeAll
     public static void setup() {
-        imageRepository = mock(ImageRepository.class);
-        imageMapper = mock(ImageMapper.class);
-        imageService = new ImageService(imageRepository, imageMapper);
-
         MockHttpServletRequest request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
     }
 
+    @BeforeEach
+    public void init() {
+        openMocks = MockitoAnnotations.openMocks(this);
+        imageService = new ImageService(imageRepository, messageRepository, imageMapper);
+    }
+
     @AfterEach
-    public void validate() {
+    public void teardown() throws Exception {
         validateMockitoUsage();
+        openMocks.close();
     }
 
     @Test
@@ -88,7 +105,7 @@ class ImageServiceTest {
         when(imageRepository.existsById(imageId)).thenReturn(false);
         when(imageRepository.findImageByCustomUri(imageId)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> imageService.getImage(imageId));
+        assertThrows(ImageNotFoundException.class, () -> imageService.getImage(imageId));
     }
 
     @Test
@@ -161,14 +178,16 @@ class ImageServiceTest {
     @Test
     public void deleteImage_shouldCallDeleteByIdMethod() {
         String id = "id";
-        Image image = new Image();
-        image.setId(id);
+        Image image = mock(Image.class);
+        ScheduledMessage message = mock(ScheduledMessage.class);
 
         when(imageRepository.existsById(id)).thenReturn(true);
         when(imageRepository.findById(id)).thenReturn(Optional.of(image));
+        when(messageRepository.findAllByImageEquals(image)).thenReturn(List.of(message));
 
         imageService.deleteImage(id);
 
+        verify(messageRepository, times(1)).findAllByImageEquals(image);
         verify(imageRepository, times(1)).deleteById(id);
     }
 
