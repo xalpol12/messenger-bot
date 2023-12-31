@@ -25,6 +25,12 @@ public class MessengerPlatformExceptionHandler {
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(value = {IncorrectWebhookObjectTypeException.class})
+    public ResponseEntity<?> handleIncorrectWebhookObjectType(RuntimeException e) {
+        String message = extractMessageAndLog(e);
+        return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+    }
+
     private String extractMessageAndLog(RuntimeException e) {
         String message = e.getMessage();
         log.error("Encountered {} with message: {}", e.getClass().getName(), message);
