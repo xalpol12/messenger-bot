@@ -27,8 +27,9 @@ public class FacebookPageAPIService {
 
     public void sendMessage(String userId, ScheduledMessage scheduledMessage) {
         Subject recipient = new Subject(userId);
-        Message message = new Message(scheduledMessage.getMessage()); //TODO: "mid" is unnecessary in this case, create another POJO?
+        Message message = new Message(scheduledMessage.getMessage());
         String accessToken = secretsConfig.getSecretKey();
+
         messengerClient.sendMessage(apiVersion, pageId, recipient, message, MESSAGING_TYPE, accessToken);
         log.info("User: {} received message: {}", userId, message);
     }

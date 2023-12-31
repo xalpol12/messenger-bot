@@ -18,6 +18,9 @@ import java.util.concurrent.Executors;
 @RequiredArgsConstructor
 public class PublisherService {
 
+    private static final int MESSAGES_EXECUTOR_THREAD_POOL = 5;
+    private static final int SUBSCRIBERS_EXECUTOR_THREAD_POOL = 5;
+
     private final ScheduledMessageRepository scheduledMessageRepository;
     private final SubscriberService subscriberService;
     private final FacebookPageAPIService facebookPageAPIService;
@@ -39,19 +42,26 @@ public class PublisherService {
     }
 
     private void submitMessages(List<ScheduledMessage> messages) {
-        ExecutorService executorService = Executors.newFixedThreadPool(5);
+        ExecutorService messagesExecutor = Executors.newFixedThreadPool(MESSAGES_EXECUTOR_THREAD_POOL);
 
         List<Subscriber> subscribers = subscriberService.getAllSubscribers();
 
-        for (Subscriber subscriber : subscribers) { //TODO: mark message as sent = true somehow
-            // but it has to be sure that the message was sent, so do not mark it 'true' here i guess
-            executorService.submit(() -> sendMessages(subscriber, messages));
+        for (ScheduledMessage message : messages) {
+            messagesExecutor.submit(() -> sendMessageToAllSubscribers(message, subscribers));
+            message.setSent(true);
         }
     }
 
-    private void sendMessages(Subscriber subscriber, List<ScheduledMessage> scheduledMessages) {
-        for (ScheduledMessage message : scheduledMessages) { //TODO: Another executor service???
-            facebookPageAPIService.sendMessage(subscriber.getUserId(), message);
+    private void sendMessageToAllSubscribers(ScheduledMessage message, List<Subscriber> subscribers) {
+        ExecutorService subscribersExecutor = Executors.newFixedThreadPool(SUBSCRIBERS_EXECUTOR_THREAD_POOL);
+
+        for (Subscriber subscriber : subscribers) {
+            subscribersExecutor.submit(() -> sendMessage(message, subscriber));
         }
+    }
+
+    private void sendMessage(ScheduledMessage message, Subscriber subscriber) {
+        String userId = subscriber.getUserId();
+        facebookPageAPIService.sendMessage(userId, message);
     }
 }
