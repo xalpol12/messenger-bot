@@ -19,7 +19,8 @@ import java.util.concurrent.Executors;
 public class PublisherService {
 
     private final ScheduledMessageRepository scheduledMessageRepository;
-    private final FacebookPageAPIService fbService;
+    private final SubscriberService subscriberService;
+    private final FacebookPageAPIService facebookPageAPIService;
 
     @Scheduled(fixedRate = 60000)
     public void selectScheduledMessages() {
@@ -27,14 +28,11 @@ public class PublisherService {
         LocalDateTime minuteBefore = currentTime.minusMinutes(1);
         LocalDateTime minuteAfter = currentTime.plusMinutes(1);
 
-        log.info("Invoked scheduled service method at: {}", currentTime);
-
         List<ScheduledMessage> messagesToSend =
                 scheduledMessageRepository.findAllByScheduledDateBetweenAndSentIsFalse(minuteBefore, minuteAfter);
 
-        log.debug("Found: {} scheduled messages!", messagesToSend.size());
-
         if (messagesToSend.size() > 0) {
+            log.debug("Found: {} scheduled messages!", messagesToSend.size());
             submitMessages(messagesToSend);
             log.debug("Sending...");
         }
@@ -43,7 +41,7 @@ public class PublisherService {
     private void submitMessages(List<ScheduledMessage> messages) {
         ExecutorService executorService = Executors.newFixedThreadPool(5);
 
-        List<Subscriber> subscribers = fbService.getAllSubscribers();
+        List<Subscriber> subscribers = subscriberService.getAllSubscribers();
 
         for (Subscriber subscriber : subscribers) { //TODO: mark message as sent = true somehow
             // but it has to be sure that the message was sent, so do not mark it 'true' here i guess
@@ -53,7 +51,7 @@ public class PublisherService {
 
     private void sendMessages(Subscriber subscriber, List<ScheduledMessage> scheduledMessages) {
         for (ScheduledMessage message : scheduledMessages) { //TODO: Another executor service???
-            fbService.sendMessage(subscriber.getUserId(), message);
+            facebookPageAPIService.sendMessage(subscriber.getUserId(), message);
         }
     }
 }
