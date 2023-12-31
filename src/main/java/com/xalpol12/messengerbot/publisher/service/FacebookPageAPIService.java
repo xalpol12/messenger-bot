@@ -1,7 +1,6 @@
 package com.xalpol12.messengerbot.publisher.service;
 
 import com.xalpol12.messengerbot.crud.model.ScheduledMessage;
-import com.xalpol12.messengerbot.publisher.client.FacebookPageAPIClient;
 import com.xalpol12.messengerbot.publisher.model.Subscriber;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +12,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class FacebookPageAPIService {
-    private final FacebookPageAPIClient fbClient;
 
     public List<Subscriber> getAllSubscribers() {
         return List.of(new Subscriber("user1"), new Subscriber("user2"), new Subscriber("user3"));
