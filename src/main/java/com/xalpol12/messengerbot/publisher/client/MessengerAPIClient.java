@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
         value = "messenger-api-client",
         url = "https://graph.facebook.com"
 )
-public interface MessengerApiClient {
+public interface MessengerAPIClient {
 
     @PostMapping(value = "/{version}/{clientId}/messages")
     MessageResponse sendMessage(@PathVariable("version") String apiVersion,
