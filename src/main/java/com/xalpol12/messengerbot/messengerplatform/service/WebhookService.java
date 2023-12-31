@@ -4,10 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xalpol12.messengerbot.messengerplatform.config.secrets.SecretsConfig;
 import com.xalpol12.messengerbot.messengerplatform.exception.IncorrectTokenException;
 import com.xalpol12.messengerbot.messengerplatform.exception.IncorrectWebhookModeException;
+import com.xalpol12.messengerbot.messengerplatform.exception.IncorrectWebhookObjectTypeException;
 import com.xalpol12.messengerbot.messengerplatform.exception.RequestSignatureValidationException;
 import com.xalpol12.messengerbot.messengerplatform.model.Webhook;
 import com.xalpol12.messengerbot.messengerplatform.model.composite.ChatEntry;
 import com.xalpol12.messengerbot.messengerplatform.model.composite.WebhookEntry;
+import com.xalpol12.messengerbot.messengerplatform.model.detail.Subject;
+import com.xalpol12.messengerbot.publisher.service.SubscriberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,6 +20,9 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -26,22 +32,41 @@ public class WebhookService {
     private final ObjectMapper objectMapper;
 
     private final SecretsConfig secrets;
+    private final SubscriberService subscriberService;
 
     private static final String HASHING_ALGORITHM = "HmacSHA256";
 
-
+    /**
+     * Currently this method accepts webhooks sent when
+     * someone messages a fanpage.
+     * It processes all sender ids and adds new ids
+     * @param webhookPayload - Webhook content
+     */
     public void process(String webhookPayload) {
         try {
             Webhook webhook = objectMapper.readValue(webhookPayload, Webhook.class);
-            WebhookEntry webhookEntry = webhook.getEntry().get(0);
-            ChatEntry chatEntry = webhookEntry.getMessaging().get(0);
-            log.info("Received expected webhookEntry structure, with sender id: {} and content: {}",
-                    chatEntry.getSender().getId(), chatEntry.getMessage().getText());
-            // check if body.object === "page" like in js example - whatever that means
-            // or throw new exception to send 404 not found if else
+            if (webhook.getObject().equals("page")) {
+                Set<String> senderIds = extractSenderIds(webhook);
+                subscriberService.addNewSubscribers(senderIds);
+            } else {
+                throw new IncorrectWebhookObjectTypeException("Received webhook is not of type \"page\"");
+            }
         } catch (Exception e) {
-            log.info("Processed webhook with content: {}", webhookPayload);
+            log.error("Couldn't process webhook with unknown structure: {}", webhookPayload);
         }
+    }
+
+    private Set<String> extractSenderIds(Webhook webhook) {
+        List<List<ChatEntry>> chatEntries = webhook.getEntry()
+                .stream()
+                .map(WebhookEntry::getMessaging)
+                .toList();
+
+        return chatEntries.stream()
+                .flatMap(List::stream)
+                .map(ChatEntry::getSender)
+                .map(Subject::getId)
+                .collect(Collectors.toSet());
     }
 
     public String verifyWebhookSubscription(String mode, String token, String challenge) {
@@ -71,10 +96,8 @@ public class WebhookService {
         byte[] hashBytes = sha256Hmac.doFinal(input.getBytes(StandardCharsets.UTF_8));
 
         StringBuilder sb = new StringBuilder();
-        for (byte hashByte : hashBytes) {
-            String hex = Integer.toHexString(0xff & hashByte);
-            if (hex.length() == 1) sb.append('0');
-            sb.append(hex);
+        for (byte b : hashBytes) {
+            sb.append(String.format("%02x", b));
         }
         return sb.toString();
     }
