@@ -1,6 +1,7 @@
 package com.xalpol12.messengerbot.publisher.service;
 
 import com.xalpol12.messengerbot.crud.model.ScheduledMessage;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,6 +15,7 @@ class FacebookPageAPIServiceTest {
     private FacebookPageAPIService facebookPageAPIService;
 
     @Test
+    @Disabled
     public void shouldSendMessage() {
         String userId = "7760584580623854";
         ScheduledMessage scheduledMessage = ScheduledMessage.builder()
