@@ -1,26 +1,39 @@
 package com.xalpol12.messengerbot.publisher.client;
 
-import com.xalpol12.messengerbot.messengerplatform.model.detail.Message;
-import com.xalpol12.messengerbot.messengerplatform.model.detail.Subject;
-import com.xalpol12.messengerbot.messengerplatform.model.dto.MessageResponse;
-import feign.RequestLine;
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import com.xalpol12.messengerbot.messengerplatform.model.dto.MessageParams;
+import lombok.RequiredArgsConstructor;
+import okhttp3.*;
+import org.springframework.stereotype.Component;
 
-@FeignClient(
-        value = "messenger-api-client",
-        url = "https://graph.facebook.com"
-)
-public interface MessengerAPIClient {
+import java.io.IOException;
+import java.util.Objects;
 
-    @PostMapping(value = "/{version}/{clientId}/messages")
-    MessageResponse sendMessage(@PathVariable("version") String apiVersion,
-                                @PathVariable("clientId") String clientId,
-                                @RequestParam("recipient") String recipient,
-                                @RequestParam("message") String message,
-                                @RequestParam("messaging_type") String messaging_type,
-                                @RequestParam("access_token") String access_token);
+@Component
+@RequiredArgsConstructor
+public class MessengerAPIClient {
+
+    private final OkHttpClient okHttpClient;
+    private final String BASE_URL = "https://graph.facebook.com";
+    private final String MESSAGES_ENDPOINT = "/messages";
+
+    public Response sendMessage(String apiVersion, String clientId, MessageParams messageParams)
+            throws IOException {
+        String fullUrl = formatUrl(apiVersion, clientId) + MESSAGES_ENDPOINT;
+        HttpUrl.Builder urlBuilder = Objects.requireNonNull(HttpUrl.parse(fullUrl)).newBuilder();
+        urlBuilder.addQueryParameter("recipient", messageParams.recipient().getId());
+        urlBuilder.addQueryParameter("message", messageParams.message().getText());
+        urlBuilder.addQueryParameter("messaging_type", messageParams.messagingType());
+        urlBuilder.addQueryParameter("access_token", messageParams.accessToken());
+
+        Request request = new Request.Builder()
+                .url(urlBuilder.build())
+                .post(RequestBody.create("", null))
+                .build();
+
+        return okHttpClient.newCall(request).execute();
+    }
+
+    private String formatUrl(String apiVersion, String clientId) {
+        return String.format("%s/%s/%s", BASE_URL, apiVersion, clientId);
+    }
 }

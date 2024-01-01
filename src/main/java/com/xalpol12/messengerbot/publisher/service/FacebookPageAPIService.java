@@ -2,36 +2,46 @@ package com.xalpol12.messengerbot.publisher.service;
 
 import com.xalpol12.messengerbot.crud.model.ScheduledMessage;
 import com.xalpol12.messengerbot.messengerplatform.config.secrets.SecretsConfig;
-import com.xalpol12.messengerbot.messengerplatform.model.detail.Message;
-import com.xalpol12.messengerbot.messengerplatform.model.detail.Subject;
+import com.xalpol12.messengerbot.messengerplatform.model.dto.MessageParams;
 import com.xalpol12.messengerbot.publisher.client.MessengerAPIClient;
+import com.xalpol12.messengerbot.publisher.exception.MessagePublishingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class FacebookPageAPIService {
+
     private final String MESSAGING_TYPE = "RESPONSE";
 
     @Value("${facebook.api.version}")
-    private String apiVersion;
+    private String API_VERSION;
 
     @Value("${facebook.page.id}")
-    private String pageId; //TODO: add support for multiple facebook pages
+    private String PAGE_ID; //TODO: add support for multiple facebook pages
 
     private final SecretsConfig secretsConfig;
     private final MessengerAPIClient messengerClient;
 
     public void sendMessage(String userId, ScheduledMessage scheduledMessage) {
-        Subject recipient = new Subject(userId);
-        Message message = new Message(scheduledMessage.getMessage());
-        String accessToken = secretsConfig.getSecretKey();
+        MessageParams params = MessageParams.builder()
+                .recipient(userId)
+                .message(scheduledMessage.getMessage())
+                .messagingType(MESSAGING_TYPE)
+                .accessToken(secretsConfig.getSecretKey())
+                .build();
 
-        //TODO: fix problem with wrong unmarshalling
-        messengerClient.sendMessage(apiVersion, pageId, recipient.getId(), message.getText(), MESSAGING_TYPE, accessToken);
-        log.info("User: {} received message: {}", userId, message);
+        try {
+            messengerClient.sendMessage(API_VERSION, PAGE_ID, params);
+            log.info("User: {} received message: {}", userId, scheduledMessage.getMessage());
+        } catch (IOException e) {
+            throw new MessagePublishingException("Could not publish message: " + scheduledMessage.getId()
+                    + " to user with id: " + userId);
+        }
     }
 }

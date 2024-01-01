@@ -1,5 +1,6 @@
 package com.xalpol12.messengerbot.publisher.config;
 
+import okhttp3.OkHttpClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -20,5 +21,10 @@ public class PublisherConfig {
     @Bean
     public ExecutorService subscribersExecutor() {
         return Executors.newFixedThreadPool(SUBSCRIBERS_EXECUTOR_THREAD_POOL);
+    }
+
+    @Bean
+    public OkHttpClient okHttpClient() {
+        return new OkHttpClient();
     }
 }
