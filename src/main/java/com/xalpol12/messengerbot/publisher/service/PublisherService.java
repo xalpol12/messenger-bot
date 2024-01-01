@@ -3,6 +3,7 @@ package com.xalpol12.messengerbot.publisher.service;
 import com.xalpol12.messengerbot.crud.model.ScheduledMessage;
 import com.xalpol12.messengerbot.crud.repository.ScheduledMessageRepository;
 import com.xalpol12.messengerbot.publisher.model.Subscriber;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -11,20 +12,19 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class PublisherService {
 
-    private static final int MESSAGES_EXECUTOR_THREAD_POOL = 5;
-    private static final int SUBSCRIBERS_EXECUTOR_THREAD_POOL = 5;
-
+    private final ExecutorService messagesExecutor;
+    private final ExecutorService subscribersExecutor;
     private final ScheduledMessageRepository scheduledMessageRepository;
     private final SubscriberService subscriberService;
     private final FacebookPageAPIService facebookPageAPIService;
 
+    @Transactional
     @Scheduled(fixedRate = 60000)
     public void selectScheduledMessages() {
         LocalDateTime currentTime = LocalDateTime.now();
@@ -42,8 +42,6 @@ public class PublisherService {
     }
 
     private void submitMessages(List<ScheduledMessage> messages) {
-        ExecutorService messagesExecutor = Executors.newFixedThreadPool(MESSAGES_EXECUTOR_THREAD_POOL);
-
         List<Subscriber> subscribers = subscriberService.getAllSubscribers();
 
         for (ScheduledMessage message : messages) {
@@ -53,8 +51,6 @@ public class PublisherService {
     }
 
     private void sendMessageToAllSubscribers(ScheduledMessage message, List<Subscriber> subscribers) {
-        ExecutorService subscribersExecutor = Executors.newFixedThreadPool(SUBSCRIBERS_EXECUTOR_THREAD_POOL);
-
         for (Subscriber subscriber : subscribers) {
             subscribersExecutor.submit(() -> sendMessage(message, subscriber));
         }
