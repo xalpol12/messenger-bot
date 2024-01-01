@@ -20,8 +20,8 @@ public class MessengerAPIClient {
             throws IOException {
         String fullUrl = formatUrl(apiVersion, clientId) + MESSAGES_ENDPOINT;
         HttpUrl.Builder urlBuilder = Objects.requireNonNull(HttpUrl.parse(fullUrl)).newBuilder();
-        urlBuilder.addQueryParameter("recipient", messageParams.recipient().getId());
-        urlBuilder.addQueryParameter("message", messageParams.message().getText());
+        urlBuilder.addQueryParameter("recipient", messageParams.recipient());
+        urlBuilder.addQueryParameter("message", messageParams.message());
         urlBuilder.addQueryParameter("messaging_type", messageParams.messagingType());
         urlBuilder.addQueryParameter("access_token", messageParams.accessToken());
 
