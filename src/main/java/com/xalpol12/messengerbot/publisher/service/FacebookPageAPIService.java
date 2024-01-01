@@ -41,7 +41,7 @@ public class FacebookPageAPIService {
             log.info("User: {} received message: {}", userId, scheduledMessage.getMessage());
         } catch (IOException e) {
             throw new MessagePublishingException("Could not publish message: " + scheduledMessage.getId()
-                    + " to user with id: " + userId);
+                    + " to user with id: " + userId + ". Message status code: " + e.getMessage());
         }
     }
 }

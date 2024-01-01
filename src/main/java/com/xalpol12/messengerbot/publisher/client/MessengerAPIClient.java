@@ -16,12 +16,17 @@ public class MessengerAPIClient {
     private final String BASE_URL = "https://graph.facebook.com";
     private final String MESSAGES_ENDPOINT = "/messages";
 
-    public Response sendMessage(String apiVersion, String clientId, MessageParams messageParams)
+    public void sendMessage(String apiVersion, String clientId, MessageParams messageParams)
             throws IOException {
+
         String fullUrl = formatUrl(apiVersion, clientId) + MESSAGES_ENDPOINT;
+
+        String recipient = String.format("{id:%s}", messageParams.recipient());
+        String message = String.format("{text:'%s'}", messageParams.message());
+
         HttpUrl.Builder urlBuilder = Objects.requireNonNull(HttpUrl.parse(fullUrl)).newBuilder();
-        urlBuilder.addQueryParameter("recipient", messageParams.recipient());
-        urlBuilder.addQueryParameter("message", messageParams.message());
+        urlBuilder.addQueryParameter("recipient", recipient);
+        urlBuilder.addQueryParameter("message", message);
         urlBuilder.addQueryParameter("messaging_type", messageParams.messagingType());
         urlBuilder.addQueryParameter("access_token", messageParams.accessToken());
 
@@ -30,7 +35,11 @@ public class MessengerAPIClient {
                 .post(RequestBody.create("", null))
                 .build();
 
-        return okHttpClient.newCall(request).execute();
+        try (Response response = okHttpClient.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Unexpected code " + response);
+            }
+        }
     }
 
     private String formatUrl(String apiVersion, String clientId) {
