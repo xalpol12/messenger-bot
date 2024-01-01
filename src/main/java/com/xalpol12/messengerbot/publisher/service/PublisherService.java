@@ -1,11 +1,15 @@
 package com.xalpol12.messengerbot.publisher.service;
 
+import com.xalpol12.messengerbot.crud.model.Image;
 import com.xalpol12.messengerbot.crud.model.ScheduledMessage;
+import com.xalpol12.messengerbot.crud.model.dto.image.ImageDTO;
+import com.xalpol12.messengerbot.crud.model.mapper.ImageMapper;
 import com.xalpol12.messengerbot.crud.repository.ScheduledMessageRepository;
 import com.xalpol12.messengerbot.publisher.model.Subscriber;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -18,11 +22,15 @@ import java.util.concurrent.ExecutorService;
 @RequiredArgsConstructor
 public class PublisherService {
 
+    @Value("${base.server.address}")
+    private String BASE_SERVER_ADDRESS; // yes, i know it's cringe, but it's the easiest way...
+
     private final ExecutorService messagesExecutor;
     private final ExecutorService subscribersExecutor;
     private final ScheduledMessageRepository scheduledMessageRepository;
     private final SubscriberService subscriberService;
     private final FacebookPageAPIService facebookPageAPIService;
+    private final ImageMapper imageMapper;
 
     @Transactional
     @Scheduled(fixedRate = 60000)
@@ -44,20 +52,33 @@ public class PublisherService {
     private void submitMessages(List<ScheduledMessage> messages) {
         List<Subscriber> subscribers = subscriberService.getAllSubscribers();
 
-        for (ScheduledMessage message : messages) {
-            messagesExecutor.submit(() -> sendMessageToAllSubscribers(message, subscribers));
-            message.setSent(true);
+        for (ScheduledMessage scheduledMessage : messages) {
+            String message = extractMessageWithImageLink(scheduledMessage);
+            messagesExecutor.submit(() -> sendMessageToAllSubscribers(subscribers, message));
+            scheduledMessage.setSent(true); //TODO: Wait for messagesExecutor full execution
         }
     }
 
-    private void sendMessageToAllSubscribers(ScheduledMessage message, List<Subscriber> subscribers) {
+    private void sendMessageToAllSubscribers(List<Subscriber> subscribers, String message) {
         for (Subscriber subscriber : subscribers) {
-            subscribersExecutor.submit(() -> sendMessage(message, subscriber));
+            subscribersExecutor.submit(() -> sendMessage(subscriber, message));
         }
     }
 
-    private void sendMessage(ScheduledMessage message, Subscriber subscriber) {
+    private void sendMessage(Subscriber subscriber, String message) {
         String userId = subscriber.getUserId();
         facebookPageAPIService.sendMessage(userId, message);
+    }
+
+    private String extractMessageWithImageLink(ScheduledMessage scheduledMessage) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(scheduledMessage.getMessage());
+        Image image = scheduledMessage.getImage();
+        if (image != null) {
+            ImageDTO imageDTO = imageMapper.mapToImageDTO(image, BASE_SERVER_ADDRESS);
+            sb.append(" ");
+            sb.append(imageDTO.getUrl());
+        }
+        return sb.toString();
     }
 }

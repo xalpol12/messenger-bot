@@ -50,7 +50,7 @@ public class ScheduledMessageService {
         if (scheduledMessageRepository.existsById(messageId)) {
             scheduledMessageRepository.deleteById(messageId);
         } else {
-            throw new EntityNotFoundException("No scheduled message found for entity with id:" + messageId);
+            throw new EntityNotFoundException("No scheduled message found for entity with id: " + messageId);
         }
         log.info("Deleted scheduled image with identifier: {}", messageId);
     }

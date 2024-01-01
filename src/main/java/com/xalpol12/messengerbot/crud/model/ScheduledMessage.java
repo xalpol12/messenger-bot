@@ -25,7 +25,7 @@ public class ScheduledMessage {
     private String message;
 
     @Nullable
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "image_id")
     private Image image;
 

@@ -58,6 +58,23 @@ public class ImageMapper {
                 .build();
     }
 
+    public ImageDTO mapToImageDTO(Image image, String baseUrl) {
+        String uriOrId = image.getCustomUri() != null ? image.getCustomUri() : image.getId();
+        String imageUrl = baseUrl +
+                ImageController.ImagePath.ROOT +
+                "/" + uriOrId;
+
+        return ImageDTO.builder()
+                .id(image.getId())
+                .name(image.getName())
+                .url(imageUrl)
+                .type(image.getType())
+                .size(image.getData().length)
+                .createdAt(image.getCreatedAt())
+                .lastModifiedAt(image.getModifiedAt())
+                .build();
+    }
+
     public void updateImage(Image source, Image destination) {
         mapper.map(source, destination);
     }

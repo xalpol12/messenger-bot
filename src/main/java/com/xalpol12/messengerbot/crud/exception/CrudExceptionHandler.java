@@ -1,5 +1,6 @@
 package com.xalpol12.messengerbot.crud.exception;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.postgresql.util.PSQLException;
 import org.postgresql.util.PSQLState;
@@ -18,8 +19,11 @@ public class CrudExceptionHandler {
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(ImageNotFoundException.class)
-    public ResponseEntity<String> handleImageNotFoundException(ImageNotFoundException e) {
+    @ExceptionHandler(value = {
+            ImageNotFoundException.class,
+            EntityNotFoundException.class
+    })
+    public ResponseEntity<String> handleImageNotFoundException(RuntimeException e) {
         String message = extractMessageAndLog(e);
         return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
     }

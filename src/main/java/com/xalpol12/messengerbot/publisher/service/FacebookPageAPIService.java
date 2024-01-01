@@ -1,6 +1,5 @@
 package com.xalpol12.messengerbot.publisher.service;
 
-import com.xalpol12.messengerbot.crud.model.ScheduledMessage;
 import com.xalpol12.messengerbot.messengerplatform.config.secrets.SecretsConfig;
 import com.xalpol12.messengerbot.messengerplatform.model.dto.MessageParams;
 import com.xalpol12.messengerbot.publisher.client.MessengerAPIClient;
@@ -28,20 +27,20 @@ public class FacebookPageAPIService {
     private final SecretsConfig secretsConfig;
     private final MessengerAPIClient messengerClient;
 
-    public void sendMessage(String userId, ScheduledMessage scheduledMessage) {
+    public void sendMessage(String userId, String message) {
         MessageParams params = MessageParams.builder()
                 .recipient(userId)
-                .message(scheduledMessage.getMessage())
+                .message(message)
                 .messagingType(MESSAGING_TYPE)
                 .accessToken(secretsConfig.getSecretKey())
                 .build();
 
         try {
             messengerClient.sendMessage(API_VERSION, PAGE_ID, params);
-            log.info("User: {} received message: {}", userId, scheduledMessage.getMessage());
+            log.info("User: {} received message: {}", userId, message);
         } catch (IOException e) {
-            throw new MessagePublishingException("Could not publish message: " + scheduledMessage.getId()
-                    + " to user with id: " + userId + ". Message status code: " + e.getMessage());
+            throw new MessagePublishingException("Could not publish message to user with id: "
+                    + userId + ". Message status code: " + e.getMessage());
         }
     }
 }

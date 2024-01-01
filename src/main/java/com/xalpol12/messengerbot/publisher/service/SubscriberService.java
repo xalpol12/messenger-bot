@@ -1,8 +1,6 @@
 package com.xalpol12.messengerbot.publisher.service;
 
 import com.xalpol12.messengerbot.publisher.model.Subscriber;
-import com.xalpol12.messengerbot.publisher.model.dto.SubscriberDetails;
-import com.xalpol12.messengerbot.publisher.model.mapper.SubscriberMapper;
 import com.xalpol12.messengerbot.publisher.repository.SubscriberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +15,6 @@ import java.util.Set;
 public class SubscriberService {
 
     private final SubscriberRepository subscriberRepository;
-    private final SubscriberMapper mapper;
 
     public List<Subscriber> getAllSubscribers() {
         return subscriberRepository.findAll();
