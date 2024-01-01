@@ -30,7 +30,8 @@ public class FacebookPageAPIService {
         Message message = new Message(scheduledMessage.getMessage());
         String accessToken = secretsConfig.getSecretKey();
 
-        messengerClient.sendMessage(apiVersion, pageId, recipient, message, MESSAGING_TYPE, accessToken);
+        //TODO: fix problem with wrong unmarshalling
+        messengerClient.sendMessage(apiVersion, pageId, recipient.getId(), message.getText(), MESSAGING_TYPE, accessToken);
         log.info("User: {} received message: {}", userId, message);
     }
 }
