@@ -30,6 +30,6 @@ class FacebookPageAPIServiceTest {
                 .sent(false)
                 .build();
 
-        facebookPageAPIService.sendMessage(userId, scheduledMessage);
+        facebookPageAPIService.sendMessage(userId, scheduledMessage.getMessage());
     }
 }
