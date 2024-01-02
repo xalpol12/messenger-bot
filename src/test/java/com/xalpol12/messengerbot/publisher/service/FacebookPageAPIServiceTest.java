@@ -17,11 +17,16 @@ class FacebookPageAPIServiceTest {
     @Test
     @Disabled
     public void shouldSendMessage() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Test test");
+        sb.append(": ");
+        sb.append("https://raw.githubusercontent.com/xalpol12/where-to-eat-android-app/main/readme-scr/find_places.png");
+        String message = sb.toString();
         String userId = "7760584580623854";
         ScheduledMessage scheduledMessage = ScheduledMessage.builder()
                 .id(1L)
                 .scheduledDate(LocalDateTime.now())
-                .message("Test test")
+                .message(message)
                 .sent(false)
                 .build();
 

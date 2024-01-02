@@ -6,9 +6,10 @@ services:
       dockerfile: Dockerfile
       target: development
     environment:
+      - BASE_SERVER_ADDRESS=http://localhost:8080
       - SPRING_PROFILES_ACTIVE=docker
-      - MESSENGER_APP_VERIFICATION_TOKEN=token
-      - MESSENGER_APP_SECRET_KEY=secret-key
+      - MESSENGER_APP_VERIFICATION_TOKEN=
+      - MESSENGER_APP_SECRET_KEY=
     ports:
       - "18080:8080"
     volumes:
