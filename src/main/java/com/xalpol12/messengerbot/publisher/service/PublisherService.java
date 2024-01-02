@@ -6,15 +6,18 @@ import com.xalpol12.messengerbot.crud.model.dto.image.ImageDTO;
 import com.xalpol12.messengerbot.crud.model.mapper.ImageMapper;
 import com.xalpol12.messengerbot.crud.repository.ScheduledMessageRepository;
 import com.xalpol12.messengerbot.publisher.model.Subscriber;
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 
 @Slf4j
@@ -23,7 +26,7 @@ import java.util.concurrent.ExecutorService;
 public class PublisherService {
 
     @Value("${base.server.address}")
-    private String BASE_SERVER_ADDRESS; // yes, i know it's cringe, but it's the easiest way...
+    private String BASE_SERVER_ADDRESS; // yes, i know it's cringe, but it's the easiest way, without controller context
 
     private final ExecutorService messagesExecutor;
     private final ExecutorService subscribersExecutor;
@@ -32,7 +35,7 @@ public class PublisherService {
     private final FacebookPageAPIService facebookPageAPIService;
     private final ImageMapper imageMapper;
 
-    @Transactional
+    @Transactional()
     @Scheduled(fixedRate = 60000)
     public void selectScheduledMessages() {
         LocalDateTime currentTime = LocalDateTime.now();
@@ -44,24 +47,54 @@ public class PublisherService {
 
         if (messagesToSend.size() > 0) {
             log.debug("Found: {} scheduled messages!", messagesToSend.size());
-            submitMessages(messagesToSend);
             log.debug("Sending...");
+            submitMessages(messagesToSend);
         }
     }
 
-    private void submitMessages(List<ScheduledMessage> messages) {
+    @Transactional
+    public void submitMessages(List<ScheduledMessage> scheduledMessages) {
         List<Subscriber> subscribers = subscriberService.getAllSubscribers();
+        CountDownLatch messagesLatch = new CountDownLatch(scheduledMessages.size());
 
-        for (ScheduledMessage scheduledMessage : messages) {
+        for (ScheduledMessage scheduledMessage : scheduledMessages) {
             String message = extractMessageWithImageLink(scheduledMessage);
-            messagesExecutor.submit(() -> sendMessageToAllSubscribers(subscribers, message));
-            scheduledMessage.setSent(true); //TODO: Wait for messagesExecutor full execution
+            messagesExecutor.submit(() -> {
+                        sendMessageToAllSubscribers(subscribers, message);
+                        messagesLatch.countDown();
+                    }
+            );
         }
+
+        try {
+            messagesLatch.await();
+            for (ScheduledMessage m : scheduledMessages) {
+                m.setSent(true);
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            log.error("Error waiting for messages to be sent", e);
+        }
+
+        log.info("All scheduled messages published successfully");
     }
 
     private void sendMessageToAllSubscribers(List<Subscriber> subscribers, String message) {
+        CountDownLatch subscribersLatch = new CountDownLatch(subscribers.size());
+
         for (Subscriber subscriber : subscribers) {
-            subscribersExecutor.submit(() -> sendMessage(subscriber, message));
+            subscribersExecutor.submit(() -> {
+                sendMessage(subscriber, message);
+                subscribersLatch.countDown();
+            });
+        }
+
+        try {
+            subscribersLatch.await();
+            log.trace("Latch counted down, message has been sent to all subscribers. Message body: {}", message);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            log.error("Error waiting for subscribers to receive the message", e);
         }
     }
 

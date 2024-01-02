@@ -55,6 +55,11 @@ public class ScheduledMessageService {
         log.info("Deleted scheduled image with identifier: {}", messageId);
     }
 
+    public void deleteAllScheduledMessages() {
+        scheduledMessageRepository.deleteAll();
+        log.info("Deleted all scheduled images");
+    }
+
     public void updateScheduledMessage(Long messageId,
                                        ScheduledMessageDetails details) {
         ScheduledMessage originalMessage = findByIdOrThrowException(messageId);

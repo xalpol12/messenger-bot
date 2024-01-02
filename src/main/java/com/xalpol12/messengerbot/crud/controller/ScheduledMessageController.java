@@ -51,6 +51,13 @@ public class ScheduledMessageController {
         return ResponseEntity.noContent().build();
     }
 
+    @DeleteMapping(ScheduledMessagePath.ROOT + "s")
+    public ResponseEntity<?> deleteAllScheduledMessages() {
+        scheduledMessageService.deleteAllScheduledMessages();
+        log.trace("DELETE /scheduled-messages called");
+        return ResponseEntity.noContent().build();
+    }
+
     @PutMapping(ScheduledMessagePath.ROOT + "/{id}")
     public ResponseEntity<?> updateScheduledMessage(@PathVariable("id") Long messageId,
                                                     @RequestBody ScheduledMessageDetails messageDetails) {
