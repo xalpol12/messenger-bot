@@ -4,7 +4,7 @@
     <logger name="com.xalpol12.messengerbot" level="TRACE"/>
 
 
-<springProfile name="dev">
+<springProfile name="local">
     <configuration>
         <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
             <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
@@ -34,7 +34,7 @@
     </configuration>
 </springProfile>
 
-<springProfile name="prod">
+<springProfile name="docker">
     <configuration>
         <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
             <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">

@@ -6,14 +6,12 @@ import com.xalpol12.messengerbot.crud.model.dto.image.ImageDTO;
 import com.xalpol12.messengerbot.crud.model.mapper.ImageMapper;
 import com.xalpol12.messengerbot.crud.repository.ScheduledMessageRepository;
 import com.xalpol12.messengerbot.publisher.model.Subscriber;
-import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -35,7 +33,7 @@ public class PublisherService {
     private final FacebookPageAPIService facebookPageAPIService;
     private final ImageMapper imageMapper;
 
-    @Transactional()
+    @Transactional
     @Scheduled(fixedRate = 60000)
     public void selectScheduledMessages() {
         LocalDateTime currentTime = LocalDateTime.now();
@@ -47,7 +45,6 @@ public class PublisherService {
 
         if (messagesToSend.size() > 0) {
             log.debug("Found: {} scheduled messages!", messagesToSend.size());
-            log.debug("Sending...");
             submitMessages(messagesToSend);
         }
     }
