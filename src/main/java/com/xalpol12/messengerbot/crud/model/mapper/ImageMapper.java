@@ -48,7 +48,7 @@ public class ImageMapper {
                 .toUriString();
 
         return ImageDTO.builder()
-                .id(image.getId())
+                .imageId(image.getId())
                 .name(image.getName())
                 .url(imageUrl)
                 .type(image.getType())
@@ -65,7 +65,7 @@ public class ImageMapper {
                 "/" + uriOrId;
 
         return ImageDTO.builder()
-                .id(image.getId())
+                .imageId(image.getId())
                 .name(image.getName())
                 .url(imageUrl)
                 .type(image.getType())

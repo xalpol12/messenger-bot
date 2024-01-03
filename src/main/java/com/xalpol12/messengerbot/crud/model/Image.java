@@ -1,5 +1,6 @@
 package com.xalpol12.messengerbot.crud.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
@@ -17,7 +18,6 @@ import java.sql.Types;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,17 +25,19 @@ import java.util.Set;
 @Entity(name = "images")
 @EntityListeners(AuditingEntityListener.class)
 public class Image {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "image_id")
     private String id;
 
     @Nullable
-    @Column(unique = true) // TODO: add catching exception from postgres
+    @Column(unique = true)
     @Length(max = 30)
     @Pattern(regexp = "^\\S+$", message = "Invalid URI format")
     private String customUri;
 
+    @Length(max = 80)
     private String name;
 
     private String type;

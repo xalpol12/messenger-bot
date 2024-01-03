@@ -5,6 +5,11 @@ import com.xalpol12.messengerbot.crud.model.Image;
 import com.xalpol12.messengerbot.crud.model.dto.image.ImageDTO;
 import com.xalpol12.messengerbot.crud.model.dto.image.ImageUploadDetails;
 import com.xalpol12.messengerbot.crud.service.ImageService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -17,6 +22,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
+@Tag(name = "Images API")
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -29,8 +35,16 @@ public class ImageController {
 
     private final ImageService imageService;
 
+    @Operation(
+            summary = "",
+            description = "",
+            tags = {})
+    @ApiResponses( value = {
+            @ApiResponse(responseCode = "200", description = ""),
+    })
     @GetMapping(ImagePath.ROOT + "/{uri}")
-    public ResponseEntity<byte[]> displayImageData(@PathVariable("uri") String uri) {
+    public ResponseEntity<byte[]> displayImageData(
+            @PathVariable("uri") @Parameter(name = "uri", description = "", examples = {}) String uri) {
         Image image = imageService.getImage(uri);
 
         MediaType mediaType = MediaType.parseMediaType(image.getType());

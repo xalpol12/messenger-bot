@@ -130,7 +130,7 @@ class ImageMapperTest {
         ImageDTO result = imageMapper.mapToImageDTO(image);
 
         assertAll(() -> {
-            assertEquals(image.getId(), result.getId());
+            assertEquals(image.getId(), result.getImageId());
             assertEquals(image.getName(), result.getName());
             assertEquals(expectedPath.toString(), result.getUrl());
             assertEquals(image.getType(), result.getType());
@@ -155,7 +155,7 @@ class ImageMapperTest {
         ImageDTO result = imageMapper.mapToImageDTO(image);
 
         assertAll(() -> {
-            assertEquals(image.getId(), result.getId());
+            assertEquals(image.getId(), result.getImageId());
             assertEquals(image.getName(), result.getName());
             assertEquals("http://localhost/api/image/" + image.getId(), result.getUrl());
             assertEquals(image.getType(), result.getType());

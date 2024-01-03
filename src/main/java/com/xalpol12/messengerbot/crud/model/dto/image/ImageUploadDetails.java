@@ -1,8 +1,14 @@
 package com.xalpol12.messengerbot.crud.model.dto.image;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Nullable;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
+@Schema(description = "Image input DTO")
 @Data
 @Builder
 @NoArgsConstructor
@@ -10,8 +16,21 @@ import lombok.*;
 public class ImageUploadDetails {
 
         @Nullable
+        @Length(max = 80)
+        @Schema(name = "Name",
+                description = "New name that the Image entity will be updated with",
+                example = "image2",
+                nullable = true,
+                maxLength = 80)
         String name;
+
         @Nullable
+        @Length(max = 30)
+        @Schema(name = "Custom URI",
+                description = "New custom URI that the Image entity will be updated with, must be unique",
+                example = "new-custom-uri",
+                nullable = true,
+                maxLength = 30)
         String customUri;
 }
 
