@@ -3,11 +3,7 @@ package com.xalpol12.messengerbot.crud.model;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDateTime;
@@ -24,6 +20,7 @@ public class ScheduledMessage {
     @Column(name = "scheduled_message_id")
     private Long id;
 
+    @NonNull
     @Future
     private LocalDateTime scheduledDate;
 

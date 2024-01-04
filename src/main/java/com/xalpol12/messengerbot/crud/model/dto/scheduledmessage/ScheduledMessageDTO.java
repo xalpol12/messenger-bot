@@ -35,7 +35,7 @@ public class ScheduledMessageDTO {
    @Nullable
    @Schema(name = "Image URL",
            description = "Link to an image that will be appended to the actual image " +
-                   "and published",
+                   "and published. Null if ScheduledMessage is not associated with any image.",
            example = "http://localhost:8080/api/image/munch-showcase")
    private String imageUrl;
 

@@ -2,7 +2,6 @@ package com.xalpol12.messengerbot.crud.model.dto.scheduledmessage;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Nullable;
-import jakarta.validation.constraints.Future;
 import lombok.Data;
 
 @Schema(description = "Scheduled message input DTO")
@@ -23,7 +22,8 @@ public class ScheduledMessageDetails {
     @Nullable
     @Schema(name = "Image ID",
             description = "Image ID to create one-to-many relation between " +
-                    "ScheduledMessage and Image",
+                    "ScheduledMessage and Image. Image with given ID must exist in " +
+                    "the database",
             example = "558e89c8-79d2-4312-9750-73c24afe253e",
             nullable = true)
     private String imageId;

@@ -1,6 +1,5 @@
 package com.xalpol12.messengerbot.crud.model;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
