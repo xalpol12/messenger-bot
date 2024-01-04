@@ -21,7 +21,7 @@ public class CrudExceptionHandler {
 
     @ExceptionHandler(value = {
             ImageNotFoundException.class,
-            EntityNotFoundException.class
+            ScheduledMessageNotFoundException.class
     })
     public ResponseEntity<String> handleImageNotFoundException(RuntimeException e) {
         String message = extractMessageAndLog(e);

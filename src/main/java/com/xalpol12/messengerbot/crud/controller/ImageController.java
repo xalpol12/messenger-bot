@@ -44,12 +44,7 @@ public class ImageController {
     })
     @GetMapping(ImagePath.ROOT + "/{uri}")
     public ResponseEntity<byte[]> displayImageData(
-            @Parameter(
-                    name = "uri",
-                    description = "Unique Image entity identifier",
-                    examples = {
-                            @ExampleObject("558e89c8-79d2-4312-9750-73c24afe253e"),
-                            @ExampleObject("munch-showcase")})
+            @Parameter(name = "uri", description = "Unique Image entity identifier")
             @PathVariable("uri") String uri) {
         Image image = imageService.getImage(uri);
 
@@ -71,12 +66,7 @@ public class ImageController {
     })
     @GetMapping(ImagePath.ROOT + "/{uri}/download")
     public ResponseEntity<byte[]> getImageData(
-            @Parameter(
-                    name = "uri",
-                    description = "Unique Image entity identifier",
-                    examples = {
-                            @ExampleObject("558e89c8-79d2-4312-9750-73c24afe253e"),
-                            @ExampleObject("munch-showcase")})
+            @Parameter(name = "uri", description = "Unique Image entity identifier")
             @PathVariable("uri") String uri) {
         Image image = imageService.getImage(uri);
         MediaType mediaType = MediaType.parseMediaType(image.getType());
@@ -133,12 +123,7 @@ public class ImageController {
     })
     @DeleteMapping(ImagePath.ROOT + "/{uri}")
     public ResponseEntity<?> deleteImage(
-            @Parameter(
-                    name = "uri",
-                    description = "Unique Image entity identifier",
-                    examples = {
-                            @ExampleObject("558e89c8-79d2-4312-9750-73c24afe253e"),
-                            @ExampleObject("munch-showcase")})
+            @Parameter(name = "uri", description = "Unique Image entity identifier")
             @PathVariable("uri") String uri) {
         log.trace("DELETE image/{uri} called for entity with uri: {}", uri);
         imageService.deleteImage(uri);
@@ -155,12 +140,7 @@ public class ImageController {
     })
     @PutMapping(value = ImagePath.ROOT + "/{uri}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateImage(
-            @Parameter(
-                    name = "uri",
-                    description = "Unique Image entity identifier",
-                    examples = {
-                            @ExampleObject("558e89c8-79d2-4312-9750-73c24afe253e"),
-                            @ExampleObject("munch-showcase")})
+            @Parameter(name = "uri", description = "Unique Image entity identifier")
             @PathVariable("uri") String uri,
             @Parameter(name = "file details", description = "ImageUploadDetails object")
             @RequestPart ImageUploadDetails fileDetails,
@@ -181,12 +161,7 @@ public class ImageController {
     })
     @PatchMapping(ImagePath.ROOT + "/{uri}/details")
     public ResponseEntity<?> updateImageDetails(
-            @Parameter(
-                    name = "uri",
-                    description = "Unique Image entity identifier",
-                    examples = {
-                            @ExampleObject("558e89c8-79d2-4312-9750-73c24afe253e"),
-                            @ExampleObject("munch-showcase")})
+            @Parameter(name = "uri", description = "Unique Image entity identifier")
             @PathVariable("uri") String uri,
             @Parameter(name = "file details", description = "ImageUploadDetails object")
             @RequestBody ImageUploadDetails newDetails) {
@@ -205,12 +180,7 @@ public class ImageController {
     })
     @PatchMapping(value = ImagePath.ROOT + "/{uri}/data", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateImageData(
-            @Parameter(
-                    name = "uri",
-                    description = "Unique Image entity identifier",
-                    examples = {
-                            @ExampleObject("558e89c8-79d2-4312-9750-73c24afe253e"),
-                            @ExampleObject("munch-showcase")})
+            @Parameter(name = "uri", description = "Unique Image entity identifier")
             @PathVariable("uri") String uri,
             @Parameter(name = "file", description = "MultipartFile object, actual image file")
             @RequestPart MultipartFile file) {

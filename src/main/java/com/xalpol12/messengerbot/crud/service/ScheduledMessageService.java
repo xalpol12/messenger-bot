@@ -1,5 +1,6 @@
 package com.xalpol12.messengerbot.crud.service;
 
+import com.xalpol12.messengerbot.crud.exception.ScheduledMessageNotFoundException;
 import com.xalpol12.messengerbot.crud.model.ScheduledMessage;
 import com.xalpol12.messengerbot.crud.model.dto.scheduledmessage.ScheduledMessageDTO;
 import com.xalpol12.messengerbot.crud.model.dto.scheduledmessage.ScheduledMessageDetails;
@@ -29,7 +30,7 @@ public class ScheduledMessageService {
 
     private ScheduledMessage findByIdOrThrowException(Long messageId) {
         return scheduledMessageRepository.findById(messageId)
-                .orElseThrow(() -> new EntityNotFoundException("Scheduled message with id: " + messageId + " does not exist"));
+                .orElseThrow(() -> new ScheduledMessageNotFoundException("Scheduled message with id: " + messageId + " does not exist"));
     }
 
     public List<ScheduledMessageDTO> getAllScheduledMessages() {
