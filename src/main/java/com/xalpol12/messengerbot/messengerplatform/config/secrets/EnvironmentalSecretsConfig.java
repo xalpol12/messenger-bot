@@ -4,6 +4,10 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+/**
+ * Retrieves secrets using environmental variables.
+ * Configured using docker.compose file.
+ */
 @Component
 @Profile("docker")
 public class EnvironmentalSecretsConfig implements SecretsConfig {

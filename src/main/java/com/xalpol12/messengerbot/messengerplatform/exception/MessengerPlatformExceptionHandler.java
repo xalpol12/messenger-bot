@@ -6,10 +6,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+/**
+ * Exception handler for Messenger Platform module.
+ * Returns response entities with String message body
+ * and corresponding HttpStatus code.
+ */
 @Slf4j
 @RestControllerAdvice
 public class MessengerPlatformExceptionHandler {
 
+    /**
+     * Raised when service couldn't correctly verify
+     * the incoming webhook request.
+      * @param e RuntimeException
+     * @return ResponseEntity<String> with exception details
+     * and error code 403
+     */
     @ExceptionHandler(value = {
             IncorrectWebhookModeException.class,
             IncorrectTokenException.class
@@ -19,14 +31,26 @@ public class MessengerPlatformExceptionHandler {
         return new ResponseEntity<>(message, HttpStatus.FORBIDDEN);
     }
 
+    /**
+     * Raised when request signature validation failed.
+     * @param e RequestSignatureValidationException
+     * @return ResponseEntity<String> with exception details
+     * and error code 400
+     */
     @ExceptionHandler(value = {RequestSignatureValidationException.class})
-    public ResponseEntity<?> handleHashValidationException(RuntimeException e) {
+    public ResponseEntity<?> handleHashValidationException(RequestSignatureValidationException e) {
         String message = extractMessageAndLog(e);
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Raised when service received unexpected webhook object structure.
+     * @param e IncorrectWebhookObjectTypeException
+     * @return ResponseEntity<String> with exception details
+     * and error code 404
+     */
     @ExceptionHandler(value = {IncorrectWebhookObjectTypeException.class})
-    public ResponseEntity<?> handleIncorrectWebhookObjectType(RuntimeException e) {
+    public ResponseEntity<?> handleIncorrectWebhookObjectType(IncorrectWebhookObjectTypeException e) {
         String message = extractMessageAndLog(e);
         return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
     }

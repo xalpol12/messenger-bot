@@ -4,6 +4,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+/**
+ * Retrieves secrets using .properties file, used
+ * in local development mode.
+ */
 @Component
 @Profile("!docker")
 public class LocalSecretsConfig implements SecretsConfig {

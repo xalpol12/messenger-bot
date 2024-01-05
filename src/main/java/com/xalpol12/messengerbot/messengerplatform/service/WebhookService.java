@@ -24,6 +24,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Methods for receiving and serving webhook incoming calls.
+ * Constructed in accordance with Messenger Platform API documentation.
+ * @see <a href="https://developers.facebook.com/docs/messenger-platform/webhooks">Messenger Platform API link</a>
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -40,7 +45,10 @@ public class WebhookService {
      * Currently this method accepts webhooks sent when
      * someone messages a fanpage.
      * It processes all sender ids and adds new ids
+     * to the database.
      * @param webhookPayload - Webhook content
+     * @throws IncorrectWebhookObjectTypeException if received webhook
+     * was not of type "page"
      */
     public void process(String webhookPayload) {
         try {
@@ -69,6 +77,18 @@ public class WebhookService {
                 .collect(Collectors.toSet());
     }
 
+    /**
+     * Checks if mode and token are of the expected values.
+     * In case of successful validation returns challenge.
+     * @param mode Expected "subscribe" value
+     * @param token Secret verification token that only service and
+     *              Messenger Platform API know
+     * @param challenge Return value in case of successful verification
+     * @return challenge
+     * @throws IncorrectTokenException if received token does not
+     * match the expected token
+     * @throws IncorrectWebhookModeException if mode value was not 'subscribe'
+     */
     public String verifyWebhookSubscription(String mode, String token, String challenge) {
         if (mode.equals("subscribe") ) {
             if (token.equals(secrets.getVerificationToken())) {
@@ -77,6 +97,13 @@ public class WebhookService {
         } else throw new IncorrectWebhookModeException("Webhook mode is not set to 'subscribe'.");
     }
 
+    /**
+     * Calculates the checksum and verifies if received checksum
+     * matches the calculated checksum.
+     * @param receivedSignature Checksum calculated by Messenger Platform API
+     * @param payload Webhook notification request body
+     * @throws RequestSignatureValidationException if validation was not successful
+     */
     public void verifyRequestSignature(String receivedSignature, String payload) {
         String signatureHash = receivedSignature.split("=")[1];
         try {
