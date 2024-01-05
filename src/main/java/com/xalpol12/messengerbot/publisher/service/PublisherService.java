@@ -18,6 +18,10 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 
+/**
+ * Service class responsible for publishing scheduled messages to all subscribers.
+ * Uses scheduled tasks to select messages at regular intervals and submits them for publication.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -33,6 +37,10 @@ public class PublisherService {
     private final FacebookPageAPIService facebookPageAPIService;
     private final ImageMapper imageMapper;
 
+    /**
+     * Selects scheduled messages within a minute time window and publishes them to all subscribers.
+     * Scheduled to run at a fixed rate specified by the 'fixedRate' attribute (60,000 milliseconds by default).
+     */
     @Transactional
     @Scheduled(fixedRate = 60000)
     public void selectScheduledMessages() {
@@ -49,6 +57,10 @@ public class PublisherService {
         }
     }
 
+    /**
+     * Submits a list of scheduled messages for publication to all subscribers.
+     * @param scheduledMessages List of scheduled messages to be published.
+     */
     @Transactional
     public void submitMessages(List<ScheduledMessage> scheduledMessages) {
         List<Subscriber> subscribers = subscriberService.getAllSubscribers();

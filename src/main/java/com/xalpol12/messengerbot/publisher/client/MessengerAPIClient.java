@@ -8,6 +8,10 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.Objects;
 
+/**
+ * HTTP client used for sending requests to
+ * Facebook Graph API.
+ */
 @Component
 @RequiredArgsConstructor
 public class MessengerAPIClient {
@@ -16,6 +20,14 @@ public class MessengerAPIClient {
     private final String BASE_URL = "https://graph.facebook.com";
     private final String MESSAGES_ENDPOINT = "/messages";
 
+    /**
+     * Sends POST request to transmit a message to a given client.
+     * @param apiVersion current Facebook Graph API version
+     * @param clientId profile ID of an account that will receive a message
+     * @param messageParams MessageParams instance that wraps message parameters
+     * @throws IOException thrown when API call was not successful
+     * @see MessageParams
+     */
     public void sendMessage(String apiVersion, String clientId, MessageParams messageParams)
             throws IOException {
 

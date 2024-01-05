@@ -7,6 +7,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Class representing "subscribers"
+ * table structure in the database.
+ */
 @Data
 @Entity(name = "subscribers")
 @Builder

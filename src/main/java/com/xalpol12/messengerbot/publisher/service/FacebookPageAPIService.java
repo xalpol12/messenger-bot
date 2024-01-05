@@ -11,6 +11,10 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
+/**
+ * Service class that encapsulates methods used for communication
+ * with Facebook Page and Facebook Graph APIs.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -27,6 +31,13 @@ public class FacebookPageAPIService {
     private final SecretsConfig secretsConfig;
     private final MessengerAPIClient messengerClient;
 
+    /**
+     * Invokes MessengerAPIClient sendMessage method passing
+     * required variables.
+     * @param userId profile ID of a user that the message
+     *               will be sent to
+     * @param message Message content that the user will receive
+     */
     public void sendMessage(String userId, String message) {
         MessageParams params = MessageParams.builder()
                 .recipient(userId)
