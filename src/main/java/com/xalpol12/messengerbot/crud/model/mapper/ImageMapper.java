@@ -13,12 +13,29 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.io.IOException;
 import java.util.Objects;
 
+/**
+ * ModelMapper wrapper class that encapsulates
+ * logic for mapping Image entity class to different
+ * forms.
+ */
 @Component
 @RequiredArgsConstructor
 public class ImageMapper {
 
     private final ModelMapper mapper;
 
+    /**
+     * Constructs new Image class instance from
+     * provided image file and details. Image name is set to
+     * original filename if no name is provided in ImageUploadDetails.
+     * Custom URI entity field is set to null if no custom URI is provided in
+     * ImageUploadDetails.
+     * @param details ImageUploadDetails that might specify new image name
+     *                and custom URI path for new entity
+     * @param file MultipartFile representing uploaded image file
+     * @return Image entity
+     * @throws IOException thrown when couldn't access MultipartFile bytes
+     */
     public Image mapToImage(ImageUploadDetails details, MultipartFile file) throws IOException {
         String imageName = details.getName() != null ? details.getName() : extractFilenameWithoutExtension(file);
         return Image.builder()
@@ -39,6 +56,14 @@ public class ImageMapper {
         }
     }
 
+    /**
+     * Constructs ImageDTO from Image entity.
+     * URL field is constructed from current context path.
+     * If provided Image entity does not have custom URI field set,
+     * URL is constructed from ID.
+     * @param image Image entity instance
+     * @return ImageDTO instance based on provided Image entity
+     */
     public ImageDTO mapToImageDTO(Image image) {
         String uriOrId = image.getCustomUri() != null ? image.getCustomUri() : image.getId();
         String imageUrl = ServletUriComponentsBuilder
@@ -58,6 +83,18 @@ public class ImageMapper {
                 .build();
     }
 
+
+    /**
+     * Constructs ImageDTO from Image entity.
+     * Method used when ImageMapper is invoked outside the controller
+     * context, then no explicit context path can be provided.
+     * URL field is constructed from provided baseUrl String.
+     * If provided Image entity does not have custom URI field set,
+     * URL is constructed from ID.
+     * @param image Image entity instance
+     * @param baseUrl String determining the base server path
+     * @return ImageDTO instance based on provided Image entity
+     */
     public ImageDTO mapToImageDTO(Image image, String baseUrl) {
         String uriOrId = image.getCustomUri() != null ? image.getCustomUri() : image.getId();
         String imageUrl = baseUrl +
@@ -75,14 +112,30 @@ public class ImageMapper {
                 .build();
     }
 
+    /**
+     * Maps Image with another Image changes.
+     * @param source Image entity
+     * @param destination Image entity
+     */
     public void updateImage(Image source, Image destination) {
         mapper.map(source, destination);
     }
 
+    /**
+     * Maps Image with ImageUploadDetails changes.
+     * @param image Image entity
+     * @param details ImageUploadDetails instance
+     */
     public void updateImageDetails(Image image, ImageUploadDetails details) {
         mapper.map(details, image);
     }
 
+    /**
+     * Sets new data Image entity field.
+     * @param image Image entity
+     * @param file MultipartFile image
+     * @throws IOException thrown when couldn't access MultipartFile bytes
+     */
     public void updateImageData(Image image, MultipartFile file) throws IOException {
         byte[] data = file.getBytes();
         image.setData(data);

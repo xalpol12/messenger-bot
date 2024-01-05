@@ -9,6 +9,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
+/**
+ * Data Access Object created for use
+ * in create and update operations on Image entity.
+ */
 @Schema(description = "Image input DTO")
 @Data
 @Builder

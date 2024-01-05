@@ -10,7 +10,6 @@ import com.xalpol12.messengerbot.crud.model.dto.image.ImageUploadDetails;
 import com.xalpol12.messengerbot.crud.model.mapper.ImageMapper;
 import com.xalpol12.messengerbot.crud.repository.ImageRepository;
 import com.xalpol12.messengerbot.crud.repository.ScheduledMessageRepository;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +23,12 @@ import java.net.URI;
 import java.util.List;
 import java.util.stream.Stream;
 
+/**
+ * Methods used to manipulate Image entities
+ * in the database. Implements custom business for
+ * retrieving Image entities based on either ID or
+ * customUrl.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -33,6 +38,12 @@ public class ImageService {
     private final ScheduledMessageRepository scheduledMessageRepository;
     private final ImageMapper imageMapper;
 
+    /**
+     * Returns Image entity from the database.
+     * Caches accessed entity.
+     * @param id custom URI or entity ID
+     * @return Image entity
+     */
     @Cacheable("imageCache")
     public Image getImage(String id) {
         return findByCustomUriOrId(id);
@@ -50,6 +61,11 @@ public class ImageService {
         return image;
     }
 
+    /**
+     * Returns list of all Images mapped
+     * to ImageDTO.
+     * @return List<ImageDTO> representing all Image entities details
+     */
     public List<ImageDTO> getAllImages() {
         Stream<Image> imageStream = imageRepository.findAll().stream();
         return imageStream
@@ -57,6 +73,15 @@ public class ImageService {
                 .toList();
     }
 
+    /**
+     * Adds new Image entity to a database.
+     * Caches inserted entity.
+     * @param fileDetails ImageUploadDetails instance
+     * @param imageData MultipartFile image
+     * @return URI access path of newly created Image entity
+     * @throws ImageAccessException thrown when service couldn't access
+     * MultipartFile bytes
+     */
     @Cacheable("imageCache")
     public URI uploadImage(ImageUploadDetails fileDetails,
                              MultipartFile imageData) throws ImageAccessException {
@@ -77,8 +102,14 @@ public class ImageService {
         return location;
     }
 
+    /**
+     * Deletes image with provided identifier.
+     * Deletes all ScheduledMessage entries
+     * associated with given image.
+     * @param id Image entity identifier
+     */
     @Transactional
-    public void deleteImage(String id) throws EntityNotFoundException {
+    public void deleteImage(String id) {
         Image image = findByCustomUriOrId(id);
         List<ScheduledMessage> messages = scheduledMessageRepository.findAllByImageEquals(image);
         scheduledMessageRepository.deleteAll(messages);
@@ -88,7 +119,14 @@ public class ImageService {
         log.info("Image with identifier: {} has been deleted", id);
     }
 
-
+    /**
+     * Replaces current Image entity with
+     * Image entity build from provided parameters,
+     * leaving only the same ID.
+     * @param customUriOrId ID of original entity to be replaced
+     * @param fileDetails ImagUploadDetails new image details
+     * @param imageData MultipartFile new image
+     */
     @Transactional
     public void updateImage(String customUriOrId,
                             ImageUploadDetails fileDetails,
@@ -103,6 +141,12 @@ public class ImageService {
         }
     }
 
+    /**
+     * Modifies specified Image entity details with newDetails.
+     * @param customUriOrId String Image identifier
+     * @param newDetails ImageUploadDetails instance,
+     *                   null fields do not modify the original entity.
+     */
     @Transactional
     public void patchImageDetails(String customUriOrId, ImageUploadDetails newDetails) {
         Image imageToPatch = findByCustomUriOrId(customUriOrId);
@@ -110,6 +154,11 @@ public class ImageService {
         log.info("Patched image details for entity with identifier: {}", customUriOrId);
     }
 
+    /**
+     * Modifies specified Image entity data with new image.
+     * @param customUriOrId String Image identifier
+     * @param file MultipartFile image
+     */
     @Transactional
     public void patchImageData(String customUriOrId, MultipartFile file) {
         Image imageToPatch = findByCustomUriOrId(customUriOrId);

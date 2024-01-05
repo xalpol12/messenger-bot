@@ -23,6 +23,11 @@ public class ScheduledMessageService {
     private final ScheduledMessageRepository scheduledMessageRepository;
     private final ScheduledMessageMapper messageMapper;
 
+    /**
+     * Retrieves a scheduled message from the database.
+     * @param messageId Long identifier of the scheduled message
+     * @return ScheduledMessageDTO representation of the scheduled message
+     */
     public ScheduledMessageDTO getScheduledMessage(Long messageId) {
         ScheduledMessage message = findByIdOrThrowException(messageId);
         return messageMapper.mapToScheduledMessageDTO(message);
@@ -33,6 +38,10 @@ public class ScheduledMessageService {
                 .orElseThrow(() -> new ScheduledMessageNotFoundException("Scheduled message with id: " + messageId + " does not exist"));
     }
 
+    /**
+     * Retrieves all scheduled messages from the database.
+     * @return List<ScheduledMessageDTO> the DTO representations of scheduled messages
+     */
     public List<ScheduledMessageDTO> getAllScheduledMessages() {
         Stream<ScheduledMessage> messageStream = scheduledMessageRepository.findAll().stream();
         return messageStream
@@ -40,6 +49,11 @@ public class ScheduledMessageService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Adds new ScheduledMessage entity to a database.
+     * @param messageDetails ScheduledMessageDetails instance
+     * @return ScheduledMessageDTO the DTO representation of added entity
+     */
     public ScheduledMessageDTO addScheduledMessage(ScheduledMessageDetails messageDetails) {
         ScheduledMessage message = messageMapper.mapToScheduledMessage(messageDetails);
         scheduledMessageRepository.save(message);
@@ -47,20 +61,35 @@ public class ScheduledMessageService {
         return messageMapper.mapToScheduledMessageDTO(message);
     }
 
-    public void deleteScheduledMessage(Long messageId) throws EntityNotFoundException {
+    /**
+     * Deletes ScheduledMessage entity from the database.
+     * @param messageId Long identifier of the scheduled message
+     * @throws ScheduledMessageNotFoundException no scheduled message with
+     * given identifier found in the database
+     */
+    public void deleteScheduledMessage(Long messageId) throws ScheduledMessageNotFoundException {
         if (scheduledMessageRepository.existsById(messageId)) {
             scheduledMessageRepository.deleteById(messageId);
         } else {
-            throw new EntityNotFoundException("No scheduled message found for entity with id: " + messageId);
+            throw new ScheduledMessageNotFoundException("No scheduled message found for entity with id: " + messageId);
         }
         log.info("Deleted scheduled image with identifier: {}", messageId);
     }
 
+    /**
+     * Deletes all ScheduledMessage entities from the database.
+     */
     public void deleteAllScheduledMessages() {
         scheduledMessageRepository.deleteAll();
         log.info("Deleted all scheduled images");
     }
 
+    /**
+     * Updates ScheduledMessage entity by identifier.
+     * @param messageId Long identifier of the scheduled message
+     * @param details ScheduledMessageDetails instance that the entity
+     *                should be updated with
+     */
     public void updateScheduledMessage(Long messageId,
                                        ScheduledMessageDetails details) {
         ScheduledMessage originalMessage = findByIdOrThrowException(messageId);

@@ -9,6 +9,11 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+/**
+ * Data Access Object for ScheduledMessage entity, created for
+ * returning only necessary, relevant ScheduledMessage entity fields
+ * without exposing all the fields.
+ */
 @Schema(description = "Scheduled message output DTO")
 @Data
 @NoArgsConstructor

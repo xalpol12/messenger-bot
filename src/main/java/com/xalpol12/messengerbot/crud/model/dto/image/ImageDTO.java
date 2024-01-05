@@ -8,7 +8,11 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-
+/**
+ * Data Access Object for Image entity, created for
+ * returning details about the Image without accessing
+ * real image data.
+ */
 @Schema(description = "Image output DTO")
 @Data
 @Builder

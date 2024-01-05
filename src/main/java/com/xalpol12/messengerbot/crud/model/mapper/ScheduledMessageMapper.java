@@ -14,6 +14,11 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.time.LocalDateTime;
 
+/**
+ * ModelMapper wrapper class that encapsulates
+ * logic for mapping ScheduledMessage entity class to different
+ * forms.
+ */
 @Component
 public class ScheduledMessageMapper {
 
@@ -48,10 +53,22 @@ public class ScheduledMessageMapper {
         });
     }
 
+    /**
+     * Returns new ScheduledMessage using ScheduledMessageDetails.
+     * @param details ScheduledMessageDetails instance
+     * @return ScheduledMessage instance
+     */
     public ScheduledMessage mapToScheduledMessage(ScheduledMessageDetails details) {
         return mapper.map(details, ScheduledMessage.class);
     }
 
+    /**
+     * Returns new ScheduledMessageDTO based on provided ScheduledMessage entity,
+     * mapping only fields present in DTO. If no Image is associated with provided
+     * ScheduledMessage, then imageUrl field is set to null.
+     * @param scheduledMessage ScheduledMessage entity
+     * @return ScheduledMessageDTO instance based on scheduledMessage
+     */
     public ScheduledMessageDTO mapToScheduledMessageDTO(ScheduledMessage scheduledMessage) {
          return ScheduledMessageDTO.builder()
                  .scheduledMessageId(scheduledMessage.getId())
@@ -74,6 +91,11 @@ public class ScheduledMessageMapper {
         } else return null;
     }
 
+    /**
+     * Maps ScheduledMessage with another ScheduledMessage.
+     * @param source ScheduledMessage entity
+     * @param destination ScheduledMessage entity
+     */
     public void updateScheduledMessage(ScheduledMessage source, ScheduledMessage destination) {
         mapper.map(source, destination);
     }

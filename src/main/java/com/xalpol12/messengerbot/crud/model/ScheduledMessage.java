@@ -8,6 +8,10 @@ import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDateTime;
 
+/**
+ * Class representing "scheduled_message_id"
+ * table in the database.
+ */
 @Data
 @Builder
 @NoArgsConstructor

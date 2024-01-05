@@ -17,6 +17,10 @@ import java.sql.Types;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+/**
+ * Class representing "images" table structure
+ * in the database.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

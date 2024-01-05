@@ -4,6 +4,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Nullable;
 import lombok.Data;
 
+/**
+ * Data Access Object created for use
+ * in create and update operations on ScheduledMessage entity.
+ */
 @Schema(description = "Scheduled message input DTO")
 @Data
 public class ScheduledMessageDetails {
