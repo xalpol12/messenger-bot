@@ -2,10 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Observable} from "rxjs";
 import {ImageUploadService} from "../../services/image-upload.service";
 import {HttpEventType, HttpResponse} from "@angular/common/http";
-
-export interface Image {
-  body: File,
-}
+import {Image, ImageInfo} from "../../models/image.model";
 
 @Component({
   selector: 'app-file-upload',
@@ -19,13 +16,17 @@ export class FileUploadComponent implements OnInit {
   progress = 0;
   message = '';
 
-  imageInfos?: Observable<any>;
+  imageInfos?: Observable<ImageInfo[]>;
 
   constructor(private uploadService: ImageUploadService) {
   }
 
   ngOnInit(): void {
-    this.imageInfos = this.uploadService.getImages();
+    this.loadImagesInfo();
+  }
+
+  loadImagesInfo(): void {
+    this.imageInfos = this.uploadService.getImagesInfo();
   }
 
   selectFile(event: any): void {
@@ -49,7 +50,7 @@ export class FileUploadComponent implements OnInit {
               this.progress = Math.round(100 * event.loaded / event.total);
             } else if (event instanceof HttpResponse) {
               this.message = event.body.message;
-              this.imageInfos = this.uploadService.getImages();
+              this.imageInfos = this.uploadService.getImagesInfo();
             }
           },
           error: (err: any) => {
