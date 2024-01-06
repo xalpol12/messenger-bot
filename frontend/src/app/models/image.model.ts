@@ -1,5 +1,6 @@
-export interface Image {
-  body: File,
+export interface ImageFormData {
+  name?: string,
+  customUri?: string,
 }
 
 export interface ImageInfo {

@@ -1,10 +1,22 @@
-<div class="row">
-  <div class="col-8">
-    <label class="btn btn-default p-0">
-      <input type="file" (change)="selectFile($event)"/>
-    </label>
+<form [formGroup]="imageDetailsForm">
+  <div class="row">
+    <div class="col-8">
+      <label class="btn btn-default p-0">
+        <input type="file" (change)="selectFile($event)"/>
+      </label>
+    </div>
+    <div class="col-4">
+      <input type="text" placeholder="Filename" formControlName="imageName" class="form-control mb-2" />
+      <div *ngIf="imageDetailsForm.get('imageName')?.hasError('maxlength') && imageDetailsForm.get('imageName')?.touched">
+        Maximum length is 80 characters.
+      </div>
+      <input type="text" placeholder="Custom URI" formControlName="imageUrl" class="form-control mb-2" />
+      <div *ngIf="imageDetailsForm.get('imageUrl')?.hasError('uriValidation') && imageDetailsForm.get('imageUrl')?.touched">
+        Please enter a valid URI. (kebab-case-required)
+      </div>
+    </div>
   </div>
-</div>
+</form>
 
 <div class="col-4">
   <button class="btn btn-success btn-sm" [disabled]="!selectedImages" (click)="upload()">

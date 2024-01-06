@@ -2,7 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {Observable} from "rxjs";
 import {ImageUploadService} from "../../services/image-upload.service";
 import {HttpEventType, HttpResponse} from "@angular/common/http";
-import {Image, ImageInfo} from "../../models/image.model";
+import {ImageFormData, ImageInfo} from "../../models/image.model";
+import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators} from "@angular/forms";
 
 @Component({
   selector: 'app-file-upload',
@@ -13,12 +14,18 @@ export class FileUploadComponent implements OnInit {
 
   selectedImages?: FileList;
   currentFile?: File;
+  imageDetailsForm: FormGroup;
   progress = 0;
   message = '';
 
   imageInfos?: Observable<ImageInfo[]>;
 
-  constructor(private uploadService: ImageUploadService) {
+  constructor(private uploadService: ImageUploadService,
+              private fb: FormBuilder) {
+    this.imageDetailsForm = this.fb.group({
+      imageName: [null, [Validators.required, Validators.maxLength(80)]],
+      imageUrl: [null, [Validators.required, this.uriValidator]]
+    })
   }
 
   ngOnInit(): void {
@@ -36,15 +43,17 @@ export class FileUploadComponent implements OnInit {
   upload(): void {
     this.progress = 0;
 
-    if (this.selectedImages) {
+    if (this.selectedImages && this.imageDetailsForm.valid) {
       const file: File | null = this.selectedImages.item(0);
 
       if (file) {
         this.currentFile = file;
+        const formData = new FormData();
 
-        const image: Image = {body: file};
+        formData.append('file', file);
+        formData.append('fileDetails', new Blob([JSON.stringify(this.imageDetailsForm.value)], { type: 'application/json'}));
 
-        this.uploadService.upload(image).subscribe({
+        this.uploadService.upload(formData).subscribe({
           next: (event: any) => {
             if (event.type === HttpEventType.UploadProgress) {
               this.progress = Math.round(100 * event.loaded / event.total);
@@ -68,8 +77,13 @@ export class FileUploadComponent implements OnInit {
         });
       }
     }
-
     this.selectedImages = undefined;
   }
 
+  uriValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const isValid = /^([a-z0-9]+-)*[a-z0-9]+$/.test(control.value);
+      return isValid ? null : { uriValidation: true };
+    }
+  }
 }
