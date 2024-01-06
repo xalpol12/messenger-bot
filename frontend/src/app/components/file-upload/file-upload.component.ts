@@ -24,7 +24,7 @@ export class FileUploadComponent implements OnInit {
               private fb: FormBuilder) {
     this.imageDetailsForm = this.fb.group({
       imageName: [null, [Validators.required, Validators.maxLength(80)]],
-      imageUrl: [null, [Validators.required, this.uriValidator]]
+      imageUrl: [null, [Validators.required, this.uriValidator()]]
     })
   }
 
@@ -85,5 +85,15 @@ export class FileUploadComponent implements OnInit {
       const isValid = /^([a-z0-9]+-)*[a-z0-9]+$/.test(control.value);
       return isValid ? null : { uriValidation: true };
     }
+  }
+
+  get isImageNameValid(): boolean {
+    const imageNameControl = this.imageDetailsForm.get('imageName');
+    return !!(imageNameControl?.hasError('maxlength') && imageNameControl.get('imageName')?.touched);
+  }
+
+  get isImageUrlValid(): boolean {
+    const imageUrlControl = this.imageDetailsForm.get('imageUrl');
+    return !!(imageUrlControl?.hasError('uriValidation') && imageUrlControl?.touched);
   }
 }

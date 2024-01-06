@@ -6,13 +6,13 @@
       </label>
     </div>
     <div class="col-4">
-      <input type="text" placeholder="Filename" formControlName="imageName" class="form-control mb-2" />
-      <div *ngIf="imageDetailsForm.get('imageName')?.hasError('maxlength') && imageDetailsForm.get('imageName')?.touched">
-        Maximum length is 80 characters.
+      <input type="text" placeholder="Filename" formControlName="imageName" class="form-control mb-2" [ngClass]="{'error-input': isImageNameValid}"/>
+      <div *ngIf="isImageNameValid" class="error-message">
+        <p class="fw-light">Maximum length is 80 characters</p>
       </div>
-      <input type="text" placeholder="Custom URI" formControlName="imageUrl" class="form-control mb-2" />
-      <div *ngIf="imageDetailsForm.get('imageUrl')?.hasError('uriValidation') && imageDetailsForm.get('imageUrl')?.touched">
-        Please enter a valid URI. (kebab-case-required)
+      <input type="text" placeholder="Custom URI" formControlName="imageUrl" class="form-control mb-2" [ngClass]="{'error-input': isImageUrlValid}" />
+      <div *ngIf="isImageUrlValid" class="error-message">
+        <p class="fw-light">Please enter a valid URI (kebab-case-required)</p>
       </div>
     </div>
   </div>
@@ -50,7 +50,7 @@
   </div>
   <ul class="list-group list-group-flush">
     <li *ngFor="let imageInfo of imageInfos | async" class="list-group-item">
-      <a href="{{ imageInfo.url }}">{{ imageInfo.name }}</a>
+      <app-image-entry [imageEntry]="imageInfo"></app-image-entry>
     </li>
   </ul>
 </div>
