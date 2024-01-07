@@ -109,6 +109,16 @@ class ScheduledMessageServiceTest {
             verify(repository, times(1)).deleteById(id);
         });
     }
+
+    @Test
+    public void deleteAllScheduledMessages_shouldCallMethod() {
+
+        scheduledMessageService.deleteAllScheduledMessages();
+
+        assertAll(() -> {
+            verify(repository, times(1)).deleteAll();
+        });
+    }
     @Test
     public void deleteScheduledMessage_shouldThrowEntityNotFoundException() {
         Long id = 1L;

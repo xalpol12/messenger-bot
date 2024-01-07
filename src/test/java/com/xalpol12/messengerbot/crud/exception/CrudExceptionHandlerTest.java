@@ -49,4 +49,12 @@ class CrudExceptionHandlerTest {
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
+
+    @Test
+    public void handlePSQLException_otherErrorCodeEncountered() {
+        PSQLState uniqueViolation = PSQLState.IO_ERROR;
+        PSQLException exception = new PSQLException("Message", uniqueViolation);
+
+        assertThrows(PSQLException.class, () -> exceptionHandler.handlePSQLException(exception));
+    }
 }
