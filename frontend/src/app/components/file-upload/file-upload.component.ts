@@ -89,11 +89,15 @@ export class FileUploadComponent implements OnInit {
 
   get isImageNameValid(): boolean {
     const imageNameControl = this.imageDetailsForm.get('imageName');
-    return !!(imageNameControl?.hasError('maxlength') && imageNameControl?.touched);
+    if (imageNameControl === null || imageNameControl.value === "") {
+      return false;
+    } else return imageNameControl?.hasError('maxlength') && imageNameControl?.touched;
   }
 
   get isImageUrlValid(): boolean {
     const imageUrlControl = this.imageDetailsForm.get('imageUrl');
-    return !!(imageUrlControl?.hasError('uriValidation') && imageUrlControl?.touched);
+    if (imageUrlControl === null || imageUrlControl.value === "") {
+      return false;
+    } else return imageUrlControl.hasError('uriValidation') && imageUrlControl.touched;
   }
 }
