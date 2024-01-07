@@ -3,7 +3,7 @@ services:
   messenger-bot:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.backend
       target: production
     environment:
       - BASE_SERVER_ADDRESS=https://motivation.bieda.it
@@ -12,7 +12,7 @@ services:
       - MESSENGER_APP_VERIFICATION_TOKEN=
       - MESSENGER_APP_SECRET_KEY=
     ports:
-      - "20174:80"
+      - '20174:80'
     depends_on:
       - pg-db
     networks:
@@ -28,6 +28,13 @@ services:
       - 'POSTGRES_PASSWORD=admin'
     networks:
       - pg-network
+
+  bot-dashboard:
+    build: 
+      context: .
+      dockerfile: Dockerfile.frontend
+    port:
+      - '14200:4200' # change port 
 
 networks:
   pg-network:
