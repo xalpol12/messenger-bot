@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {ImageInfo} from "../../../models/image.model";
 import {NgIf} from "@angular/common";
 

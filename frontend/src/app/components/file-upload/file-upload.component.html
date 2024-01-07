@@ -6,11 +6,11 @@
       </label>
     </div>
     <div class="col-4">
-      <input type="text" placeholder="Filename" formControlName="imageName" class="form-control mb-2" [ngClass]="{'error-input': isImageNameValid}"/>
+      <input type="text" placeholder="Filename" formControlName="name" class="form-control mb-2" [ngClass]="{'error-input': isImageNameValid}"/>
       <div *ngIf="isImageNameValid" class="error-message">
         <p class="fw-light">Maximum length is 80 characters</p>
       </div>
-      <input type="text" placeholder="Custom URI" formControlName="imageUrl" class="form-control mb-2" [ngClass]="{'error-input': isImageUrlValid}" />
+      <input type="text" placeholder="Custom URI" formControlName="customUri" class="form-control mb-2" [ngClass]="{'error-input': isImageUrlValid}" />
       <div *ngIf="isImageUrlValid" class="error-message">
         <p class="fw-light">Please enter a valid URI (kebab-case-required)</p>
       </div>
@@ -19,12 +19,12 @@
 </form>
 
 <div class="col-4">
-  <button class="btn btn-success btn-sm" [disabled]="!selectedImages" (click)="upload()">
+  <button class="btn btn-success btn-sm" [disabled]="!selectedFile" (click)="upload()">
     Upload
   </button>
 </div>
 
-<div *ngIf="currentFile" class="progress my-3">
+<div *ngIf="selectedFile" class="progress my-3">
   <div
     class="progress-bar progress-bar-info progress-bar-striped"
     role="progressbar"
