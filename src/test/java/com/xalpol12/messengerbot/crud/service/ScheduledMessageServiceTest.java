@@ -1,18 +1,18 @@
 package com.xalpol12.messengerbot.crud.service;
 
+import com.xalpol12.messengerbot.crud.exception.ScheduledMessageNotFoundException;
 import com.xalpol12.messengerbot.crud.model.ScheduledMessage;
 import com.xalpol12.messengerbot.crud.model.dto.scheduledmessage.ScheduledMessageDTO;
 import com.xalpol12.messengerbot.crud.model.dto.scheduledmessage.ScheduledMessageDetails;
 import com.xalpol12.messengerbot.crud.model.mapper.ScheduledMessageMapper;
 import com.xalpol12.messengerbot.crud.repository.ScheduledMessageRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,7 +45,7 @@ class ScheduledMessageServiceTest {
     @Test
     public void getScheduledMessage_shouldReturnScheduledMessageDTO() {
         Long id = 1L;
-        ScheduledMessage message = ScheduledMessage.builder().id(id).build();
+        ScheduledMessage message = ScheduledMessage.builder().id(id).scheduledDate(LocalDateTime.MAX).build();
         ScheduledMessageDTO dto = ScheduledMessageDTO.builder().scheduledMessageId(id).build();
 
         when(repository.findById(id)).thenReturn(Optional.of(message));
@@ -62,12 +62,12 @@ class ScheduledMessageServiceTest {
     @Test
     public void getScheduledMessage_shouldThrowEntityNotFoundException() {
         Long id = 1L;
-        ScheduledMessage message = ScheduledMessage.builder().id(id).build();
+        ScheduledMessage message = ScheduledMessage.builder().id(id).scheduledDate(LocalDateTime.MAX).build();
 
         when(repository.findById(id)).thenReturn(Optional.empty());
 
         assertAll(() -> {
-            assertThrows(EntityNotFoundException.class, () -> scheduledMessageService.getScheduledMessage(id));
+            assertThrows(ScheduledMessageNotFoundException.class, () -> scheduledMessageService.getScheduledMessage(id));
             verify(repository, times(1)).findById(id);
         });
     }
@@ -116,28 +116,26 @@ class ScheduledMessageServiceTest {
         when(repository.existsById(id)).thenReturn(false);
 
         assertAll(() -> {
-            assertThrows(EntityNotFoundException.class, () -> scheduledMessageService.deleteScheduledMessage(id));
+            assertThrows(ScheduledMessageNotFoundException.class, () -> scheduledMessageService.deleteScheduledMessage(id));
             verify(repository, times(1)).existsById(id);
         });
     }
-//    @Test //TODO: Find out why this doesnt work
-//    public void updateScheduledMessage_shouldCallUpdateScheduledMessageMapperMethod() {
-//        Long id = 1L;
-//        ScheduledMessageDetails details = new ScheduledMessageDetails();
-//        ScheduledMessage message = new ScheduledMessage();
-//
-//        when(repository.existsById(id)).thenReturn(true);
-//        when(repository.findById(id)).thenReturn(Optional.of(message));
-//        when(mapper.mapToScheduledMessage(details)).thenReturn(message);
-//
-//        scheduledMessageService.updateScheduledMessage(id, details);
-//
-//        assertAll(() -> {
-//            verify(repository, times(1)).existsById(id);
-//            verify(repository, times(1)).findById(id);
-//            verify(mapper, times(1)).mapToScheduledMessage(details);
-//            verify(mapper, times(1)).updateScheduledMessage(message, message);
-//        });
-//    }
 
+    @Test
+    public void updateScheduledMessage_shouldCallUpdateScheduledMessageMapperMethod() {
+        Long id = 1L;
+        ScheduledMessageDetails details = new ScheduledMessageDetails();
+        ScheduledMessage message = new ScheduledMessage();
+
+        when(repository.findById(id)).thenReturn(Optional.of(message));
+        when(mapper.mapToScheduledMessage(details)).thenReturn(message);
+
+        scheduledMessageService.updateScheduledMessage(id, details);
+
+        assertAll(() -> {
+            verify(repository, times(1)).findById(id);
+            verify(mapper, times(1)).mapToScheduledMessage(details);
+            verify(mapper, times(1)).updateScheduledMessage(message, message);
+        });
+    }
 }
