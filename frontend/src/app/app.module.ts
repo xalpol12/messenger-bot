@@ -4,6 +4,7 @@ import {FileUploadComponent} from "./components/file-upload/file-upload.componen
 import {BrowserModule} from "@angular/platform-browser";
 import {HttpClientModule} from "@angular/common/http";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {ImageEntryComponent} from "./components/file-upload/image-entry/image-entry.component";
 
 @NgModule({
   declarations: [
@@ -15,6 +16,7 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
         HttpClientModule,
         FormsModule,
         ReactiveFormsModule,
+        ImageEntryComponent,
     ],
   providers: [],
   bootstrap: [AppComponent]
