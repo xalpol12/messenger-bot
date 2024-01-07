@@ -12,8 +12,7 @@ import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, 
 })
 export class FileUploadComponent implements OnInit {
 
-  selectedImages?: FileList;
-  currentFile?: File;
+  selectedFile?: File;
   imageDetailsForm: FormGroup;
   progress = 0;
   message = '';
@@ -23,8 +22,8 @@ export class FileUploadComponent implements OnInit {
   constructor(private uploadService: ImageUploadService,
               private fb: FormBuilder) {
     this.imageDetailsForm = this.fb.group({
-      imageName: [null, [Validators.required, Validators.maxLength(80)]],
-      imageUrl: [null, [Validators.required, this.uriValidator()]]
+      name: [null, [Validators.required, Validators.maxLength(80)]],
+      customUri: [null, [Validators.required, this.uriValidator()]]
     })
   }
 
@@ -37,47 +36,41 @@ export class FileUploadComponent implements OnInit {
   }
 
   selectFile(event: any): void {
-    this.selectedImages = event.target.files;
+    this.selectedFile = event.target.files.item(0);
   }
 
   upload(): void {
     this.progress = 0;
 
-    if (this.selectedImages && this.imageDetailsForm.valid) {
-      const file: File | null = this.selectedImages.item(0);
+    if (this.imageDetailsForm.valid && this.selectedFile) {
+      const formData = new FormData();
 
-      if (file) {
-        this.currentFile = file;
-        const formData = new FormData();
+      formData.append('file', this.selectedFile);
+      formData.append('fileDetails', new Blob([JSON.stringify(this.imageDetailsForm.value)], { type: 'application/json' }));
 
-        formData.append('file', file);
-        formData.append('fileDetails', new Blob([JSON.stringify(this.imageDetailsForm.value)], { type: 'application/json'}));
-
-        this.uploadService.upload(formData).subscribe({
-          next: (event: any) => {
-            if (event.type === HttpEventType.UploadProgress) {
-              this.progress = Math.round(100 * event.loaded / event.total);
-            } else if (event instanceof HttpResponse) {
-              this.message = event.body.message;
-              this.imageInfos = this.uploadService.getImagesInfo();
-            }
-          },
-          error: (err: any) => {
-            console.log(err);
-            this.progress = 0;
-
-            if (err.error && err.error.message) {
-              this.message = err.error.message;
-            } else {
-              this.message = 'Could not upload file!';
-            }
-
-            this.currentFile = undefined;
+      this.uploadService.upload(formData).subscribe({
+        next: (event: any) => {
+          if (event.type === HttpEventType.UploadProgress) {
+            this.progress = Math.round(100 * event.loaded / event.total);
+          } else if (event instanceof HttpResponse) {
+            this.message = event.body.message;
+            this.imageInfos = this.uploadService.getImagesInfo();
           }
-        });
-      }
+        },
+        error: (err: any) => {
+          console.log(err);
+          this.progress = 0;
+
+          if (err.error && err.error.message) {
+            this.message = err.error.message;
+          } else {
+            this.message = 'Could not upload file!';
+          }
+
+          this.selectedFile = undefined;
+        }
+      });
     }
-    this.selectedImages = undefined;
   }
 
   uriValidator(): ValidatorFn {
