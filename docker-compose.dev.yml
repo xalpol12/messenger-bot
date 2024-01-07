@@ -1,34 +1,43 @@
 version: '3.8'
 services:
-  messenger-bot:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: development
-    environment:
-      - BASE_SERVER_ADDRESS=http://localhost:8080
-      - SPRING_PROFILES_ACTIVE=docker
-      - MESSENGER_APP_VERIFICATION_TOKEN=
-      - MESSENGER_APP_SECRET_KEY=
-    ports:
-      - "18080:8080"
-    volumes:
-      - ./:/app
-    depends_on:
-      - pg-db
-    networks:
-      - db-network
+  # messenger-bot:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.backend
+  #     target: development
+  #   environment:
+  #     - BASE_SERVER_ADDRESS=http://localhost:8080
+  #     - SPRING_PROFILES_ACTIVE=docker
+  #     - MESSENGER_APP_VERIFICATION_TOKEN=
+  #     - MESSENGER_APP_SECRET_KEY=
+  #   ports:
+  #     - '18080:8080'
+  #   volumes:
+  #     - ./:/app
+  #   depends_on:
+  #     - pg-db
+  #   networks:
+  #     - db-network
 
-  pg-db:
-    image: postgres:alpine
+  # pg-db:
+  #   image: postgres:alpine
+  #   ports:
+  #     - '15432:5432'
+  #   environment:
+  #     - 'POSTGRES_DB=ms-bot'
+  #     - 'POSTGRES_USER=postgres'
+  #     - 'POSTGRES_PASSWORD=admin'
+  #   networks:
+  #     - db-network
+
+  bot-dashboard:
+    build: 
+      context: .
+      dockerfile: Dockerfile.frontend
+      target: development
     ports:
-      - '15432:5432'
-    environment:
-      - 'POSTGRES_DB=ms-bot'
-      - 'POSTGRES_USER=postgres'
-      - 'POSTGRES_PASSWORD=admin'
-    networks:
-      - db-network
+      - "14200:4200"
+
 
 networks:
   db-network:

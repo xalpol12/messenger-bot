@@ -1,0 +1,17 @@
+FROM node:current-alpine as base
+WORKDIR /app/frontend
+COPY ./frontend/package.json ./frontend/package-lock.json ./
+RUN npm ci
+COPY . .
+
+FROM base as development
+CMD ["ng", "serve", "--host", "0.0.0.0"]
+
+FROM base as build
+RUN npm run build
+RUN npm prune --production
+
+FROM build as production
+FROM nginx:stable-alpine
+COPY ./frontend/nginx.conf /etc/nginx/nginx.conf
+COPY --from=build /app/frontend/dist /usr/share/nginx/html
