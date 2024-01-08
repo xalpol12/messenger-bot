@@ -25,8 +25,10 @@ class CrudExceptionHandlerTest {
 
         ResponseEntity<String> response = exceptionHandler.handleImageAccessException(exception);
 
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals(message, response.getBody());
+        assertAll(() -> {
+            assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+            assertEquals(message, response.getBody());
+        });
     }
 
     @Test
@@ -36,8 +38,10 @@ class CrudExceptionHandlerTest {
 
         ResponseEntity<String> response = exceptionHandler.handleImageNotFoundException(exception);
 
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertEquals(message, response.getBody());
+        assertAll(() -> {
+            assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+            assertEquals(message, response.getBody());
+        });
     }
 
     @Test

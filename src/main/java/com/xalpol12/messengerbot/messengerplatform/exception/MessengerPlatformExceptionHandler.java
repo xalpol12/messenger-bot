@@ -26,7 +26,7 @@ public class MessengerPlatformExceptionHandler {
             IncorrectWebhookModeException.class,
             IncorrectTokenException.class
     })
-    public ResponseEntity<?> handleWebhookVerificationExceptions(RuntimeException e) {
+    public ResponseEntity<String> handleWebhookVerificationExceptions(RuntimeException e) {
         String message = extractMessageAndLog(e);
         return new ResponseEntity<>(message, HttpStatus.FORBIDDEN);
     }
@@ -38,7 +38,7 @@ public class MessengerPlatformExceptionHandler {
      * and error code 400
      */
     @ExceptionHandler(value = {RequestSignatureValidationException.class})
-    public ResponseEntity<?> handleHashValidationException(RequestSignatureValidationException e) {
+    public ResponseEntity<String> handleHashValidationException(RequestSignatureValidationException e) {
         String message = extractMessageAndLog(e);
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
@@ -50,7 +50,7 @@ public class MessengerPlatformExceptionHandler {
      * and error code 404
      */
     @ExceptionHandler(value = {IncorrectWebhookObjectTypeException.class})
-    public ResponseEntity<?> handleIncorrectWebhookObjectType(IncorrectWebhookObjectTypeException e) {
+    public ResponseEntity<String> handleIncorrectWebhookObjectType(IncorrectWebhookObjectTypeException e) {
         String message = extractMessageAndLog(e);
         return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
     }
