@@ -56,7 +56,6 @@ class ImageControllerTest {
         validateMockitoUsage();
     }
 
-
     @Test
     public void displayImageData_returnImageData_expect200() throws Exception {
         String uri = "uri";
@@ -107,7 +106,6 @@ class ImageControllerTest {
     }
 
     @Test
-    //TODO: Fix
     public void uploadImage_returnCreatedURL_expect201() throws Exception {
         String endpointPath = ImageController.ImagePath.ROOT;
         ImageUploadDetails fileDetails = ImageUploadDetails.builder().build();
@@ -144,7 +142,6 @@ class ImageControllerTest {
     }
 
     @Test
-    //TODO: Fix
     public void updateImage_expect200() throws Exception {
         String uri = "uri";
         ImageUploadDetails details = ImageUploadDetails.builder().build();
