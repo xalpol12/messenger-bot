@@ -166,6 +166,35 @@ class ImageMapperTest {
     }
 
     @Test
+    public void mapToImageDTO_shouldReturnImageDTO_outsideControllerContext() {
+        String baseUrl = "localhost:8080";
+        String customUri = "custom-uri";
+        String expectedPath = baseUrl + ImageController.ImagePath.ROOT + "/" + customUri;
+        Image image = Image.builder()
+                .id("id")
+                .customUri(customUri)
+                .name("name")
+                .type("image/jpeg")
+                .data(new byte[0])
+                .createdAt(LocalDateTime.MIN)
+                .modifiedAt(LocalDateTime.MIN)
+                .scheduledMessages(null)
+                .build();
+
+        ImageDTO result = imageMapper.mapToImageDTO(image, baseUrl);
+
+        assertAll(() -> {
+            assertEquals(image.getId(), result.getImageId());
+            assertEquals(image.getName(), result.getName());
+            assertEquals(expectedPath, result.getUrl());
+            assertEquals(image.getType(), result.getType());
+            assertEquals(image.getData().length, result.getSize());
+            assertEquals(image.getCreatedAt(), result.getCreatedAt());
+            assertEquals(image.getModifiedAt(), result.getLastModifiedAt());
+        });
+    }
+
+    @Test
     void updateImage_shouldMapSourceToDestination() {
         Image source = new Image();
         Image destination = new Image();
