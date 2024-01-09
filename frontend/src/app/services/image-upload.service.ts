@@ -1,17 +1,19 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpEvent, HttpHeaders, HttpRequest} from "@angular/common/http";
 import {Observable} from "rxjs";
+import { environment } from '../../environment/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ImageUploadService {
-  private baseUrl = "http://localhost:8080/api/image";
+  private base = environment.API_BASE_URL;
+  private imageUrl = this.base + "/api/image";
 
   constructor(private http: HttpClient) { }
 
   upload(formData: FormData): Observable<HttpEvent<any>> {
-    const req = new HttpRequest('POST', this.baseUrl, formData, {
+    const req = new HttpRequest('POST', this.imageUrl, formData, {
       reportProgress: true,
       responseType: 'json',
     });
@@ -20,6 +22,6 @@ export class ImageUploadService {
   }
 
   getImagesInfo(): Observable<any> {
-    return this.http.get(`${this.baseUrl}`+'s');
+    return this.http.get(`${this.imageUrl}`+'s');
   }
 }
