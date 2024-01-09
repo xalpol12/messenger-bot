@@ -45,6 +45,7 @@ public class WebhookController {
         webhookService.process(body);
         return new ResponseEntity<>("EVENT_RECEIVED", HttpStatus.OK);
     }
+
     @Operation(
             summary = "Receive new webhook subscription",
             description = "Receives webhook from Messenger Platform API")
