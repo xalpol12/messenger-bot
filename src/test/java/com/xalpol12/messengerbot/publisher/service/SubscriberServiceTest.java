@@ -3,14 +3,10 @@ package com.xalpol12.messengerbot.publisher.service;
 import com.xalpol12.messengerbot.publisher.model.Subscriber;
 import com.xalpol12.messengerbot.publisher.repository.SubscriberRepository;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.Set;
 
@@ -25,12 +21,6 @@ class SubscriberServiceTest {
     private SubscriberService subscriberService;
 
     private AutoCloseable openMocks;
-
-    @BeforeAll
-    public static void setup() {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
-    }
 
     @BeforeEach
     public void init() {
