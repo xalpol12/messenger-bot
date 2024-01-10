@@ -7,6 +7,8 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {ImageEntryComponent} from "./components/file-upload/image-entry/image-entry.component";
 import {NgOptimizedImage} from "@angular/common";
 import {NavbarComponent} from "./components/navbar/navbar.component";
+import {RouterModule, RouterOutlet, Routes} from "@angular/router";
+import {routes} from "./app.routes";
 
 @NgModule({
   declarations: [
@@ -21,7 +23,9 @@ import {NavbarComponent} from "./components/navbar/navbar.component";
     ImageEntryComponent,
     NgOptimizedImage,
     NavbarComponent,
+    RouterModule.forRoot(routes)
   ],
+  exports: [RouterModule],
   providers: [],
   bootstrap: [AppComponent]
 })
