@@ -25,8 +25,10 @@ class CrudExceptionHandlerTest {
 
         ResponseEntity<String> response = exceptionHandler.handleImageAccessException(exception);
 
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals(message, response.getBody());
+        assertAll(() -> {
+            assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+            assertEquals(message, response.getBody());
+        });
     }
 
     @Test
@@ -36,8 +38,10 @@ class CrudExceptionHandlerTest {
 
         ResponseEntity<String> response = exceptionHandler.handleImageNotFoundException(exception);
 
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertEquals(message, response.getBody());
+        assertAll(() -> {
+            assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+            assertEquals(message, response.getBody());
+        });
     }
 
     @Test
@@ -48,5 +52,13 @@ class CrudExceptionHandlerTest {
         ResponseEntity<String> response = exceptionHandler.handlePSQLException(exception);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    public void handlePSQLException_otherErrorCodeEncountered() {
+        PSQLState uniqueViolation = PSQLState.IO_ERROR;
+        PSQLException exception = new PSQLException("Message", uniqueViolation);
+
+        assertThrows(PSQLException.class, () -> exceptionHandler.handlePSQLException(exception));
     }
 }

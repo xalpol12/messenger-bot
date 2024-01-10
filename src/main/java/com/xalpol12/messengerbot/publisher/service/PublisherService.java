@@ -5,6 +5,7 @@ import com.xalpol12.messengerbot.crud.model.ScheduledMessage;
 import com.xalpol12.messengerbot.crud.model.dto.image.ImageDTO;
 import com.xalpol12.messengerbot.crud.model.mapper.ImageMapper;
 import com.xalpol12.messengerbot.crud.repository.ScheduledMessageRepository;
+import com.xalpol12.messengerbot.publisher.exception.MessagePublishingException;
 import com.xalpol12.messengerbot.publisher.model.Subscriber;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -109,7 +110,11 @@ public class PublisherService {
 
     private void sendMessage(Subscriber subscriber, String message) {
         String userId = subscriber.getUserId();
-        facebookPageAPIService.sendMessage(userId, message);
+        try {
+            facebookPageAPIService.sendMessage(userId, message);
+        } catch (MessagePublishingException e) {
+            log.error(e.getMessage());
+        }
     }
 
     private String extractMessageWithImageLink(ScheduledMessage scheduledMessage) {

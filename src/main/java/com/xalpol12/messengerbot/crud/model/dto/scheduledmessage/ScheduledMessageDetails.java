@@ -2,13 +2,19 @@ package com.xalpol12.messengerbot.crud.model.dto.scheduledmessage;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Nullable;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Data Access Object created for use
  * in create and update operations on ScheduledMessage entity.
  */
 @Schema(description = "Scheduled message input DTO")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
 public class ScheduledMessageDetails {
 

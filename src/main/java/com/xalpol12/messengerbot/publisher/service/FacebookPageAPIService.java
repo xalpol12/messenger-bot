@@ -3,10 +3,10 @@ package com.xalpol12.messengerbot.publisher.service;
 import com.xalpol12.messengerbot.messengerplatform.config.secrets.SecretsConfig;
 import com.xalpol12.messengerbot.messengerplatform.model.dto.MessageParams;
 import com.xalpol12.messengerbot.publisher.client.MessengerAPIClient;
+import com.xalpol12.messengerbot.publisher.config.FacebookVariables;
 import com.xalpol12.messengerbot.publisher.exception.MessagePublishingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -22,12 +22,7 @@ public class FacebookPageAPIService {
 
     private final String MESSAGING_TYPE = "RESPONSE";
 
-    @Value("${facebook.api.version}")
-    private String API_VERSION;
-
-    @Value("${facebook.page.id}")
-    private String PAGE_ID; //TODO: add support for multiple facebook pages
-
+    private final FacebookVariables fbVars;
     private final SecretsConfig secretsConfig;
     private final MessengerAPIClient messengerClient;
 
@@ -38,7 +33,7 @@ public class FacebookPageAPIService {
      *               will be sent to
      * @param message Message content that the user will receive
      */
-    public void sendMessage(String userId, String message) {
+    public void sendMessage(String userId, String message) throws MessagePublishingException {
         MessageParams params = MessageParams.builder()
                 .recipient(userId)
                 .message(message)
@@ -47,7 +42,7 @@ public class FacebookPageAPIService {
                 .build();
 
         try {
-            messengerClient.sendMessage(API_VERSION, PAGE_ID, params);
+            messengerClient.sendMessage(fbVars.getApiVersion(), fbVars.getPageId(), params);
             log.info("User: {} received message: {}", userId, message);
         } catch (IOException e) {
             throw new MessagePublishingException("Could not publish message to user with id: "

@@ -5,9 +5,6 @@ package com.xalpol12.messengerbot.crud.exception;
  * ScheduledMessage entity access in the database.
  */
 public class ScheduledMessageNotFoundException extends RuntimeException {
-    public ScheduledMessageNotFoundException() {
-        super();
-    }
 
     public ScheduledMessageNotFoundException(String message) {
         super(message);
