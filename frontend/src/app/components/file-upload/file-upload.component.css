@@ -9,3 +9,8 @@
 .preview {
   max-width: 200px;
 }
+
+.full-width {
+  width: 100%;
+  height: auto;
+}

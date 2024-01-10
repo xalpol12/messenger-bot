@@ -12,7 +12,9 @@ import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, 
 })
 export class FileUploadComponent implements OnInit {
 
-  selectedFile?: File;
+  fileReader: FileReader = new FileReader();
+  selectedFile: File | undefined;
+  selectedFilePreview?: string | ArrayBuffer | null;
   imageDetailsForm: FormGroup;
   progress = 0;
   message = '';
@@ -29,6 +31,10 @@ export class FileUploadComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadImagesInfo();
+
+    this.fileReader.onload = () => {
+      this.selectedFilePreview = this.fileReader.result;
+    }
   }
 
   loadImagesInfo(): void {
@@ -37,6 +43,11 @@ export class FileUploadComponent implements OnInit {
 
   selectFile(event: any): void {
     this.selectedFile = event.target.files.item(0);
+    if (this.selectedFile !== undefined) this.fileReader.readAsDataURL(this.selectedFile);
+  }
+
+  cancelSelectedFile(): void {
+    this.selectedFile = undefined;
   }
 
   upload(): void {

@@ -5,6 +5,7 @@ import {BrowserModule} from "@angular/platform-browser";
 import {HttpClientModule} from "@angular/common/http";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {ImageEntryComponent} from "./components/file-upload/image-entry/image-entry.component";
+import {NgOptimizedImage} from "@angular/common";
 
 @NgModule({
   declarations: [
@@ -17,6 +18,7 @@ import {ImageEntryComponent} from "./components/file-upload/image-entry/image-en
         FormsModule,
         ReactiveFormsModule,
         ImageEntryComponent,
+        NgOptimizedImage,
     ],
   providers: [],
   bootstrap: [AppComponent]
