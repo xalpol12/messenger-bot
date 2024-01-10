@@ -6,20 +6,22 @@ import {HttpClientModule} from "@angular/common/http";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {ImageEntryComponent} from "./components/file-upload/image-entry/image-entry.component";
 import {NgOptimizedImage} from "@angular/common";
+import {NavbarComponent} from "./components/navbar/navbar.component";
 
 @NgModule({
   declarations: [
     AppComponent,
     FileUploadComponent,
   ],
-    imports: [
-        BrowserModule,
-        HttpClientModule,
-        FormsModule,
-        ReactiveFormsModule,
-        ImageEntryComponent,
-        NgOptimizedImage,
-    ],
+  imports: [
+    BrowserModule,
+    HttpClientModule,
+    FormsModule,
+    ReactiveFormsModule,
+    ImageEntryComponent,
+    NgOptimizedImage,
+    NavbarComponent,
+  ],
   providers: [],
   bootstrap: [AppComponent]
 })
