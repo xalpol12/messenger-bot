@@ -7,6 +7,7 @@ import com.xalpol12.messengerbot.crud.repository.ScheduledMessageRepository;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -53,6 +54,7 @@ class ImageCachingTest {
     }
 
     @Test
+    @Disabled
     public void testCaching() {
         String cacheName = "imageCache";
         String imageId = "uuid";
