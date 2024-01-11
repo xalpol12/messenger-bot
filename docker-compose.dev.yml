@@ -1,8 +1,30 @@
 version: '3.8'
 services:
-  messenger-dashboard:
-    container_name: messenger-dashboard-app
-    image: messenger-dashboard-image
+
+  messenger-bot:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+      target: development
+    environment:
+      - BASE_SERVER_ADDRESS=http://localhost:8080
+      - SPRING_PROFILES_ACTIVE=docker
+      - MESSENGER_APP_VERIFICATION_TOKEN=
+      - MESSENGER_APP_SECRET_KEY=
+    ports:
+      - 18080:8080
+    expose:
+      - 8080
+    volumes:
+      - ./:/app
+    depends_on:
+      - pg-db
+    networks:
+      - db-network
+
+  bot-dashboard:
+    container_name: bot-dashboard-app
+    image: bot-dashboard-image
     build: 
       context: ./frontend
       dockerfile: Dockerfile.frontend
@@ -13,46 +35,16 @@ services:
     networks:
       - db-network
 
-  # messenger-bot:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile.backend
-  #     target: development
-  #   environment:
-  #     - BASE_SERVER_ADDRESS=http://localhost:8080
-  #     - SPRING_PROFILES_ACTIVE=docker
-  #     - MESSENGER_APP_VERIFICATION_TOKEN=
-  #     - MESSENGER_APP_SECRET_KEY=
-  #   ports:
-  #     - 18080:8080
-  #   volumes:
-  #     - ./:/app
-  #   depends_on:
-  #     - pg-db
-  #   networks:
-  #     - db-network
-
-  # pg-db:
-  #   image: postgres:alpine
-  #   ports:
-  #     - 15432:5432
-  #   environment:
-  #     - 'POSTGRES_DB=ms-bot'
-  #     - 'POSTGRES_USER=postgres'
-  #     - 'POSTGRES_PASSWORD=admin'
-  #   networks:
-  #     - db-network
-
-#   bot-dashboard:
-#     container_name: bot-dashboard-app
-#     image: bot-dashboard-app-v1
-#     build: 
-#       context: ./frontend
-#       dockerfile: Dockerfile.frontend
-#       target: production
-#     ports:
-#       - 14200:80
-
+  pg-db:
+    image: postgres:alpine
+    ports:
+      - 15432:5432
+    environment:
+      - 'POSTGRES_DB=ms-bot'
+      - 'POSTGRES_USER=postgres'
+      - 'POSTGRES_PASSWORD=admin'
+    networks:
+      - db-network
 
 networks:
   db-network:

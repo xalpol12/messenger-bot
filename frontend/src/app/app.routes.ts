@@ -13,7 +13,7 @@ export const routes: Routes = [
   {
     path: 'images',
     component: FileUploadComponent,
-    title: 'File Upload'
+    title: 'File Upload',
   },
   {
     path: 'scheduler',
