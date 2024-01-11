@@ -9,6 +9,7 @@ import {NgOptimizedImage} from "@angular/common";
 import {NavbarComponent} from "./core/components/navbar/navbar.component";
 import {RouterModule} from "@angular/router";
 import {routes} from "./app.routes";
+import {ImagePreviewComponent} from "./features/components/file-upload/image-preview/image-preview.component";
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import {routes} from "./app.routes";
     ImageEntryComponent,
     NgOptimizedImage,
     NavbarComponent,
-    RouterModule.forRoot(routes)
+    RouterModule.forRoot(routes),
+    ImagePreviewComponent
   ],
   exports: [RouterModule],
   providers: [],

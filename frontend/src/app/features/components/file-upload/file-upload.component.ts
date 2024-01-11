@@ -1,9 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Observable} from "rxjs";
 import {ImageUploadService} from "../../services/image-upload.service";
 import {HttpEventType, HttpResponse} from "@angular/common/http";
-import {ImageFormData, ImageInfo} from "../../models/image.model";
+import {ImageInfo} from "../../models/image.model";
 import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators} from "@angular/forms";
+import {ImagePreviewComponent} from "./image-preview/image-preview.component";
 
 @Component({
   selector: 'app-file-upload',
@@ -12,9 +13,9 @@ import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, 
 })
 export class FileUploadComponent implements OnInit {
 
-  fileReader: FileReader = new FileReader();
+  @ViewChild('fileInput') fileInput!: ElementRef;
+
   selectedFile: File | undefined;
-  selectedFilePreview?: string | ArrayBuffer | null;
   imageDetailsForm: FormGroup;
   progress = 0;
   message = '';
@@ -31,10 +32,6 @@ export class FileUploadComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadImagesInfo();
-
-    this.fileReader.onload = () => {
-      this.selectedFilePreview = this.fileReader.result;
-    }
   }
 
   loadImagesInfo(): void {
@@ -43,11 +40,11 @@ export class FileUploadComponent implements OnInit {
 
   selectFile(event: any): void {
     this.selectedFile = event.target.files.item(0);
-    if (this.selectedFile !== undefined) this.fileReader.readAsDataURL(this.selectedFile);
   }
 
   cancelSelectedFile(): void {
     this.selectedFile = undefined;
+    this.fileInput.nativeElement.value = '';
   }
 
   upload(): void {

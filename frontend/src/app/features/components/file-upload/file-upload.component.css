@@ -5,12 +5,3 @@
 .error-input {
   border: 1px solid red;
 }
-
-.preview {
-  max-width: 200px;
-}
-
-.full-width {
-  width: 100%;
-  height: auto;
-}
