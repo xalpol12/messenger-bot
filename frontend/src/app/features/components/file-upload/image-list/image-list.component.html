@@ -1,0 +1,15 @@
+<div class="card mt-3">
+  <div class="card-header">
+    <div class="d-flex justify-content-between align-items-center">
+      <span>List of images</span>
+      <button type="button" class="btn btn-outline-success btn-sm" (click)="loadImagesInfo()">
+        <i class="bi bi-arrow-clockwise"></i> Refresh
+      </button>
+    </div>
+  </div>
+  <ul class="list-group list-group-flush">
+    <li *ngFor="let imageInfo of imageInfos | async" class="list-group-item">
+      <app-image-entry [imageEntry]="imageInfo"></app-image-entry>
+    </li>
+  </ul>
+</div>

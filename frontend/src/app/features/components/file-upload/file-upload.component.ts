@@ -1,6 +1,6 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Observable} from "rxjs";
-import {ImageUploadService} from "../../services/image-upload.service";
+import {ImageService} from "../../services/image.service";
 import {HttpEventType, HttpResponse} from "@angular/common/http";
 import {ImageInfo} from "../../models/image.model";
 import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators} from "@angular/forms";
@@ -11,7 +11,7 @@ import {ImagePreviewComponent} from "./image-preview/image-preview.component";
   templateUrl: './file-upload.component.html',
   styleUrl: './file-upload.component.css'
 })
-export class FileUploadComponent implements OnInit {
+export class FileUploadComponent {
 
   @ViewChild('fileInput') fileInput!: ElementRef;
 
@@ -20,22 +20,12 @@ export class FileUploadComponent implements OnInit {
   progress = 0;
   message = '';
 
-  imageInfos?: Observable<ImageInfo[]>;
-
-  constructor(private uploadService: ImageUploadService,
+  constructor(private imageService: ImageService,
               private fb: FormBuilder) {
     this.imageDetailsForm = this.fb.group({
       name: [null, [Validators.required, Validators.maxLength(80)]],
       customUri: [null, [Validators.required, this.uriValidator()]]
     })
-  }
-
-  ngOnInit(): void {
-    this.loadImagesInfo();
-  }
-
-  loadImagesInfo(): void {
-    this.imageInfos = this.uploadService.getImagesInfo();
   }
 
   selectFile(event: any): void {
@@ -56,13 +46,12 @@ export class FileUploadComponent implements OnInit {
       formData.append('file', this.selectedFile);
       formData.append('fileDetails', new Blob([JSON.stringify(this.imageDetailsForm.value)], { type: 'application/json' }));
 
-      this.uploadService.upload(formData).subscribe({
+      this.imageService.upload(formData).subscribe({
         next: (event: any) => {
           if (event.type === HttpEventType.UploadProgress) {
             this.progress = Math.round(100 * event.loaded / event.total);
           } else if (event instanceof HttpResponse) {
             this.message = event.body.message;
-            this.imageInfos = this.uploadService.getImagesInfo();
           }
         },
         error: (err: any) => {

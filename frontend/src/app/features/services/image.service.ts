@@ -6,7 +6,7 @@ import { environment } from '../../../environment/environment';
 @Injectable({
   providedIn: 'root'
 })
-export class ImageUploadService {
+export class ImageService {
   private base = environment.API_BASE_URL;
   private imageUrl = this.base + "/api/image";
 

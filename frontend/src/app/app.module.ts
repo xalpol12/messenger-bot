@@ -4,12 +4,13 @@ import {FileUploadComponent} from "./features/components/file-upload/file-upload
 import {BrowserModule} from "@angular/platform-browser";
 import {HttpClientModule} from "@angular/common/http";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {ImageEntryComponent} from "./features/components/file-upload/image-entry/image-entry.component";
+import {ImageEntryComponent} from "./features/components/file-upload/image-list/image-entry/image-entry.component";
 import {NgOptimizedImage} from "@angular/common";
 import {NavbarComponent} from "./core/components/navbar/navbar.component";
 import {RouterModule} from "@angular/router";
 import {routes} from "./app.routes";
 import {ImagePreviewComponent} from "./features/components/file-upload/image-preview/image-preview.component";
+import {ImageListComponent} from "./features/components/file-upload/image-list/image-list.component";
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import {ImagePreviewComponent} from "./features/components/file-upload/image-pre
     NgOptimizedImage,
     NavbarComponent,
     RouterModule.forRoot(routes),
-    ImagePreviewComponent
+    ImagePreviewComponent,
+    ImageListComponent
   ],
   exports: [RouterModule],
   providers: [],
