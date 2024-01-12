@@ -1,7 +1,7 @@
 To fix:
 - [ ] split main file-upload component into smaller components
-  - [ ] image previewer
-  - [ ] image list
+  - [x] image previewer
+  - [x] image list
 - [ ] "delete all" button - with "are you sure?" modal
 - [ ] form validations div does not display
 - [ ] rescale selected image preview (max 200 width)
