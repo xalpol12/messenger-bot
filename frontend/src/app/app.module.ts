@@ -11,6 +11,7 @@ import {RouterModule} from "@angular/router";
 import {routes} from "./app.routes";
 import {ImagePreviewComponent} from "./features/components/file-upload/image-preview/image-preview.component";
 import {ImageListComponent} from "./features/components/file-upload/image-list/image-list.component";
+import {ImageInputComponent} from "./features/components/file-upload/image-input/image-input.component";
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import {ImageListComponent} from "./features/components/file-upload/image-list/i
     NavbarComponent,
     RouterModule.forRoot(routes),
     ImagePreviewComponent,
-    ImageListComponent
+    ImageListComponent,
+    ImageInputComponent
   ],
   exports: [RouterModule],
   providers: [],
