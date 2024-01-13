@@ -49,6 +49,7 @@ export class ImageListComponent implements OnInit {
 
   confirmDelete() {
     this.showConfirmationModal = true;
+    console.log('Confirm delete dialog modal: ', this.showConfirmationModal);
   }
 
   closeConfirmationModal() {
