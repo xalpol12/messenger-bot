@@ -32,7 +32,12 @@
           <a class="nav-link"
              href="https://github.com/xalpol12/messenger-bot/issues"
              (click)="isMenuCollapsed = true">
-            <i class="bi bi-flag"><title>Report a bug</title></i>
+            <div *ngIf="!isNavbarHidden">
+              <i class="bi bi-flag"><title>Report a bug</title></i>
+            </div>
+            <div *ngIf="isNavbarHidden">
+              Report a bug
+            </div>
           </a>
         </li>
       </ul>
