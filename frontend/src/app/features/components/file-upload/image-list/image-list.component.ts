@@ -1,9 +1,10 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit, TemplateRef} from '@angular/core';
 import {AsyncPipe, NgClass, NgForOf, NgIf} from "@angular/common";
 import {ImageEntryComponent} from "./image-entry/image-entry.component";
 import {Observable} from "rxjs";
 import {ImageInfo} from "../../../models/image.model";
 import {ImageService} from "../../../services/image.service";
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
   selector: 'app-image-list',
@@ -22,7 +23,8 @@ export class ImageListComponent implements OnInit {
 
   imageInfos?: Observable<ImageInfo[]>;
 
-  showConfirmationModal = false;
+  modalService = inject(NgbModal);
+
 
   constructor(private imageService: ImageService) {
   }
@@ -47,12 +49,7 @@ export class ImageListComponent implements OnInit {
       });
   }
 
-  confirmDelete() {
-    this.showConfirmationModal = true;
-    console.log('Confirm delete dialog modal: ', this.showConfirmationModal);
-  }
-
-  closeConfirmationModal() {
-    this.showConfirmationModal = false;
+  open(content: TemplateRef<any>) {
+    this.modalService.open(content, { ariaLabelledBy: 'modal-confirm-deletion'});
   }
 }
