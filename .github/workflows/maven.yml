@@ -9,6 +9,15 @@ on:
 jobs:
   java-tests:
     runs-on: ubuntu-latest
+    services: 
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: ms-bot
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: admin
+        ports:
+          - 5432:5432
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 17
