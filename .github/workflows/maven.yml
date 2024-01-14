@@ -25,7 +25,7 @@ jobs:
       # - name: Run the Maven test
       #   run: mvn test
 
-      -name: Build project with Maven
+      - name: Build project with Maven
         run: mvn -B package 
  
       - name: Update dependency graph
