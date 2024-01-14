@@ -1,16 +1,19 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ImageInfo} from "../../../../models/image.model";
 import {NgIf} from "@angular/common";
+import {NgbCollapse} from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
   selector: 'app-image-entry',
   standalone: true,
   imports: [
-    NgIf
+    NgIf,
+    NgbCollapse
   ],
   templateUrl: './image-entry.component.html',
   styleUrl: './image-entry.component.css'
 })
 export class ImageEntryComponent {
   @Input() imageEntry: ImageInfo | undefined;
+  @Input() isExpanded: boolean = false;
 }

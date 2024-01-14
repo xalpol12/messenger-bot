@@ -22,12 +22,12 @@ import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 export class ImageListComponent implements OnInit {
 
   imageInfos?: Observable<ImageInfo[]>;
+  selectedImageInfo: any;
 
   modalService = inject(NgbModal);
 
 
-  constructor(private imageService: ImageService) {
-  }
+  constructor(private imageService: ImageService) { }
 
   ngOnInit(): void {
     this.loadImagesInfo();
@@ -47,6 +47,14 @@ export class ImageListComponent implements OnInit {
           console.log('There was an error!', err);
         }
       });
+  }
+
+  toggleDetails(imageInfo: any) {
+    if (this.selectedImageInfo === imageInfo) {
+      this.selectedImageInfo = null;
+    } else {
+      this.selectedImageInfo = imageInfo;
+    }
   }
 
   open(content: TemplateRef<any>) {

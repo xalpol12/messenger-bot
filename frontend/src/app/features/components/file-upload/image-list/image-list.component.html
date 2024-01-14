@@ -14,8 +14,15 @@
   </div>
 
   <ul class="list-group list-group-flush">
-    <li *ngFor="let imageInfo of imageInfos | async" class="list-group-item">
-      <app-image-entry [imageEntry]="imageInfo"></app-image-entry>
+    <li *ngFor="let imageInfo of imageInfos | async"
+        class="list-group-item clickable"
+        [class.active]="selectedImageInfo === imageInfo"
+        (click)="toggleDetails(imageInfo)"
+    >
+      <app-image-entry
+        [imageEntry]="imageInfo"
+        [isExpanded]="imageInfo !== selectedImageInfo"
+      ></app-image-entry>
     </li>
   </ul>
 
