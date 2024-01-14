@@ -3,7 +3,7 @@
   <!-- TODO: route to separate page that will contain a full-screen info -->
   <a href="{{ imageEntry.url }}">{{ imageEntry.name }}</a>
 
-  <div [ngbCollapse]="isExpanded" class="card">
+  <div [ngbCollapse]="!isExpanded" class="card">
     <div class="card-body">
       <p class="align-items-center">Expanded info tab</p>
     </div>

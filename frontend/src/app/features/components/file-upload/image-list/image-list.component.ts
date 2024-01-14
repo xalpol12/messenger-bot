@@ -50,11 +50,9 @@ export class ImageListComponent implements OnInit {
   }
 
   toggleDetails(imageInfo: any) {
-    if (this.selectedImageInfo === imageInfo) {
-      this.selectedImageInfo = null;
-    } else {
-      this.selectedImageInfo = imageInfo;
-    }
+    this.selectedImageInfo === imageInfo
+      ? this.selectedImageInfo = null
+      : this.selectedImageInfo = imageInfo;
   }
 
   open(content: TemplateRef<any>) {
