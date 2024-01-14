@@ -19,6 +19,13 @@ jobs:
           architecture: x64
           cache: maven
 
+      - name: Cache the Macen packages to speed up build
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
       # - name: Run the Maven verify phase
       #   run: mvn --batch-mode --update-snapshots verify
 
