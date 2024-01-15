@@ -141,6 +141,18 @@ class ImageControllerTest {
         verify(imageService, times(1)).deleteImage(uri);
     }
 
+
+    @Test
+    public void deleteAllImages_expect204() throws Exception {
+        String endpointPath = ImageController.ImagePath.ROOT + "s";
+
+        this.mockMvc
+                .perform(delete(endpointPath))
+                .andExpect(status().isNoContent());
+
+        verify(imageService, times(1)).deleteAllImages();
+    }
+
     @Test
     public void updateImage_expect200() throws Exception {
         String uri = "uri";

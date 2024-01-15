@@ -80,6 +80,16 @@ public interface IImageController {
                                   @PathVariable("uri") String uri);
 
     @Operation(
+            summary = "Delete all images",
+            description = "Deletes all images from the database. " +
+                    "Also deletes all ScheduledImage entities that were associated with any image.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Successfully deleted all Image entities from the database"),
+    })
+    @DeleteMapping(ImagePath.ROOT + "s")
+    ResponseEntity<?> deleteAllImages();
+
+    @Operation(
             summary = "Update image",
             description = "Replaces old entity with the entity created from provided details, retaining the same ID")
     @ApiResponses(value = {

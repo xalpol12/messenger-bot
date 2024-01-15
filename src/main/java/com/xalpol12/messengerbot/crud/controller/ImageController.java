@@ -68,6 +68,12 @@ public class ImageController implements IImageController {
         return ResponseEntity.noContent().build();
     }
 
+    public ResponseEntity<?> deleteAllImages() {
+        log.trace("DELETE /images called");
+        imageService.deleteAllImages();
+        return ResponseEntity.noContent().build();
+    }
+
     public ResponseEntity<?> updateImage(String uri, ImageUploadDetails fileDetails, MultipartFile file) {
         log.trace("PUT image/{uri} called for entity with uri: {}", uri);
         imageService.updateImage(uri, fileDetails, file);

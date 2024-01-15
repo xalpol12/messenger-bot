@@ -112,11 +112,24 @@ public class ImageService {
     public void deleteImage(String id) {
         Image image = findByCustomUriOrId(id);
         List<ScheduledMessage> messages = scheduledMessageRepository.findAllByImageEquals(image);
-        scheduledMessageRepository.deleteAll(messages);
+        scheduledMessageRepository.deleteAllInBatch(messages);
         log.info("All {} scheduled messages associated with image {} " +
                 "have been deleted", messages.size(), id);
         imageRepository.delete(image);
         log.info("Image with identifier: {} has been deleted", id);
+    }
+
+    /**
+     * Deletes all image entities
+     * from the database. Also deletes
+     * all ScheduledMessage entries that
+     * were associated with any Image entity.
+     */
+    @Transactional
+    public void deleteAllImages() {
+        List<ScheduledMessage> messages = scheduledMessageRepository.findAllByImageIsNotNull();
+        scheduledMessageRepository.deleteAllInBatch(messages);
+        imageRepository.deleteAllInBatch(); // avoid deleteAll which leads to N + 1
     }
 
     /**

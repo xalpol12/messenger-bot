@@ -12,4 +12,5 @@ import java.util.List;
 public interface ScheduledMessageRepository extends JpaRepository<ScheduledMessage, Long> {
     List<ScheduledMessage> findAllByScheduledDateBetweenAndSentIsFalse(LocalDateTime start, LocalDateTime end);
     List<ScheduledMessage> findAllByImageEquals(Image image);
+    List<ScheduledMessage> findAllByImageIsNotNull();
 }

@@ -186,8 +186,23 @@ class ImageServiceTest {
         imageService.deleteImage(id);
 
         verify(messageRepository, times(1)).findAllByImageEquals(image);
-        verify(messageRepository, times(1)).deleteAll(messages);
+        verify(messageRepository, times(1)).deleteAllInBatch(messages);
         verify(imageRepository, times(1)).delete(image);
+    }
+
+
+    @Test
+    public void deleteAllImages_shouldCallDeleteAll() {
+        ScheduledMessage message = mock(ScheduledMessage.class);
+        List<ScheduledMessage> messages = List.of(message);
+
+        when(messageRepository.findAllByImageIsNotNull()).thenReturn(messages);
+
+        imageService.deleteAllImages();
+
+        verify(messageRepository, times(1)).findAllByImageIsNotNull();
+        verify(messageRepository, times(1)).deleteAllInBatch(messages);
+        verify(imageRepository, times(1)).deleteAllInBatch();
     }
 
     @Test
