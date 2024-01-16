@@ -1,12 +1,10 @@
 <div *ngIf="imageEntry">
+    <!-- TODO: route to separate page that will contain a full-screen info -->
+    <a href="{{ imageEntry.url }}">{{ imageEntry.name }}</a>
 
-  <!-- TODO: route to separate page that will contain a full-screen info -->
-  <a href="{{ imageEntry.url }}">{{ imageEntry.name }}</a>
-
-  <div [ngbCollapse]="!isExpanded" class="card">
-    <div class="card-body">
-      <p class="align-items-center">Expanded info tab</p>
-    </div>
+  <div *ngIf="isExpanded" class="mb-2"></div>
+  <div [ngbCollapse]="!isExpanded">
+    <app-image-details [imageEntry]="imageEntry"></app-image-details>
   </div>
 
 </div>

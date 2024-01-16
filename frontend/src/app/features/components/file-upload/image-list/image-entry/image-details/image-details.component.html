@@ -1,0 +1,16 @@
+<div class="card">
+  <div class="row">
+    <p>Created at: {{imageEntry?.createdAt | date:'long'}}</p>
+  </div>
+<!--  <div class="row">-->
+<!--    <p>Last modified at: {{imageEntry?.modifiedAt.| date:'long'}}</p>-->
+<!--  </div>-->
+  <div class="row">
+    <div class="col">
+      <p>Size: {{imageEntry?.size | sizeFormat }}</p>
+    </div>
+    <div class="col">
+      <p>Type: {{imageEntry?.type}}</p>
+    </div>
+  </div>
+</div>
