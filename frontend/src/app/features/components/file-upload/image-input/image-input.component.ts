@@ -92,14 +92,14 @@ export class ImageInputComponent {
   }
 
   get isImageNameValid(): boolean {
-    const imageNameControl = this.imageDetailsForm.get('imageName');
+    const imageNameControl = this.imageDetailsForm.get('name');
     if (imageNameControl === null || imageNameControl.value === "") {
       return false;
     } else return imageNameControl?.hasError('maxlength') && imageNameControl?.touched;
   }
 
   get isImageUrlValid(): boolean {
-    const imageUrlControl = this.imageDetailsForm.get('imageUrl');
+    const imageUrlControl = this.imageDetailsForm.get('customUri');
     if (imageUrlControl === null || imageUrlControl.value === "") {
       return false;
     } else return imageUrlControl.hasError('uriValidation') && imageUrlControl.touched;
