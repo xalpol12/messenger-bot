@@ -2,6 +2,8 @@ version: '3.8'
 services:
 
   messenger-bot:
+    container_name: bot-backend-app
+    image: bot-backend-image
     build:
       context: .
       dockerfile: Dockerfile.backend
@@ -49,4 +51,3 @@ services:
 networks:
   db-network:
     driver: bridge
-

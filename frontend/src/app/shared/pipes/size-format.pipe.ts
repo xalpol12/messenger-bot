@@ -20,5 +20,4 @@ export class SizeFormatPipe implements PipeTransform {
     }
     return `${size.toFixed(2)} ${(SizeFormatPipe.units)[unitIndex]}`;
   }
-
 }
