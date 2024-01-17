@@ -8,5 +8,5 @@ import {Component} from '@angular/core';
   `,
   styles: []
 })
-export class FileUploadComponent {
+export class ImageUploadComponent {
 }

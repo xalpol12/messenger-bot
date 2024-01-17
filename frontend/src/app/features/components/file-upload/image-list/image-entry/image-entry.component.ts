@@ -3,6 +3,7 @@ import {ImageInfo} from "../../../../models/image.model";
 import {NgIf} from "@angular/common";
 import {NgbCollapse} from "@ng-bootstrap/ng-bootstrap";
 import {ImageDetailsComponent} from "./image-details/image-details.component";
+import {RouterLink, RouterOutlet} from "@angular/router";
 
 @Component({
   selector: 'app-image-entry',
@@ -10,7 +11,9 @@ import {ImageDetailsComponent} from "./image-details/image-details.component";
   imports: [
     NgIf,
     NgbCollapse,
-    ImageDetailsComponent
+    ImageDetailsComponent,
+    RouterLink,
+    RouterOutlet
   ],
   templateUrl: './image-entry.component.html',
   styleUrl: './image-entry.component.css'

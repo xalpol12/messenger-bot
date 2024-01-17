@@ -1,6 +1,6 @@
 <div *ngIf="imageEntry">
     <!-- TODO: route to separate page that will contain a full-screen info -->
-    <a href="{{ imageEntry.url }}">{{ imageEntry.name }}</a>
+  <a [routerLink]="['/image/details', imageEntry.imageId]">{{imageEntry.name}}</a>
 
   <div *ngIf="isExpanded" class="mb-2"></div>
   <div [ngbCollapse]="!isExpanded">
