@@ -3,6 +3,7 @@ import {RouterLink, RouterOutlet} from "@angular/router";
 import {NgbCollapse} from "@ng-bootstrap/ng-bootstrap";
 import {MediaMatcher} from "@angular/cdk/layout";
 import {NgIf} from "@angular/common";
+import {FooterComponent} from "../footer/footer.component";
 
 @Component({
   selector: 'app-navbar',
@@ -12,6 +13,7 @@ import {NgIf} from "@angular/common";
     RouterOutlet,
     NgbCollapse,
     NgIf,
+    FooterComponent,
   ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
