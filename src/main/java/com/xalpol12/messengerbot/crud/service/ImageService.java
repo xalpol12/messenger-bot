@@ -119,6 +119,16 @@ public class ImageService {
         log.info("Image with identifier: {} has been deleted", id);
     }
 
+    @Transactional
+    public void deleteSelectedImages(List<String> imageIds) {
+        scheduledMessageRepository.deleteAllByImageIds(imageIds);
+        log.info("All scheduled messages associated with " +
+                "provided image IDs have been deleted");
+        imageRepository.deleteById(imageIds);
+        log.info("All images specified by " +
+                "image IDS list have been deleted");
+    }
+
     /**
      * Deletes all image entities
      * from the database. Also deletes

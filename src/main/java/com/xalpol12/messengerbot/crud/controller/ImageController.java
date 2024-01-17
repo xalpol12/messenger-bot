@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URI;
@@ -65,6 +65,12 @@ public class ImageController implements IImageController {
     public ResponseEntity<?> deleteImage(String uri) {
         log.trace("DELETE image/{uri} called for entity with uri: {}", uri);
         imageService.deleteImage(uri);
+        return ResponseEntity.noContent().build();
+    }
+
+    public ResponseEntity<?> deleteSelectedImages(List<String> imageIds) {
+        log.trace("DELETE images called");
+        imageService.deleteSelectedImages(imageIds);
         return ResponseEntity.noContent().build();
     }
 

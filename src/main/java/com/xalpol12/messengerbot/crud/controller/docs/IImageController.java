@@ -80,6 +80,17 @@ public interface IImageController {
                                   @PathVariable("uri") String uri);
 
     @Operation(
+            summary = "Delete selected images",
+            description = "Deletes images with ids passed to this endpoint as a list. " +
+                    "Also deletes all ScheduledImage entities that were associated with these images.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Successfully deleted entities with given IDs from the database"),
+    })
+    @DeleteMapping(ImagePath.ROOT + "s/batch")
+    ResponseEntity<?> deleteSelectedImages(@Parameter(name = "imageIds", description = "list of image IDs for deletion")
+                                           @RequestBody List<String> imageIds);
+
+    @Operation(
             summary = "Delete all images",
             description = "Deletes all images from the database. " +
                     "Also deletes all ScheduledImage entities that were associated with any image.")
