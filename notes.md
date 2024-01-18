@@ -21,6 +21,8 @@
 **Image:**
 - [ ] Change swagger params json schema to camelCase
 - [ ] Get one image details by ID
-- [ ] Thumbnails endpoint that sends thumbnail version of the image
-- [ ] Delete multiple -> send only image id array to backend, send only scheduled message id
+- [x] Thumbnails endpoint that sends thumbnail version of the image
+  - [ ] Generate thumbnail only if provided width and height is less than the original image
+- [x] Delete multiple -> send only image id array to backend, send only scheduled message id
+- [ ] Image info and scheduled message pagination
 - [ ] Search by image name

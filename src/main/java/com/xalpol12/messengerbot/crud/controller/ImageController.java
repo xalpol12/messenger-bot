@@ -5,11 +5,15 @@ import com.xalpol12.messengerbot.crud.model.Image;
 import com.xalpol12.messengerbot.crud.model.dto.image.ImageDTO;
 import com.xalpol12.messengerbot.crud.model.dto.image.ImageUploadDetails;
 import com.xalpol12.messengerbot.crud.service.ImageService;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,7 +27,7 @@ public class ImageController implements IImageController {
 
     private final ImageService imageService;
 
-    public ResponseEntity<byte[]> displayImageData(String uri) {
+    public ResponseEntity<byte[]> getFullImageData(String uri) {
         Image image = imageService.getImage(uri);
 
         MediaType mediaType = MediaType.parseMediaType(image.getType());
@@ -35,7 +39,14 @@ public class ImageController implements IImageController {
                 .body(image.getData());
     }
 
-    public ResponseEntity<byte[]> getImageData(String uri) {
+    public ResponseEntity<byte[]> getThumbnail(String uri, String width, String height) {
+        byte[] thumbnail = imageService.getThumbnail(uri, width, height);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_JPEG);
+        return new ResponseEntity<>(thumbnail, headers, HttpStatus.OK);
+    }
+
+    public ResponseEntity<byte[]> redirectToImageDataDownload(String uri) {
         Image image = imageService.getImage(uri);
         MediaType mediaType = MediaType.parseMediaType(image.getType());
 
@@ -49,7 +60,7 @@ public class ImageController implements IImageController {
                 .body(image.getData());
     }
 
-    public ResponseEntity<List<ImageDTO>> getAllImages() {
+    public ResponseEntity<List<ImageDTO>> getAllImageInfos() {
         log.trace("GET /images called");
         List<ImageDTO> images = imageService.getAllImages();
         log.trace("GET /images returned {} elements", images.size());

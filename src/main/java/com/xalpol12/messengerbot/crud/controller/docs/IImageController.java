@@ -31,8 +31,28 @@ public interface IImageController {
             @ApiResponse(responseCode = "404", description = "Image with given ID not found in the database"),
     })
     @GetMapping(ImagePath.ROOT + "/{uri}")
-    ResponseEntity<byte[]> displayImageData(@Parameter(name = "uri", description = "Unique Image entity identifier")
+    ResponseEntity<byte[]> getFullImageData(@Parameter(name = "uri", description = "Unique Image entity identifier")
                                             @PathVariable("uri") String uri);
+
+    @Operation(
+            summary = "Display image thumbnail",
+            description = "Sends the image body for display in web browser as a page. " +
+                    "Caches accessed entity for faster retrieval.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved the message body for given image ID"),
+            @ApiResponse(responseCode = "404", description = "Image with given ID not found in the database"),
+    })
+    @GetMapping(ImagePath.ROOT + "/{uri}" + "/thumbnail")
+    ResponseEntity<byte[]> getThumbnail(@Parameter(name = "uri", description = "Unique Image entity identifier")
+                                        @PathVariable("uri") String uri,
+                                        @Parameter(name = "width", description = "Width of the thumbnail (in pixels) that " +
+                                                "the image should be scaled to, cannot be greater than original image width. " +
+                                                "Default value is 100 pixels.")
+                                        @RequestParam(required = false, defaultValue = "100") String width,
+                                        @Parameter(name = "height", description = "Height of the thumbnail (in pixels) that " +
+                                                "the image should be scaled to, cannot be greater than original image height." +
+                                                "Default value is 100 pixels.")
+                                        @RequestParam(required = false, defaultValue = "100") String height);
 
     @Operation(
             summary = "Download image",
@@ -42,17 +62,17 @@ public interface IImageController {
             @ApiResponse(responseCode = "404", description = "Image with given ID not found in the database"),
     })
     @GetMapping(ImagePath.ROOT + "/{uri}/download")
-    ResponseEntity<byte[]> getImageData(@Parameter(name = "uri", description = "Unique Image entity identifier")
+    ResponseEntity<byte[]> redirectToImageDataDownload(@Parameter(name = "uri", description = "Unique Image entity identifier")
                                         @PathVariable("uri") String uri);
 
     @Operation(
             summary = "Return list of all images",
             description = "Returns all images info in the form of ImageDTO list")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved all available images"),
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved all available image infos"),
     })
     @GetMapping(ImagePath.ROOT + "s")
-    ResponseEntity<List<ImageDTO>> getAllImages();
+    ResponseEntity<List<ImageDTO>> getAllImageInfos();
 
     @Operation(
             summary = "Upload image",

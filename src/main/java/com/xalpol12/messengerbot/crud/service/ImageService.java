@@ -36,6 +36,7 @@ public class ImageService {
 
     private final ImageRepository imageRepository;
     private final ScheduledMessageRepository scheduledMessageRepository;
+    private final ThumbnailService thumbnailService;
     private final ImageMapper imageMapper;
 
     /**
@@ -47,6 +48,14 @@ public class ImageService {
     @Cacheable("imageCache")
     public Image getImage(String id) {
         return findByCustomUriOrId(id);
+    }
+
+    @Cacheable(value = "thumbnailCache", key = "{#id, #width, #height}", unless = "#result == null")
+    public byte[] getThumbnail(String id, String width, String height) {
+        Image image = findByCustomUriOrId(id);
+        int parsedWidth = Integer.parseInt(width);
+        int parsedHeight = Integer.parseInt(height);
+        return thumbnailService.generateThumbnail(image.getData(), parsedWidth, parsedHeight);
     }
 
     private Image findByCustomUriOrId(String customUriOrId) {
