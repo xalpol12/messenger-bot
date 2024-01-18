@@ -49,6 +49,10 @@ public class Image {
     @JdbcTypeCode(Types.LONGVARBINARY)
     private byte[] data;
 
+    private int width;
+
+    private int height;
+
     @Column(nullable = false, updatable = false)
     @CreatedDate
     LocalDateTime createdAt;

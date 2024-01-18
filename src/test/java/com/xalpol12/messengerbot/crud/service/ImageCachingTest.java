@@ -33,6 +33,8 @@ class ImageCachingTest {
     @Mock
     private ScheduledMessageRepository messageRepository;
     @Mock
+    private ThumbnailService thumbnailService;
+    @Mock
     private ImageMapper mapper;
     private ImageService imageService;
 
@@ -44,7 +46,7 @@ class ImageCachingTest {
     @BeforeEach
     public void init() {
         openMocks = MockitoAnnotations.openMocks(this);
-        imageService = new ImageService(imageRepository, messageRepository, mapper);
+        imageService = new ImageService(imageRepository, messageRepository, thumbnailService, mapper);
     }
 
     @AfterEach

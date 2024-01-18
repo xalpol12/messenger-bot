@@ -3,6 +3,7 @@ package com.xalpol12.messengerbot.crud.service;
 import com.xalpol12.messengerbot.crud.controller.ImageController;
 import com.xalpol12.messengerbot.crud.exception.ImageAccessException;
 import com.xalpol12.messengerbot.crud.exception.ImageNotFoundException;
+import com.xalpol12.messengerbot.crud.exception.InvalidThumbnailDimensionException;
 import com.xalpol12.messengerbot.crud.model.Image;
 import com.xalpol12.messengerbot.crud.model.ScheduledMessage;
 import com.xalpol12.messengerbot.crud.model.dto.image.ImageDTO;
@@ -53,9 +54,14 @@ public class ImageService {
     @Cacheable(value = "thumbnailCache", key = "{#id, #width, #height}", unless = "#result == null")
     public byte[] getThumbnail(String id, String width, String height) {
         Image image = findByCustomUriOrId(id);
-        int parsedWidth = Integer.parseInt(width);
-        int parsedHeight = Integer.parseInt(height);
-        return thumbnailService.generateThumbnail(image.getData(), parsedWidth, parsedHeight);
+        try {
+            int parsedWidth = Integer.parseInt(width);
+            int parsedHeight = Integer.parseInt(height);
+            validateThumbnailDimensions(image, parsedWidth, parsedHeight);
+            return thumbnailService.generateThumbnail(image.getData(), parsedWidth, parsedHeight);
+        } catch (NumberFormatException | InvalidThumbnailDimensionException e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
     }
 
     private Image findByCustomUriOrId(String customUriOrId) {
@@ -68,6 +74,23 @@ public class ImageService {
                     .orElseThrow(() -> new ImageNotFoundException("No image found for: " + customUriOrId));
         }
         return image;
+    }
+
+    private void validateThumbnailDimensions(Image image, int destinationWidth, int destinationHeight) {
+        int sourceWidth = image.getWidth();
+        int sourceHeight = image.getHeight();
+        String exceptionMessage = "";
+        if (destinationWidth > sourceWidth) {
+            exceptionMessage += "Invalid thumbnail width: " + destinationWidth +
+                    " can't be larger than original image width: " + sourceWidth + " ";
+        }
+        if (destinationHeight > sourceHeight) {
+            exceptionMessage += "Invalid thumbnail height: " + destinationHeight +
+                    " can't be larger than original image height: " + sourceHeight;
+        }
+        if (!exceptionMessage.equals("")) {
+            throw new InvalidThumbnailDimensionException(exceptionMessage);
+        }
     }
 
     /**
@@ -93,7 +116,7 @@ public class ImageService {
      */
     @Cacheable("imageCache")
     public URI uploadImage(ImageUploadDetails fileDetails,
-                             MultipartFile imageData) throws ImageAccessException {
+                           MultipartFile imageData) throws ImageAccessException {
         Image newImage;
         try {
             newImage = imageMapper.mapToImage(fileDetails, imageData);

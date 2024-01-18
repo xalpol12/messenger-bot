@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashMap;
@@ -31,8 +30,11 @@ public class CrudExceptionHandler {
      * @return ResponseEntity<String> with exception details
      * and error code 400
      */
-    @ExceptionHandler(ImageAccessException.class)
-    public ResponseEntity<String> handleImageAccessException(ImageAccessException e) {
+    @ExceptionHandler(value = {
+            ImageAccessException.class,
+            IllegalArgumentException.class
+    })
+    public ResponseEntity<String> handleImageAccessException(RuntimeException e) {
         String message = extractMessageAndLog(e);
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
@@ -75,7 +77,10 @@ public class CrudExceptionHandler {
         }
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler(value = {
+            MethodArgumentNotValidException.class,
+            NumberFormatException.class
+    })
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {

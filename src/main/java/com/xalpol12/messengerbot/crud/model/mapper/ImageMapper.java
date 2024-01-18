@@ -1,6 +1,7 @@
 package com.xalpol12.messengerbot.crud.model.mapper;
 
 import com.xalpol12.messengerbot.crud.controller.ImageController;
+import com.xalpol12.messengerbot.crud.exception.ImageAccessException;
 import com.xalpol12.messengerbot.crud.model.Image;
 import com.xalpol12.messengerbot.crud.model.dto.image.ImageDTO;
 import com.xalpol12.messengerbot.crud.model.dto.image.ImageUploadDetails;
@@ -10,7 +11,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.spi.IIORegistry;
+import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.stream.ImageInputStream;
+import java.awt.*;
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Iterator;
 import java.util.Objects;
 
 /**
@@ -38,10 +48,13 @@ public class ImageMapper {
      */
     public Image mapToImage(ImageUploadDetails details, MultipartFile file) throws IOException {
         String imageName = details.getName() != null ? details.getName() : extractFilenameWithoutExtension(file);
+        Dimension imageDimension = getImageDimensions(file);
         return Image.builder()
                 .customUri(details.getCustomUri())
                 .name(imageName)
                 .data(file.getBytes())
+                .width(imageDimension.width)
+                .height(imageDimension.height)
                 .type(file.getContentType())
                 .build();
     }
@@ -53,6 +66,35 @@ public class ImageMapper {
             return originalFilename.substring(0, lastDotIndex);
         } else {
             return originalFilename;
+        }
+    }
+
+    private Dimension getImageDimensions(MultipartFile file) {
+        String filename = file.getOriginalFilename();
+        try (ImageInputStream stream = ImageIO.createImageInputStream(file.getInputStream())) {
+            if (stream != null) {
+                IIORegistry iioRegistry = IIORegistry.getDefaultInstance();
+                Iterator<ImageReaderSpi> iter = iioRegistry.getServiceProviders(ImageReaderSpi.class, true);
+                while (iter.hasNext()) {
+                    ImageReaderSpi readerSpi = iter.next();
+                    if (readerSpi.canDecodeInput(stream)) {
+                        ImageReader reader = readerSpi.createReaderInstance();
+                        try {
+                            reader.setInput(stream);
+                            int width = reader.getWidth(reader.getMinIndex());
+                            int height = reader.getHeight(reader.getMinIndex());
+                            return new Dimension(width, height);
+                        } finally {
+                            reader.dispose();
+                        }
+                    }
+                }
+                throw new IllegalArgumentException("Can't find decoder for image " + filename);
+            } else {
+                throw new IllegalArgumentException("Can't open stream for image " + filename);
+            }
+        } catch (IOException e) {
+            throw new ImageAccessException(e.getMessage());
         }
     }
 
