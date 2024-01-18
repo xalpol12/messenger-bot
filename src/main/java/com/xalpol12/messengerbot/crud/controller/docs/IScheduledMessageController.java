@@ -63,6 +63,16 @@ public interface IScheduledMessageController {
                                              @PathVariable("id") Long messageId);
 
     @Operation(
+            summary = "Delete selected scheduled messages",
+            description = "Deletes scheduled messages with IDs passed to this endpoint.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Successfully deleted ScheduledMessage entities with given IDs from the database"),
+    })
+    @DeleteMapping(ScheduledMessagePath.ROOT + "s" + "/batch")
+    ResponseEntity<?> deleteSelectedScheduledMessages(@Parameter(name = "messageIds", description = "List of message IDs for deletion")
+                                                      @RequestBody List<Long> messageIds);
+
+    @Operation(
             summary = "Delete all scheduled message",
             description = "Deletes all scheduled messages from the database")
     @ApiResponses(value = {

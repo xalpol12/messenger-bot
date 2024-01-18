@@ -69,7 +69,7 @@ public class ImageController implements IImageController {
     }
 
     public ResponseEntity<?> deleteSelectedImages(List<String> imageIds) {
-        log.trace("DELETE images called");
+        log.trace("DELETE batch images called");
         imageService.deleteSelectedImages(imageIds);
         return ResponseEntity.noContent().build();
     }

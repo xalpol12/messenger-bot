@@ -121,12 +121,12 @@ public class ImageService {
 
     @Transactional
     public void deleteSelectedImages(List<String> imageIds) {
-        scheduledMessageRepository.deleteAllByImageIds(imageIds);
+        scheduledMessageRepository.deleteAllInImageIdList(imageIds);
         log.info("All scheduled messages associated with " +
-                "provided image IDs have been deleted");
-        imageRepository.deleteById(imageIds);
+                "provided image Ids have been deleted");
+        imageRepository.deleteAllInImageIdList(imageIds);
         log.info("All images specified by " +
-                "image IDS list have been deleted");
+                "image Ids list have been deleted");
     }
 
     /**

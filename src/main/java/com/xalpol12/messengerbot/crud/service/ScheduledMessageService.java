@@ -7,6 +7,7 @@ import com.xalpol12.messengerbot.crud.model.dto.scheduledmessage.ScheduledMessag
 import com.xalpol12.messengerbot.crud.model.mapper.ScheduledMessageMapper;
 import com.xalpol12.messengerbot.crud.repository.ScheduledMessageRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -74,6 +75,13 @@ public class ScheduledMessageService {
             throw new ScheduledMessageNotFoundException("No scheduled message found for entity with id: " + messageId);
         }
         log.info("Deleted scheduled image with identifier: {}", messageId);
+    }
+
+    @Transactional
+    public void deleteSelectedMessages(List<Long> messageIds) {
+        scheduledMessageRepository.deleteAllInScheduledMessageIdList(messageIds);
+        log.info("All messages specified by " +
+                "message Ids list have been deleted");
     }
 
     /**

@@ -43,6 +43,12 @@ public class ScheduledMessageController implements IScheduledMessageController {
         return ResponseEntity.noContent().build();
     }
 
+    public ResponseEntity<?> deleteSelectedScheduledMessages(List<Long> messageIds) {
+        log.trace("DELETE batch messages called");
+        scheduledMessageService.deleteSelectedMessages(messageIds);
+        return ResponseEntity.noContent().build();
+    }
+
     public ResponseEntity<?> deleteAllScheduledMessages() {
         scheduledMessageService.deleteAllScheduledMessages();
         log.trace("DELETE /scheduled-messages called");

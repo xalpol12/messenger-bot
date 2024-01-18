@@ -19,7 +19,8 @@
 
 ## To implement
 **Image:**
+- [ ] Change swagger params json schema to camelCase
 - [ ] Get one image details by ID
 - [ ] Thumbnails endpoint that sends thumbnail version of the image
-- [ ] Delete multiple -> send only image id array to backend 
+- [ ] Delete multiple -> send only image id array to backend, send only scheduled message id
 - [ ] Search by image name
