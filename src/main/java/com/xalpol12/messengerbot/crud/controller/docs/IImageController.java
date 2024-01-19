@@ -28,7 +28,7 @@ public interface IImageController {
             description = "Sends the image body for display in web browser as a page. " +
                     "Caches accessed entity for faster retrieval.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved the message body for given image ID"),
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved the image body for given image ID"),
             @ApiResponse(responseCode = "404", description = "Image with given ID not found in the database"),
     })
     @GetMapping(ImagePath.ROOT + "/{uri}")
@@ -37,7 +37,7 @@ public interface IImageController {
 
     @Operation(
             summary = "Display image thumbnail",
-            description = "Sends the image body for display in web browser as a page. " +
+            description = "Generates and sends resized image body. " +
                     "Caches accessed entity for faster retrieval.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved the message body for given image ID"),
@@ -59,12 +59,23 @@ public interface IImageController {
             summary = "Download image",
             description = "Redirects browser to download image with given ID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved the message for given image ID"),
+            @ApiResponse(responseCode = "200", description = "Successfully send attachment to download image for given ID"),
             @ApiResponse(responseCode = "404", description = "Image with given ID not found in the database"),
     })
     @GetMapping(ImagePath.ROOT + "/{uri}/download")
     ResponseEntity<byte[]> redirectToImageDataDownload(@Parameter(name = "uri", description = "Unique Image entity identifier")
-                                        @PathVariable("uri") String uri);
+                                                       @PathVariable("uri") String uri);
+
+    @Operation(
+            summary = "Return image info",
+            description = "Returns image info in the form of ImageDTO")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved available image info"),
+            @ApiResponse(responseCode = "404", description = "Image with given ID not found in the database"),
+    })
+    @GetMapping(ImagePath.ROOT + "/{uri}/details")
+    ResponseEntity<ImageDTO> getImageInfo(@Parameter(name = "uri", description = "Unique Image entity identifier")
+                                          @PathVariable("uri") String uri);
 
     @Operation(
             summary = "Return list of all images",
@@ -84,9 +95,9 @@ public interface IImageController {
     })
     @PostMapping(path = ImagePath.ROOT, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<URI> uploadImage(@Parameter(name = "file details", description = "ImageUploadDetails object")
-                                  @RequestPart ImageUploadDetails fileDetails,
+                                    @RequestPart ImageUploadDetails fileDetails,
                                     @Parameter(name = "file", description = "MultipartFile object, actual image file")
-                                  @RequestPart MultipartFile file);
+                                    @RequestPart MultipartFile file);
 
     @Operation(
             summary = "Delete image",
@@ -98,7 +109,7 @@ public interface IImageController {
     })
     @DeleteMapping(ImagePath.ROOT + "/{uri}")
     ResponseEntity<Void> deleteImage(@Parameter(name = "uri", description = "Unique Image entity identifier")
-                                  @PathVariable("uri") String uri);
+                                     @PathVariable("uri") String uri);
 
     @Operation(
             summary = "Delete selected images",
@@ -109,7 +120,7 @@ public interface IImageController {
     })
     @DeleteMapping(ImagePath.ROOT + "s" + "/batch")
     ResponseEntity<Void> deleteSelectedImages(@Parameter(name = "imageIds", description = "list of image IDs for deletion")
-                                           @RequestBody List<String> imageIds);
+                                              @RequestBody List<String> imageIds);
 
     @Operation(
             summary = "Delete all images",
@@ -131,11 +142,11 @@ public interface IImageController {
     })
     @PutMapping(value = ImagePath.ROOT + "/{uri}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<Void> updateImage(@Parameter(name = "uri", description = "Unique Image entity identifier")
-                                  @PathVariable("uri") String uri,
-                                  @Parameter(name = "file details", description = "ImageUploadDetails object")
-                                  @RequestPart ImageUploadDetails fileDetails,
-                                  @Parameter(name = "file", description = "MultipartFile object, actual image file")
-                                  @RequestPart MultipartFile file);
+                                     @PathVariable("uri") String uri,
+                                     @Parameter(name = "file details", description = "ImageUploadDetails object")
+                                     @RequestPart ImageUploadDetails fileDetails,
+                                     @Parameter(name = "file", description = "MultipartFile object, actual image file")
+                                     @RequestPart MultipartFile file);
 
     @Operation(
             summary = "Patch image details",
@@ -147,9 +158,9 @@ public interface IImageController {
     })
     @PatchMapping(ImagePath.ROOT + "/{uri}/details")
     ResponseEntity<Void> updateImageDetails(@Parameter(name = "uri", description = "Unique Image entity identifier")
-                                         @PathVariable("uri") String uri,
-                                         @Parameter(name = "file details", description = "ImageUploadDetails object")
-                                         @RequestBody ImageUploadDetails newDetails);
+                                            @PathVariable("uri") String uri,
+                                            @Parameter(name = "file details", description = "ImageUploadDetails object")
+                                            @RequestBody ImageUploadDetails newDetails);
 
     @Operation(
             summary = "Patch image data",
@@ -161,7 +172,7 @@ public interface IImageController {
     })
     @PatchMapping(value = ImagePath.ROOT + "/{uri}/data", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<Void> updateImageData(@Parameter(name = "uri", description = "Unique Image entity identifier")
-                                      @PathVariable("uri") String uri,
-                                      @Parameter(name = "file", description = "MultipartFile object, actual image file")
-                                      @RequestPart MultipartFile file);
+                                         @PathVariable("uri") String uri,
+                                         @Parameter(name = "file", description = "MultipartFile object, actual image file")
+                                         @RequestPart MultipartFile file);
 }

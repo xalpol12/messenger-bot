@@ -112,7 +112,7 @@ class ImageServiceTest {
         when(imageRepository.findAll()).thenReturn(List.of(new Image(), new Image()));
         when(imageMapper.mapToImageDTO(any())).thenReturn(new ImageDTO());
 
-        List<ImageDTO> results = imageService.getAllImages();
+        List<ImageDTO> results = imageService.getAllImageInfos();
 
         assertAll(() -> {
             verify(imageMapper, times(2)).mapToImageDTO(any());

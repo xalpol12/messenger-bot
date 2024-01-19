@@ -57,9 +57,15 @@ public class ImageController implements IImageController {
                 .body(image.getData());
     }
 
+    public ResponseEntity<ImageDTO> getImageInfo(String uri) {
+        log.trace("GET /image/{}/details called", uri);
+        ImageDTO imageDTO = imageService.getImageInfo(uri);
+        return ResponseEntity.ok(imageDTO);
+    }
+
     public ResponseEntity<List<ImageDTO>> getAllImageInfos() {
         log.trace("GET /images called");
-        List<ImageDTO> images = imageService.getAllImages();
+        List<ImageDTO> images = imageService.getAllImageInfos();
         log.trace("GET /images returned {} elements", images.size());
         return ResponseEntity.ok(images);
     }

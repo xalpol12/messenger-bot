@@ -68,7 +68,6 @@ public class ImageService {
         Image image;
         if (imageRepository.existsById(customUriOrId)) {
             image = imageRepository.findById(customUriOrId).get();
-            log.warn("No custom uri found for entity with id: {}", customUriOrId);
         } else {
             image = imageRepository.findImageByCustomUri(customUriOrId)
                     .orElseThrow(() -> new ImageNotFoundException("No image found for: " + customUriOrId));
@@ -93,12 +92,17 @@ public class ImageService {
         }
     }
 
+    public ImageDTO getImageInfo(String customUriOrId) {
+        Image image = findByCustomUriOrId(customUriOrId);
+        return imageMapper.mapToImageDTO(image);
+    }
+
     /**
      * Returns list of all Images mapped
      * to ImageDTO.
      * @return List<ImageDTO> representing all Image entities details
      */
-    public List<ImageDTO> getAllImages() {
+    public List<ImageDTO> getAllImageInfos() {
         Stream<Image> imageStream = imageRepository.findAll().stream();
         return imageStream
                 .map(imageMapper::mapToImageDTO)

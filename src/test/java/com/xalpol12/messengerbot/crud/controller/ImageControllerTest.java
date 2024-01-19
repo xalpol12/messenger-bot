@@ -95,14 +95,14 @@ class ImageControllerTest {
         String endpointPath = ImageController.ImagePath.ROOT + "s";
         List<ImageDTO> responseImages = List.of(getSampleImageDTO(), getSampleImageDTO());
 
-        when(imageService.getAllImages()).thenReturn(responseImages);
+        when(imageService.getAllImageInfos()).thenReturn(responseImages);
 
         this.mockMvc
                 .perform(get(endpointPath))
                 .andExpect(status().isOk())
                 .andExpect(content().string(asJsonString(responseImages)));
 
-        verify(imageService, times(1)).getAllImages();
+        verify(imageService, times(1)).getAllImageInfos();
     }
 
     @Test
