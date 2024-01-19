@@ -1,6 +1,7 @@
 package com.xalpol12.messengerbot.messengerplatform.controller.docs;
 
 import com.xalpol12.messengerbot.messengerplatform.controller.WebhookController;
+import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -10,8 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Webhook API", description = "API for receiving webhooks from Messenger Platform API, " +
-        "should be hosted with secure HTTPS protocol. API constructed in accordance to the official Meta docs " +
-        "available here: https://developers.facebook.com/docs/messenger-platform/webhooks")
+        "should be hosted with secure HTTPS protocol. API constructed in accordance to the official Meta docs.",
+        externalDocs = @ExternalDocumentation(url = "https://developers.facebook.com/docs/messenger-platform/webhooks",
+                description = "Meta API docs for messenger webhooks"))
 public interface IWebhookController {
 
     class WebhookPath {

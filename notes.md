@@ -20,7 +20,7 @@
 
 ## To implement
 **Image:**
-- [ ] Change swagger params json schema to camelCase
+- [x] Change swagger params json schema to camelCase
 - [x] Get one image details by ID
 - [x] Thumbnails endpoint that sends thumbnail version of the image
   - [x] Generate thumbnail only if provided width and height is less than the original image

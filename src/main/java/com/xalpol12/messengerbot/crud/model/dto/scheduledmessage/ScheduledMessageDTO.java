@@ -21,30 +21,30 @@ import java.time.LocalDateTime;
 @Builder
 public class ScheduledMessageDTO {
 
-   @Schema(name = "Scheduled message ID",
+   @Schema(name = "scheduledMessageId",
            description = "Unique ScheduledMessage entity identifier (long)",
            example = "1352")
    private Long scheduledMessageId;
 
-   @Schema(name = "Scheduled date",
+   @Schema(name = "scheduledDate",
            description = "LocalDateTime that the message should be published at",
            example = "2024-01-03T12:26:00")
    private LocalDateTime scheduledDate;
 
-   @Schema(name = "Message",
+   @Schema(name = "message",
            description = "Actual message content that will be published",
            example = "Hello! This is an example.",
            maxLength = 300)
    private String message;
 
    @Nullable
-   @Schema(name = "Image URL",
+   @Schema(name = "imageUrl",
            description = "Link to an image that will be appended to the actual image " +
                    "and published. Null if ScheduledMessage is not associated with any image.",
            example = "http://localhost:8080/api/image/munch-showcase")
    private String imageUrl;
 
-   @Schema(name = "Is sent",
+   @Schema(name = "isSent",
            description = "Scheduled message status, determines if scheduled message " +
                    "has been successfully published",
            example = "false")

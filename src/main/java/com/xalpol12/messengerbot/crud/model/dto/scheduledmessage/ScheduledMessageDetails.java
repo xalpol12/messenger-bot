@@ -18,19 +18,19 @@ import lombok.NoArgsConstructor;
 @Data
 public class ScheduledMessageDetails {
 
-    @Schema(name = "Scheduled date",
+    @Schema(name = "scheduledDate",
             description = "LocalDateTime that the message should be published at (GMT+0), must be in the future",
-            example = "2024-01-03T12:26:00")
+            example = "2025-01-03T12:26:00")
     private String scheduledDate;
 
-    @Schema(name = "Message",
+    @Schema(name = "message",
             description = "Actual message content that will be published",
             example = "Hello! This is an example.",
             maxLength = 300)
     private String message;
 
     @Nullable
-    @Schema(name = "Image ID",
+    @Schema(name = "imageId",
             description = "Image ID to create one-to-many relation between " +
                     "ScheduledMessage and Image. Image with given ID must exist in " +
                     "the database",
