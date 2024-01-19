@@ -1,5 +1,10 @@
 package com.xalpol12.messengerbot.crud.exception;
 
+import com.xalpol12.messengerbot.crud.exception.customexception.ImageAccessException;
+import com.xalpol12.messengerbot.crud.exception.customexception.ImageNotFoundException;
+import com.xalpol12.messengerbot.crud.exception.customexception.ScheduledMessageNotFoundException;
+import com.xalpol12.messengerbot.crud.exception.response.CustomErrorResponse;
+import com.xalpol12.messengerbot.crud.exception.utils.ExceptionUtils;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
@@ -34,9 +39,12 @@ public class CrudExceptionHandler {
             ImageAccessException.class,
             IllegalArgumentException.class
     })
-    public ResponseEntity<String> handleImageAccessException(RuntimeException e) {
-        String message = extractMessageAndLog(e);
-        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<CustomErrorResponse> handleImageAccessException(RuntimeException e) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        String error = ExceptionUtils.getErrorCode(e);
+        String message = ExceptionUtils.getMessageAndLog(e);
+        CustomErrorResponse response = CustomErrorResponse.create(status, error, message);
+        return new ResponseEntity<>(response, status);
     }
 
     /**
@@ -50,9 +58,12 @@ public class CrudExceptionHandler {
             ImageNotFoundException.class,
             ScheduledMessageNotFoundException.class
     })
-    public ResponseEntity<String> handleImageNotFoundException(RuntimeException e) {
-        String message = extractMessageAndLog(e);
-        return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+    public ResponseEntity<CustomErrorResponse> handleImageNotFoundException(RuntimeException e) {
+        HttpStatus status = HttpStatus.NOT_FOUND;
+        String error = ExceptionUtils.getErrorCode(e);
+        String message = ExceptionUtils.getMessageAndLog(e);
+        CustomErrorResponse response = CustomErrorResponse.create(status, error, message);
+        return new ResponseEntity<>(response, status);
     }
 
     /**
@@ -67,44 +78,45 @@ public class CrudExceptionHandler {
      * currently handled by the method.
      */
     @ExceptionHandler(PSQLException.class)
-    public ResponseEntity<String> handlePSQLException(PSQLException e) throws PSQLException {
-        if (e.getSQLState().equals(PSQLState.UNIQUE_VIOLATION.getState())) {
-            String errorMessage = "Provided custom uri that already exists in a database";
-            log.error("Encountered {} with message: {}", e.getClass().getName(), errorMessage);
-            return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<CustomErrorResponse> handlePSQLException(PSQLException e) throws PSQLException {
+        String psqlState = e.getSQLState();
+        if (psqlState.equals(PSQLState.UNIQUE_VIOLATION.getState())) {
+            HttpStatus status = HttpStatus.BAD_REQUEST;
+            String error = PSQLState.UNIQUE_VIOLATION.toString();
+            String message = "Provided custom uri that already exists in a database";
+            CustomErrorResponse response = CustomErrorResponse.create(status, error, message);
+            log.error("Encountered {} with message: {}", e.getClass().getName(), message);
+            return new ResponseEntity<>(response, status);
         } else {
             throw e;
         }
     }
 
-    @ExceptionHandler(value = {
-            MethodArgumentNotValidException.class,
-            NumberFormatException.class
-    })
-    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<CustomErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        String errorCode = ExceptionUtils.getErrorCode(ex);
+        Map<String, String> fieldErrors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
+            fieldErrors.put(fieldName, errorMessage);
         });
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        CustomErrorResponse response = CustomErrorResponse.create(status, errorCode, fieldErrors);
+        return new ResponseEntity<>(response, status);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<Map<String, String>> handleConstraintViolationExceptions(ConstraintViolationException ex) {
-        Map<String, String> errors = new HashMap<>();
+    public ResponseEntity<CustomErrorResponse> handleConstraintViolationExceptions(ConstraintViolationException ex) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        String errorCode = ExceptionUtils.getErrorCode(ex);
+        Map<String, String> fieldErrors = new HashMap<>();
         for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
             String fieldName = violation.getPropertyPath().toString();
             String errorMessage = violation.getMessage();
-            errors.put(fieldName, errorMessage);
+            fieldErrors.put(fieldName, errorMessage);
         }
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
-    }
-
-    private String extractMessageAndLog(RuntimeException e) {
-        String message = e.getMessage();
-        log.error("Encountered {} with message: {}", e.getClass().getName(), message);
-        return message;
+        CustomErrorResponse response = CustomErrorResponse.create(status, errorCode, fieldErrors);
+        return new ResponseEntity<>(response, status);
     }
 }

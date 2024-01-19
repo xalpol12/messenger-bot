@@ -1,7 +1,7 @@
 package com.xalpol12.messengerbot.crud.model.mapper;
 
 import com.xalpol12.messengerbot.crud.controller.ImageController;
-import com.xalpol12.messengerbot.crud.exception.ImageAccessException;
+import com.xalpol12.messengerbot.crud.exception.customexception.ImageAccessException;
 import com.xalpol12.messengerbot.crud.model.Image;
 import com.xalpol12.messengerbot.crud.model.dto.image.ImageDTO;
 import com.xalpol12.messengerbot.crud.model.dto.image.ImageUploadDetails;

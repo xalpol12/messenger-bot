@@ -1,6 +1,6 @@
 package com.xalpol12.messengerbot.crud.service;
 
-import com.xalpol12.messengerbot.crud.exception.ImageAccessException;
+import com.xalpol12.messengerbot.crud.exception.customexception.ImageAccessException;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.stereotype.Service;
 

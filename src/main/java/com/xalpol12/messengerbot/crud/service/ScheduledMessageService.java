@@ -1,12 +1,11 @@
 package com.xalpol12.messengerbot.crud.service;
 
-import com.xalpol12.messengerbot.crud.exception.ScheduledMessageNotFoundException;
+import com.xalpol12.messengerbot.crud.exception.customexception.ScheduledMessageNotFoundException;
 import com.xalpol12.messengerbot.crud.model.ScheduledMessage;
 import com.xalpol12.messengerbot.crud.model.dto.scheduledmessage.ScheduledMessageDTO;
 import com.xalpol12.messengerbot.crud.model.dto.scheduledmessage.ScheduledMessageDetails;
 import com.xalpol12.messengerbot.crud.model.mapper.ScheduledMessageMapper;
 import com.xalpol12.messengerbot.crud.repository.ScheduledMessageRepository;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

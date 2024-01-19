@@ -1,5 +1,7 @@
 package com.xalpol12.messengerbot.crud.exception;
 
+import com.xalpol12.messengerbot.crud.exception.customexception.ImageAccessException;
+import com.xalpol12.messengerbot.crud.exception.customexception.ImageNotFoundException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.postgresql.util.PSQLException;

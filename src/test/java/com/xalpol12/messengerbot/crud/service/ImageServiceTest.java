@@ -1,7 +1,7 @@
 package com.xalpol12.messengerbot.crud.service;
 
 import com.xalpol12.messengerbot.crud.controller.ImageController;
-import com.xalpol12.messengerbot.crud.exception.ImageNotFoundException;
+import com.xalpol12.messengerbot.crud.exception.customexception.ImageNotFoundException;
 import com.xalpol12.messengerbot.crud.model.Image;
 import com.xalpol12.messengerbot.crud.model.ScheduledMessage;
 import com.xalpol12.messengerbot.crud.model.dto.image.ImageDTO;

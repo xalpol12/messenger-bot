@@ -25,7 +25,8 @@
 - [x] Thumbnails endpoint that sends thumbnail version of the image
   - [x] Generate thumbnail only if provided width and height is less than the original image
 - [x] Delete multiple -> send only image id array to backend, send only scheduled message id
-- [ ] Search by image name
 - [ ] Refactor exception structure
+- [ ] Complete missing tests and javadocs for new features
+- [ ] Search by image name
 - [ ] Image info and scheduled message pagination
 - [ ] Security with JWT
