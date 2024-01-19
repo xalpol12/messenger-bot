@@ -27,14 +27,14 @@ public class WebhookController implements IWebhookController {
             @ApiResponse(responseCode = "404", description = "Unknown or unexpected webhook object structure, couldn't deserialize the object"),
     })
     @PostMapping(WebhookPath.ROOT)
-    public ResponseEntity<?> receiveWebhook(String signature, String body) {
+    public ResponseEntity<String> receiveWebhook(String signature, String body) {
         log.trace("Received webhook");
 //        webhookService.verifyRequestSignature(signature, body);
         webhookService.process(body);
         return new ResponseEntity<>("EVENT_RECEIVED", HttpStatus.OK);
     }
 
-    public ResponseEntity<?> verifyWebhookSubscription(String mode, String token, String challenge) {
+    public ResponseEntity<String> verifyWebhookSubscription(String mode, String token, String challenge) {
         String receivedChallenge = webhookService.verifyWebhookSubscription(mode, token, challenge);
         return new ResponseEntity<>(receivedChallenge, HttpStatus.OK);
     }

@@ -37,25 +37,25 @@ public class ScheduledMessageController implements IScheduledMessageController {
         return new ResponseEntity<>(messageDTO, HttpStatus.CREATED);
     }
 
-    public ResponseEntity<?> deleteScheduledMessage(Long messageId) {
+    public ResponseEntity<Void> deleteScheduledMessage(Long messageId) {
         scheduledMessageService.deleteScheduledMessage(messageId);
         log.trace("DELETE /scheduled-message/{id} called for entity with id: {}", messageId);
         return ResponseEntity.noContent().build();
     }
 
-    public ResponseEntity<?> deleteSelectedScheduledMessages(List<Long> messageIds) {
+    public ResponseEntity<Void> deleteSelectedScheduledMessages(List<Long> messageIds) {
         log.trace("DELETE batch messages called");
         scheduledMessageService.deleteSelectedMessages(messageIds);
         return ResponseEntity.noContent().build();
     }
 
-    public ResponseEntity<?> deleteAllScheduledMessages() {
+    public ResponseEntity<Void> deleteAllScheduledMessages() {
         scheduledMessageService.deleteAllScheduledMessages();
         log.trace("DELETE /scheduled-messages called");
         return ResponseEntity.noContent().build();
     }
 
-    public ResponseEntity<?> updateScheduledMessage(Long messageId, ScheduledMessageDetails messageDetails) {
+    public ResponseEntity<Void> updateScheduledMessage(Long messageId, ScheduledMessageDetails messageDetails) {
         scheduledMessageService.updateScheduledMessage(messageId, messageDetails);
         log.trace("PUT /scheduled-message/{id} called for entity with id: {}", messageId);
         return ResponseEntity.ok().build();

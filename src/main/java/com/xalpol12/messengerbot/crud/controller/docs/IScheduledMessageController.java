@@ -28,7 +28,7 @@ public interface IScheduledMessageController {
             @ApiResponse(responseCode = "404", description = "ScheduledMessage with given ID not found in the database"),
     })
     @GetMapping(ScheduledMessagePath.ROOT + "/{id}")
-     ResponseEntity<ScheduledMessageDTO> getScheduledMessage(
+    ResponseEntity<ScheduledMessageDTO> getScheduledMessage(
             @Parameter(name = "id", description = "Unique ScheduledMessage entity identifier")
             @PathVariable("id") Long messageId);
 
@@ -39,7 +39,7 @@ public interface IScheduledMessageController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved all entities from the database"),
     })
     @GetMapping(ScheduledMessagePath.ROOT + "s")
-     ResponseEntity<List<ScheduledMessageDTO>> getAllScheduledMessages();
+    ResponseEntity<List<ScheduledMessageDTO>> getAllScheduledMessages();
 
     @Operation(
             summary = "Upload scheduled message",
@@ -59,7 +59,7 @@ public interface IScheduledMessageController {
             @ApiResponse(responseCode = "404", description = "ScheduledMessage with given ID not found in the database"),
     })
     @DeleteMapping(ScheduledMessagePath.ROOT + "/{id}")
-    ResponseEntity<?> deleteScheduledMessage(@Parameter(name = "id", description = "Unique ScheduledMessage entity identifier")
+    ResponseEntity<Void> deleteScheduledMessage(@Parameter(name = "id", description = "Unique ScheduledMessage entity identifier")
                                              @PathVariable("id") Long messageId);
 
     @Operation(
@@ -69,7 +69,7 @@ public interface IScheduledMessageController {
             @ApiResponse(responseCode = "204", description = "Successfully deleted ScheduledMessage entities with given IDs from the database"),
     })
     @DeleteMapping(ScheduledMessagePath.ROOT + "s" + "/batch")
-    ResponseEntity<?> deleteSelectedScheduledMessages(@Parameter(name = "messageIds", description = "List of message IDs for deletion")
+    ResponseEntity<Void> deleteSelectedScheduledMessages(@Parameter(name = "messageIds", description = "List of message IDs for deletion")
                                                       @RequestBody List<Long> messageIds);
 
     @Operation(
@@ -79,7 +79,7 @@ public interface IScheduledMessageController {
             @ApiResponse(responseCode = "204", description = "Successfully deleted the ScheduledMessage entity from the database"),
     })
     @DeleteMapping(ScheduledMessagePath.ROOT + "s")
-    ResponseEntity<?> deleteAllScheduledMessages();
+    ResponseEntity<Void> deleteAllScheduledMessages();
 
     @Operation(
             summary = "Update scheduled message",
@@ -89,8 +89,8 @@ public interface IScheduledMessageController {
             @ApiResponse(responseCode = "404", description = "ScheduledMessage with given ID not found in the database"),
     })
     @PutMapping(ScheduledMessagePath.ROOT + "/{id}")
-    ResponseEntity<?> updateScheduledMessage(@Parameter(name = "id", description = "Unique ScheduledMessage entity identifier")
-                                             @PathVariable("id") Long messageId,
-                                             @Parameter(name = "scheduled message details", description = "ScheduledMessageDetails object")
-                                             @RequestBody ScheduledMessageDetails messageDetails);
+    ResponseEntity<Void> updateScheduledMessage(@Parameter(name = "id", description = "Unique ScheduledMessage entity identifier")
+                                                @PathVariable("id") Long messageId,
+                                                @Parameter(name = "scheduled message details", description = "ScheduledMessageDetails object")
+                                                @RequestBody ScheduledMessageDetails messageDetails);
 }

@@ -3,8 +3,9 @@
     - [x] storing images in db, has a field to add which day image will be sent
     - [x] storing subscribers for which the image will be transmitted to
     - [x] if in db image with current date -> send this image, send random image that has not been sent yet
-- [ ] CRUD for adding and deleting images from db, check if API key is correct (for only owner can edit db)
-- [ ] docker it and host on hosting service to actually run
+- [x] CRUD for adding and deleting images from db
+- [ ] check if API key is correct (for only owner can edit db) - security
+- [x] docker it and host on hosting service to actually run
 
 ## API design backend
 - CRUD module: 
@@ -22,7 +23,9 @@
 - [ ] Change swagger params json schema to camelCase
 - [ ] Get one image details by ID
 - [x] Thumbnails endpoint that sends thumbnail version of the image
-  - [ ] Generate thumbnail only if provided width and height is less than the original image
+  - [x] Generate thumbnail only if provided width and height is less than the original image
 - [x] Delete multiple -> send only image id array to backend, send only scheduled message id
-- [ ] Image info and scheduled message pagination
 - [ ] Search by image name
+- [ ] Refactor exception structure
+- [ ] Image info and scheduled message pagination
+- [ ] Security with JWT
