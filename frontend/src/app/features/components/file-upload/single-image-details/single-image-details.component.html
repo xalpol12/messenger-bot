@@ -2,3 +2,20 @@
 <div *ngIf="id">
   ID: {{id}}
 </div>
+<div *ngIf="image">
+  <div class="card">
+    <div class="card-header">
+      <p>{{ image.name }}</p>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col">
+          <p>url: {{ image.url }}</p>
+        </div>
+        <div class="col" *ngIf="thumbnail | async as thumb">
+          <img [src]="thumb"/>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

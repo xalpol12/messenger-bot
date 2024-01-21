@@ -34,11 +34,11 @@ export class ImageListComponent implements OnInit {
   }
 
   loadImagesInfo(): void {
-    this.imageInfos = this.imageService.getImagesInfo();
+    this.imageInfos = this.imageService.getInfos();
   }
 
   deleteAllImages(): void {
-    this.imageService.deleteAllImages()
+    this.imageService.deleteAll()
       .subscribe({
         next: data => {
           console.log('Deleted all images successfully');
