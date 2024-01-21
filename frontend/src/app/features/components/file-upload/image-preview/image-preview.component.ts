@@ -21,9 +21,7 @@ export class ImagePreviewComponent {
   set selectedFile(value: File | undefined) {
     if (value !== undefined) {
       this._selectedFile = value;
-      console.log("Set selectedFile to ", value?.name);
       this.loadPreview();
-      console.log("Loaded preview", this.selectedFilePreview !== null);
     }
     if (this._selectedFile !== undefined && value === undefined) {
       this.removePreview();

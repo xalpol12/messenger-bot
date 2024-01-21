@@ -4,13 +4,15 @@ import {AsyncPipe, NgIf} from "@angular/common";
 import {ImageService} from "../../../services/image.service";
 import {ImageInfo} from "../../../models/image.model";
 import {async, map, Observable} from "rxjs";
+import {ImageDetailsComponent} from "../image-list/image-entry/image-details/image-details.component";
 
 @Component({
   selector: 'app-single-image-details',
   standalone: true,
   imports: [
     NgIf,
-    AsyncPipe
+    AsyncPipe,
+    ImageDetailsComponent
   ],
   templateUrl: './single-image-details.component.html',
   styleUrl: './single-image-details.component.css'
