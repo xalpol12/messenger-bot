@@ -1,4 +1,4 @@
-package com.xalpol12.messengerbot.crud.exception.utils;
+package com.xalpol12.messengerbot.core.exception.utils;
 
 import com.xalpol12.messengerbot.crud.exception.customexception.ImageAccessException;
 import com.xalpol12.messengerbot.crud.exception.customexception.ImageNotFoundException;
@@ -10,6 +10,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Class containing helper methods for exception handling.
+ */
 @Slf4j
 public class ExceptionUtils {
 
@@ -24,6 +27,13 @@ public class ExceptionUtils {
         ERROR_CODE_MAP.put(ConstraintViolationException.class, "CONSTRAINT_VIOLATED");
     }
 
+    /**
+     * Checks in static look-up table for predefined error code
+     * associated with passed exception class
+     * @param ex Exception class instance
+     * @return String predefined error code or "UNKNOWN_ERROR_CODE"
+     * in no match was found
+     */
     public static String getErrorCode(Exception ex) {
         return ERROR_CODE_MAP.entrySet().stream()
                 .filter(entry -> entry.getKey().isInstance(ex))
@@ -32,6 +42,12 @@ public class ExceptionUtils {
                 .orElse("UNKNOWN_ERROR_CODE");
     }
 
+    /**
+     * Extracts message from exception and
+     * logs the extracted message.
+     * @param e RuntimeException class instance or class extending RuntimeException
+     * @return String exception message
+     */
     public static String getMessageAndLog(RuntimeException e) {
         String message = e.getMessage();
         log.error("Encountered {} with message: {}", e.getClass().getName(), message);

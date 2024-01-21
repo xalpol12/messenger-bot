@@ -76,6 +76,11 @@ public class ScheduledMessageService {
         log.info("Deleted scheduled image with identifier: {}", messageId);
     }
 
+    /**
+     * Batch delete all entities from repository
+     * based on the provided list.
+     * @param messageIds List of entity ids marked for deletion
+     */
     @Transactional
     public void deleteSelectedMessages(List<Long> messageIds) {
         scheduledMessageRepository.deleteAllInScheduledMessageIdList(messageIds);

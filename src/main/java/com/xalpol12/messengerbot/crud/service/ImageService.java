@@ -51,6 +51,18 @@ public class ImageService {
         return findByCustomUriOrId(id);
     }
 
+    /**
+     * Generates thumbnail from image
+     * contained in the repository.
+     * @param id image identifier
+     * @param width desired width of the requested thumbnail,
+     *              must be less than original image width
+     *              and more or equal to one pixel
+     * @param height desired height of the requested thumbnail,
+     *               must be less than original image height
+     *               and more or equal to one pixel
+     * @return thumbnail byte array
+     */
     @Cacheable(value = "thumbnailCache", key = "{#id, #width, #height}", unless = "#result == null")
     public byte[] getThumbnail(String id, String width, String height) {
         Image image = findByCustomUriOrId(id);
@@ -81,17 +93,29 @@ public class ImageService {
         String exceptionMessage = "";
         if (destinationWidth > sourceWidth) {
             exceptionMessage += "Invalid thumbnail width: " + destinationWidth +
-                    " can't be larger than original image width: " + sourceWidth + " ";
+                    " is larger than original image width: " + sourceWidth + " ";
+        } else if (destinationWidth < 1) {
+            exceptionMessage += "Invalid thumbnail width: " + destinationWidth +
+                    " can't be less than 1 pixel.";
         }
         if (destinationHeight > sourceHeight) {
             exceptionMessage += "Invalid thumbnail height: " + destinationHeight +
                     " can't be larger than original image height: " + sourceHeight;
+        } else if (destinationHeight < 1) {
+            exceptionMessage += "Invalid thumbnail height: " + destinationHeight +
+                    " can't be less than 1 pixel.";
         }
+
         if (!exceptionMessage.equals("")) {
             throw new InvalidThumbnailDimensionException(exceptionMessage);
         }
     }
 
+    /**
+     * Returns image details for single entity.
+     * @param customUriOrId image identifier
+     * @return ImageDTO object
+     */
     public ImageDTO getImageInfo(String customUriOrId) {
         Image image = findByCustomUriOrId(customUriOrId);
         return imageMapper.mapToImageDTO(image);
@@ -155,6 +179,11 @@ public class ImageService {
         log.info("Image with identifier: {} has been deleted", id);
     }
 
+    /**
+     * Batch delete all entities from repository
+     * based on the provided list.
+     * @param imageIds List of entity ids marked for deletion
+     */
     @Transactional
     public void deleteSelectedImages(List<String> imageIds) {
         scheduledMessageRepository.deleteAllInImageIdList(imageIds);

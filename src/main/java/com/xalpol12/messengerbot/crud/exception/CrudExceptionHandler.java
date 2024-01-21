@@ -3,8 +3,8 @@ package com.xalpol12.messengerbot.crud.exception;
 import com.xalpol12.messengerbot.crud.exception.customexception.ImageAccessException;
 import com.xalpol12.messengerbot.crud.exception.customexception.ImageNotFoundException;
 import com.xalpol12.messengerbot.crud.exception.customexception.ScheduledMessageNotFoundException;
-import com.xalpol12.messengerbot.crud.exception.response.CustomErrorResponse;
-import com.xalpol12.messengerbot.crud.exception.utils.ExceptionUtils;
+import com.xalpol12.messengerbot.core.exception.response.CustomErrorResponse;
+import com.xalpol12.messengerbot.core.exception.utils.ExceptionUtils;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ import java.util.Map;
 
 /**
  * Exception handler for CRUD module. Returns response entities
- * with String message body and corresponding HttpStatus code
+ * with CustomerErrorResponse body and corresponding HttpStatus code
  */
 @Slf4j
 @RestControllerAdvice
@@ -32,8 +32,8 @@ public class CrudExceptionHandler {
      * Raised when service couldn't access byte data
      * in provided MultipartFile.
      * @param e ImageAccessException
-     * @return ResponseEntity<String> with exception details
-     * and error code 400
+     * @return ResponseEntity with CustomErrorResponse
+     * body and exception details with error code 400
      */
     @ExceptionHandler(value = {
             ImageAccessException.class,
@@ -51,8 +51,8 @@ public class CrudExceptionHandler {
      * Raised when service couldn't find any entity
      * with given ID in a database.
      * @param e RuntimeException
-     * @return ResponseEntity<String> with exception details
-     * and error code 404
+     * @return ResponseEntity with CustomErrorResponse and exception details
+     * with error code 404
      */
     @ExceptionHandler(value = {
             ImageNotFoundException.class,
@@ -70,9 +70,9 @@ public class CrudExceptionHandler {
      * Exception raised when PostgreSQL
      * encounters an error.
      * @param e PSQLException with specified SQLState.
-     * @return ResponseEntity<String> with a status code
-     * and error message specifying the details of
-     * caught exception.
+     * @return ResponseEntity containing CustomErrorResponse
+     * with a status code and error message
+     * specifying the details of caught exception.
      * @throws PSQLException rethrows exception
      * if PSQLException contains SQLState that is not
      * currently handled by the method.
@@ -92,12 +92,19 @@ public class CrudExceptionHandler {
         }
     }
 
+    /**
+     * Raised when provided request with
+     * invalid content.
+     * @param e MethodArgumentNotValidException
+     * @return ResponseEntity with CustomErrorResponse and exception details
+     * with error code 400
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<CustomErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ResponseEntity<CustomErrorResponse> handleValidationExceptions(MethodArgumentNotValidException e) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
-        String errorCode = ExceptionUtils.getErrorCode(ex);
+        String errorCode = ExceptionUtils.getErrorCode(e);
         Map<String, String> fieldErrors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
+        e.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             fieldErrors.put(fieldName, errorMessage);
@@ -106,12 +113,19 @@ public class CrudExceptionHandler {
         return new ResponseEntity<>(response, status);
     }
 
+    /**
+     * Raised when one or more entity constraints
+     * have been violated.
+     * @param e ConstraintViolationException
+     * @return ResponseEntity with CustomErrorResponse and exception details
+     * with error code 400
+     */
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<CustomErrorResponse> handleConstraintViolationExceptions(ConstraintViolationException ex) {
+    public ResponseEntity<CustomErrorResponse> handleConstraintViolationExceptions(ConstraintViolationException e) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
-        String errorCode = ExceptionUtils.getErrorCode(ex);
+        String errorCode = ExceptionUtils.getErrorCode(e);
         Map<String, String> fieldErrors = new HashMap<>();
-        for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
+        for (ConstraintViolation<?> violation : e.getConstraintViolations()) {
             String fieldName = violation.getPropertyPath().toString();
             String errorMessage = violation.getMessage();
             fieldErrors.put(fieldName, errorMessage);

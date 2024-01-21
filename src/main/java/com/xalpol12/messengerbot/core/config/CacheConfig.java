@@ -1,4 +1,4 @@
-package com.xalpol12.messengerbot.crud.config;
+package com.xalpol12.messengerbot.core.config;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.springframework.cache.CacheManager;
