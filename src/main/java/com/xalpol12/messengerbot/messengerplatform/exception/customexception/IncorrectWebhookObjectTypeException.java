@@ -1,4 +1,4 @@
-package com.xalpol12.messengerbot.messengerplatform.exception;
+package com.xalpol12.messengerbot.messengerplatform.exception.customexception;
 
 /**
  * Exception occurs when service received unexpected

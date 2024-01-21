@@ -3,6 +3,10 @@ package com.xalpol12.messengerbot.core.exception.utils;
 import com.xalpol12.messengerbot.crud.exception.customexception.ImageAccessException;
 import com.xalpol12.messengerbot.crud.exception.customexception.ImageNotFoundException;
 import com.xalpol12.messengerbot.crud.exception.customexception.ScheduledMessageNotFoundException;
+import com.xalpol12.messengerbot.messengerplatform.exception.customexception.IncorrectTokenException;
+import com.xalpol12.messengerbot.messengerplatform.exception.customexception.IncorrectWebhookModeException;
+import com.xalpol12.messengerbot.messengerplatform.exception.customexception.IncorrectWebhookObjectTypeException;
+import com.xalpol12.messengerbot.messengerplatform.exception.customexception.RequestSignatureValidationException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -25,6 +29,10 @@ public class ExceptionUtils {
         ERROR_CODE_MAP.put(ScheduledMessageNotFoundException.class, "SCHEDULED_MESSAGE_NOT_FOUND");
         ERROR_CODE_MAP.put(MethodArgumentNotValidException.class, "METHOD_ARGUMENT_NOT_VALID");
         ERROR_CODE_MAP.put(ConstraintViolationException.class, "CONSTRAINT_VIOLATED");
+        ERROR_CODE_MAP.put(IncorrectWebhookModeException.class, "INCORRECT_WEBHOOK_MODE");
+        ERROR_CODE_MAP.put(IncorrectTokenException.class, "INCORRECT_TOKEN");
+        ERROR_CODE_MAP.put(RequestSignatureValidationException.class, "REQUEST_SIGNATURE_NOT_VALID");
+        ERROR_CODE_MAP.put(IncorrectWebhookObjectTypeException.class, "UNEXPECTED_WEBHOOK_OBJECT_STRUCTURE");
     }
 
     /**
