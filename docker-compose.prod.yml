@@ -12,29 +12,33 @@ services:
       - MESSENGER_APP_VERIFICATION_TOKEN=
       - MESSENGER_APP_SECRET_KEY=
     ports:
-      - '20174:80'
+      - 20174:80
     depends_on:
       - pg-db
+    networks:
+      - pg-network
+
+  bot-dashboard:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.frontend
+    ports:
+      - 40450:80
+    expose:
+      - 80
     networks:
       - pg-network
 
   pg-db:
     image: postgres:alpine
     ports:
-      - '30174:5432'
+      - 30174:5432
     environment:
       - 'POSTGRES_DB=ms-bot'
       - 'POSTGRES_USER=postgres'
       - 'POSTGRES_PASSWORD=admin'
     networks:
       - pg-network
-
-  bot-dashboard:
-    build: 
-      context: .
-      dockerfile: Dockerfile.frontend
-    port:
-      - '14200:4200' # change port 
 
 networks:
   pg-network:
