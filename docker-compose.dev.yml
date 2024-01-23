@@ -30,7 +30,6 @@ services:
     build: 
       context: ./frontend
       dockerfile: Dockerfile.frontend
-      target: development
     ports:
       - 14200:80
     expose:
