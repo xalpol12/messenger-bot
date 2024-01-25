@@ -118,7 +118,7 @@ public interface IImageController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Successfully deleted entities with given IDs from the database"),
     })
-    @DeleteMapping(ImagePath.ROOT + "s" + "/batch")
+    @PutMapping(ImagePath.ROOT + "s" + "/batch")
     ResponseEntity<Void> deleteSelectedImages(@Parameter(name = "imageIds", description = "list of image IDs for deletion")
                                               @RequestBody List<String> imageIds);
 
