@@ -1,5 +1,6 @@
 package com.xalpol12.messengerbot.crud.controller.docs;
 
+import com.xalpol12.messengerbot.crud.model.dto.image.ImageBatchDeleteRequest;
 import com.xalpol12.messengerbot.crud.model.dto.image.ImageDTO;
 import com.xalpol12.messengerbot.crud.model.dto.image.ImageUploadDetails;
 import io.swagger.v3.oas.annotations.Operation;
@@ -120,7 +121,7 @@ public interface IImageController {
     })
     @PutMapping(ImagePath.ROOT + "s" + "/batch")
     ResponseEntity<Void> deleteSelectedImages(@Parameter(name = "imageIds", description = "list of image IDs for deletion")
-                                              @RequestBody List<String> imageIds);
+                                              @RequestBody ImageBatchDeleteRequest imageIds);
 
     @Operation(
             summary = "Delete all images",
