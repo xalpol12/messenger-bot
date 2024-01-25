@@ -2,6 +2,7 @@ package com.xalpol12.messengerbot.crud.controller;
 
 import com.xalpol12.messengerbot.crud.controller.docs.IImageController;
 import com.xalpol12.messengerbot.crud.model.Image;
+import com.xalpol12.messengerbot.crud.model.dto.image.ImageBatchDeleteRequest;
 import com.xalpol12.messengerbot.crud.model.dto.image.ImageDTO;
 import com.xalpol12.messengerbot.crud.model.dto.image.ImageUploadDetails;
 import com.xalpol12.messengerbot.crud.service.ImageService;
@@ -82,9 +83,9 @@ public class ImageController implements IImageController {
         return ResponseEntity.noContent().build();
     }
 
-    public ResponseEntity<Void> deleteSelectedImages(List<String> imageIds) {
-        log.trace("DELETE batch images called");
-        imageService.deleteSelectedImages(imageIds);
+    public ResponseEntity<Void> deleteSelectedImages(ImageBatchDeleteRequest deleteRequest) {
+        log.trace("PUT (DELETE) batch images called");
+        imageService.deleteSelectedImages(deleteRequest);
         return ResponseEntity.noContent().build();
     }
 

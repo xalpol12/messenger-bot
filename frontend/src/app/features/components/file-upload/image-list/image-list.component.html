@@ -1,16 +1,30 @@
 <div class="card mt-3">
   <div class="card-header">
-    <div class="d-flex justify-content-between align-items-center">
 
+    <div class="d-flex justify-content-between align-items-center">
       <span class="me-auto">List of images</span>
-      <button type="button" class="btn btn-outline-danger btn-sm me-2" (click)="open(content)">
-        <i class="bi bi-trash"></i> Delete all
+
+      <span *ngIf="isItemSelectionActive">
+      <button type="button" class="btn btn-outline-danger btn-sm me-2" (click)="deleteSelectedImages()">
+        <i class="bi bi-trash"></i> Delete {{selectedImagesIds.length}}
       </button>
+
+      <button type="button" class="btn btn-outline-secondary btn-sm me-2" (click)="toggleItemSelectionState(false)">
+        <i class="bi bi-x-circle"></i> Cancel
+      </button>
+      </span>
+
+      <span *ngIf="!isItemSelectionActive">
+      <button type="button" class="btn btn-outline-secondary btn-sm me-2" (click)="toggleItemSelectionState(true)">
+        <i class="bi bi-hand-index-thumb"></i> Select
+      </button>
+      </span>
+
       <button type="button" class="btn btn-outline-success btn-sm" (click)="loadImagesInfo()">
         <i class="bi bi-arrow-clockwise"></i> Refresh
       </button>
-
     </div>
+
   </div>
 
   <ul class="list-group list-group-flush">
@@ -21,10 +35,20 @@
     >
       <app-image-entry
         [imageEntry]="imageInfo"
-        [isExpanded]="imageInfo === selectedImageInfo">
+        [isExpanded]="imageInfo === selectedImageInfo"
+        [isItemSelectionActive]="isItemSelectionActive"
+      (selectionChanged)="onEntrySelectionChanged($event)">
       </app-image-entry>
     </li>
   </ul>
+
+  <div class="card-footer">
+    <div class="d-flex justify-content-center" >
+      <button type="button" class="btn btn-outline-danger btn-sm me-2" (click)="openModal(content)">
+        <i class="bi bi-trash"></i> Delete all
+      </button>
+    </div>
+  </div>
 
 </div>
 

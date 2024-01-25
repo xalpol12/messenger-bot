@@ -43,6 +43,19 @@ export class ImageService {
     return this.http.get(`${this.imageUrl}s`);
   }
 
+  deleteSelected(imageIds: string[]) {
+    const requestPayload = {
+      imageIds: imageIds
+    }
+    const options = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+    };
+
+    return this.http.put(`${this.imageUrl}s/batch`, requestPayload, options);
+  }
+
   deleteAll(): Observable<any> {
     return this.http.delete(`${this.imageUrl}s`);
   }

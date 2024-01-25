@@ -23,9 +23,9 @@ export class ImageListComponent implements OnInit {
 
   imageInfos?: Observable<ImageInfo[]>;
   selectedImageInfo: any;
-
+  isItemSelectionActive = false;
+  selectedImagesIds: string[] = [];
   modalService = inject(NgbModal);
-
 
   constructor(private imageService: ImageService) { }
 
@@ -35,6 +35,46 @@ export class ImageListComponent implements OnInit {
 
   loadImagesInfo(): void {
     this.imageInfos = this.imageService.getInfos();
+  }
+
+  toggleItemSelectionState(state: boolean) {
+    this.isItemSelectionActive = state;
+  }
+
+  toggleDetails(imageInfo: any) {
+    this.selectedImageInfo === imageInfo
+      ? this.selectedImageInfo = null
+      : this.selectedImageInfo = imageInfo;
+  }
+
+  openModal(content: TemplateRef<any>) {
+    this.modalService.open(content, { ariaLabelledBy: 'modal-confirm-deletion'});
+  }
+
+  onEntrySelectionChanged(data: { itemId: string, isChecked: boolean }) {
+    if (data.isChecked) {
+      if (!this.selectedImagesIds.includes(data.itemId)) {
+        this.selectedImagesIds.push(data.itemId);
+      }
+    } else {
+      this.selectedImagesIds = this.selectedImagesIds.filter(id => id !== data.itemId);
+    }
+  }
+
+  deleteSelectedImages() {
+    if (this.selectedImagesIds.length > 0) {
+      this.imageService.deleteSelected(this.selectedImagesIds).subscribe(
+        {
+          next: () => {
+            this.selectedImagesIds = [];
+            this.loadImagesInfo();
+          },
+          error: (err) => {
+            console.error('Error during deletion:', err);
+          }
+        }
+      );
+    }
   }
 
   deleteAllImages(): void {
@@ -47,15 +87,5 @@ export class ImageListComponent implements OnInit {
           console.log('There was an error!', err);
         }
       });
-  }
-
-  toggleDetails(imageInfo: any) {
-    this.selectedImageInfo === imageInfo
-      ? this.selectedImageInfo = null
-      : this.selectedImageInfo = imageInfo;
-  }
-
-  open(content: TemplateRef<any>) {
-    this.modalService.open(content, { ariaLabelledBy: 'modal-confirm-deletion'});
   }
 }

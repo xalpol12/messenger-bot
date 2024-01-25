@@ -6,6 +6,7 @@ import com.xalpol12.messengerbot.crud.exception.customexception.ImageNotFoundExc
 import com.xalpol12.messengerbot.crud.exception.customexception.InvalidThumbnailDimensionException;
 import com.xalpol12.messengerbot.crud.model.Image;
 import com.xalpol12.messengerbot.crud.model.ScheduledMessage;
+import com.xalpol12.messengerbot.crud.model.dto.image.ImageBatchDeleteRequest;
 import com.xalpol12.messengerbot.crud.model.dto.image.ImageDTO;
 import com.xalpol12.messengerbot.crud.model.dto.image.ImageUploadDetails;
 import com.xalpol12.messengerbot.crud.model.mapper.ImageMapper;
@@ -182,14 +183,14 @@ public class ImageService {
     /**
      * Batch delete all entities from repository
      * based on the provided list.
-     * @param imageIds List of entity ids marked for deletion
+     * @param deleteRequest Request containing list of entity ids marked for deletion
      */
     @Transactional
-    public void deleteSelectedImages(List<String> imageIds) {
-        scheduledMessageRepository.deleteAllInImageIdList(imageIds);
+    public void deleteSelectedImages(ImageBatchDeleteRequest deleteRequest) {
+        scheduledMessageRepository.deleteAllInImageIdList(deleteRequest.getImageIds());
         log.info("All scheduled messages associated with " +
                 "provided image Ids have been deleted");
-        imageRepository.deleteAllInImageIdList(imageIds);
+        imageRepository.deleteAllInImageIdList(deleteRequest.getImageIds());
         log.info("All images specified by " +
                 "image Ids list have been deleted");
     }

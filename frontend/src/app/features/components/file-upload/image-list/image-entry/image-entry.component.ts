@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {ImageInfo} from "../../../../models/image.model";
 import {NgIf} from "@angular/common";
 import {NgbCollapse} from "@ng-bootstrap/ng-bootstrap";
@@ -21,4 +21,12 @@ import {RouterLink, RouterOutlet} from "@angular/router";
 export class ImageEntryComponent {
   @Input() imageEntry: ImageInfo | undefined;
   @Input() isExpanded: boolean = false;
+  @Input() isItemSelectionActive: boolean = false;
+  @Output() selectionChanged = new EventEmitter<{ itemId: string, isChecked: boolean }>();
+
+  onSelectionChanged(event: any) {
+    if (this.imageEntry?.imageId) {
+      this.selectionChanged.emit({ itemId: this.imageEntry?.imageId, isChecked: event.target.checked });
+    }
+  }
 }

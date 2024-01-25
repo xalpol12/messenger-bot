@@ -1,10 +1,14 @@
 <div *ngIf="imageEntry">
-    <!-- TODO: route to separate page that will contain a full-screen info -->
+  <span *ngIf="isItemSelectionActive">
+  <input class="form-check-input me-2" type="checkbox" (change)="onSelectionChanged($event)">
+  </span>
   <a [routerLink]="['/image/details', imageEntry.imageId]">{{imageEntry.name}}</a>
 
-  <div *ngIf="isExpanded" class="mb-2"></div>
-  <div [ngbCollapse]="!isExpanded">
-    <app-image-details [imageEntry]="imageEntry"></app-image-details>
+  <div *ngIf="!isItemSelectionActive">
+    <div *ngIf="isExpanded" class="mb-2"></div>
+    <div [ngbCollapse]="!isExpanded">
+      <app-image-details [imageEntry]="imageEntry"></app-image-details>
+    </div>
   </div>
 
 </div>
