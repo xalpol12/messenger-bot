@@ -68,6 +68,7 @@ export class ImageListComponent implements OnInit {
           next: () => {
             this.selectedImagesIds = [];
             this.loadImagesInfo();
+            this.isItemSelectionActive = false;
           },
           error: (err) => {
             console.error('Error during deletion:', err);
