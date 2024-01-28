@@ -43,6 +43,10 @@ export class ImageService {
     return this.http.get(`${this.imageUrl}s`);
   }
 
+  deleteSingle(imageId: string) {
+    return this.http.delete(`${this.imageUrl}/${imageId}`);
+  }
+
   deleteSelected(imageIds: string[]) {
     const requestPayload = {
       imageIds: imageIds

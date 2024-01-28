@@ -1,9 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
-import {AsyncPipe, NgForOf, NgIf} from "@angular/common";
+import {AsyncPipe, Location, NgForOf, NgIf} from "@angular/common";
 import {ImageService} from "../../../services/image.service";
 import {ImageInfo} from "../../../models/image.model";
-import {async, map, Observable} from "rxjs";
 import {ImageDetailsComponent} from "../image-list/image-entry/image-details/image-details.component";
 import {ThumbnailComponent} from "../thumbnail/thumbnail.component";
 import {UriSeparatorPipe} from "../../../../shared/pipes/uri-separator.pipe";
@@ -27,6 +26,7 @@ export class SingleImageDetailsComponent implements OnInit {
   image?: ImageInfo;
 
   constructor(private route: ActivatedRoute,
+              private location: Location,
               private imageService: ImageService) {}
 
   ngOnInit() {
@@ -47,5 +47,22 @@ export class SingleImageDetailsComponent implements OnInit {
         }
       });
     }
+  }
+
+  deleteImage() {
+    if (this.id) {
+      this.imageService.deleteSingle(this.id).subscribe({
+        next: () => {
+          this.goBack();
+        },
+        error: (err) => {
+          console.log(err);
+        }
+      });
+    }
+  }
+
+  goBack() {
+    this.location.back();
   }
 }
