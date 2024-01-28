@@ -1,10 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
-import {AsyncPipe, NgIf} from "@angular/common";
+import {AsyncPipe, NgForOf, NgIf} from "@angular/common";
 import {ImageService} from "../../../services/image.service";
 import {ImageInfo} from "../../../models/image.model";
 import {async, map, Observable} from "rxjs";
 import {ImageDetailsComponent} from "../image-list/image-entry/image-details/image-details.component";
+import {ThumbnailComponent} from "../thumbnail/thumbnail.component";
+import {UriSeparatorPipe} from "../../../../shared/pipes/uri-separator.pipe";
 
 @Component({
   selector: 'app-single-image-details',
@@ -12,7 +14,10 @@ import {ImageDetailsComponent} from "../image-list/image-entry/image-details/ima
   imports: [
     NgIf,
     AsyncPipe,
-    ImageDetailsComponent
+    ImageDetailsComponent,
+    ThumbnailComponent,
+    UriSeparatorPipe,
+    NgForOf
   ],
   templateUrl: './single-image-details.component.html',
   styleUrl: './single-image-details.component.css'
@@ -20,7 +25,6 @@ import {ImageDetailsComponent} from "../image-list/image-entry/image-details/ima
 export class SingleImageDetailsComponent implements OnInit {
   id?: string;
   image?: ImageInfo;
-  thumbnail?: Observable<string>;
 
   constructor(private route: ActivatedRoute,
               private imageService: ImageService) {}
@@ -30,7 +34,6 @@ export class SingleImageDetailsComponent implements OnInit {
       this.id = params['id'];
     })
     this.loadInfo();
-    this.loadThumbnail();
   }
 
   loadInfo() {
@@ -43,17 +46,6 @@ export class SingleImageDetailsComponent implements OnInit {
           console.log(err);
         }
       });
-    }
-  }
-
-  loadThumbnail() {
-    if (this.id) {
-      this.thumbnail = this.imageService.getThumbnail(this.id, {width: 200, height: 200}).pipe(
-        map(response => {
-          const blob = new Blob([response], { type: 'image/jpeg' });
-          return URL.createObjectURL(blob);
-        })
-      )
     }
   }
 }
