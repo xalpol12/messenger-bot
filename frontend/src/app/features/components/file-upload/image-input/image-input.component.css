@@ -5,3 +5,9 @@
 .error-input {
   border: 1px solid red;
 }
+
+.dashed-border {
+  border: 2px dotted #ccc;
+  padding: 10px;
+  display: block;
+}

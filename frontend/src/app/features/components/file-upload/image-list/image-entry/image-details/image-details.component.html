@@ -1,10 +1,12 @@
 <div class="card">
   <div class="card-body">
     <div class="row">
-      <span>Created at: </span> <p class="fw-light">{{imageEntry?.createdAt | date:'long'}}</p>
-    </div>
-    <div class="row">
-      <span>Last modified at:</span> <p class="fw-light">{{imageEntry?.lastModifiedAt | date:'long'}}</p>
+      <div class="col">
+        <span>Created at: </span> <p class="fw-light">{{imageEntry?.createdAt | date:'long'}}</p>
+      </div>
+      <div class="col">
+        <span>Last modified at:</span> <p class="fw-light">{{imageEntry?.lastModifiedAt | date:'long'}}</p>
+      </div>
     </div>
     <div class="row">
       <div class="col">
