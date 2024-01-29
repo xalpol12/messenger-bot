@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {ImageInfo} from "../../../../models/image.model";
 import {NgIf} from "@angular/common";
 import {NgbCollapse} from "@ng-bootstrap/ng-bootstrap";
@@ -23,10 +23,19 @@ export class ImageEntryComponent {
   @Input() isExpanded: boolean = false;
   @Input() isItemSelectionActive: boolean = false;
   @Output() selectionChanged = new EventEmitter<{ itemId: string, isChecked: boolean }>();
+  @ViewChild('checkboxRef', {static: false}) checkboxRef!: ElementRef;
 
-  onSelectionChanged(event: any) {
+  handleDivClick(event: any) {
+    if (this.isItemSelectionActive && event.target !== this.checkboxRef.nativeElement) {
+      console.log("div click");
+      this.checkboxRef.nativeElement.checked = !this.checkboxRef.nativeElement.checked;
+      this.onSelectionChanged();
+    }
+  }
+
+  onSelectionChanged() {
     if (this.imageEntry?.imageId) {
-      this.selectionChanged.emit({ itemId: this.imageEntry?.imageId, isChecked: event.target.checked });
+      this.selectionChanged.emit({ itemId: this.imageEntry?.imageId, isChecked: this.checkboxRef.nativeElement.checked });
     }
   }
 }

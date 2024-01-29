@@ -7,7 +7,7 @@
       <div class="row">
 
         <div class="col">
-          <div class="input-group" *ngIf="image.url | uriSeparator as urlParts">
+          <div class="input-group" *ngIf="image.url | urlSeparator as urlParts">
             <span class="input-group-text">{{ urlParts[0] }}</span>
             <input type="text" [placeholder]="urlParts[1]" class="form-control">
           </div>

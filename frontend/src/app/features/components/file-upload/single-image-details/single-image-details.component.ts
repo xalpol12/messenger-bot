@@ -5,7 +5,7 @@ import {ImageService} from "../../../services/image.service";
 import {ImageInfo} from "../../../models/image.model";
 import {ImageDetailsComponent} from "../image-list/image-entry/image-details/image-details.component";
 import {ThumbnailComponent} from "../thumbnail/thumbnail.component";
-import {UriSeparatorPipe} from "../../../../shared/pipes/uri-separator.pipe";
+import {UrlSeparatorPipe} from "../../../../shared/pipes/uri-separator.pipe";
 
 @Component({
   selector: 'app-single-image-details',
@@ -15,7 +15,7 @@ import {UriSeparatorPipe} from "../../../../shared/pipes/uri-separator.pipe";
     AsyncPipe,
     ImageDetailsComponent,
     ThumbnailComponent,
-    UriSeparatorPipe,
+    UrlSeparatorPipe,
     NgForOf
   ],
   templateUrl: './single-image-details.component.html',

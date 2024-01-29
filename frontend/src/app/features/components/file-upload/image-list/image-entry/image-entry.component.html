@@ -1,6 +1,6 @@
-<div *ngIf="imageEntry">
+<div *ngIf="imageEntry" (click)="handleDivClick($event)">
   <span *ngIf="isItemSelectionActive">
-  <input class="form-check-input me-2" type="checkbox" (change)="onSelectionChanged($event)">
+  <input #checkboxRef class="form-check-input me-2" type="checkbox" (change)="onSelectionChanged()">
   </span>
   <a [routerLink]="['/image/details', imageEntry.imageId]">{{imageEntry.name}}</a>
 
@@ -10,5 +10,6 @@
       <app-image-details [imageEntry]="imageEntry"></app-image-details>
     </div>
   </div>
+
 
 </div>

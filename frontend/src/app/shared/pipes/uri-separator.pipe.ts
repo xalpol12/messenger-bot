@@ -1,10 +1,10 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'uriSeparator',
+  name: 'urlSeparator',
   standalone: true
 })
-export class UriSeparatorPipe implements PipeTransform {
+export class UrlSeparatorPipe implements PipeTransform {
 
   /**
    * Splits given URL into two parts,
