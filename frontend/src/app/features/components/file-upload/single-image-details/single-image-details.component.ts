@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, inject, OnInit, TemplateRef} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {AsyncPipe, Location, NgForOf, NgIf} from "@angular/common";
 import {ImageService} from "../../../services/image.service";
@@ -6,6 +6,7 @@ import {ImageInfo} from "../../../models/image.model";
 import {ImageDetailsComponent} from "../image-list/image-entry/image-details/image-details.component";
 import {ThumbnailComponent} from "../thumbnail/thumbnail.component";
 import {UrlSeparatorPipe} from "../../../../shared/pipes/uri-separator.pipe";
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
   selector: 'app-single-image-details',
@@ -24,6 +25,8 @@ import {UrlSeparatorPipe} from "../../../../shared/pipes/uri-separator.pipe";
 export class SingleImageDetailsComponent implements OnInit {
   id?: string;
   image?: ImageInfo;
+  modalService = inject(NgbModal);
+  isEditModeActive: boolean = false;
 
   constructor(private route: ActivatedRoute,
               private location: Location,
@@ -64,5 +67,17 @@ export class SingleImageDetailsComponent implements OnInit {
 
   goBack() {
     this.location.back();
+  }
+
+  openModal(content: TemplateRef<any>) {
+    this.modalService.open(content, { ariaLabelledBy: 'modal-confirm-deletion'});
+  }
+
+  toggleEditMode(state: boolean) {
+    this.isEditModeActive = state;
+  }
+
+  saveEditDetails() {
+    this.toggleEditMode(false);
   }
 }
