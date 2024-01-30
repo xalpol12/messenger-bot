@@ -2,22 +2,25 @@
   <div class="card">
     <div class="card-header">
       <div class="d-flex justify-content-between align-items-center">
-        <span class="fw-bold">{{ image.name }}</span>
 
         <span *ngIf="isEditModeActive">
-
-          <button type="button" class="btn btn-outline-success btn-sm me-2" (click)="saveEditDetails()">
-            <i class="bi bi-floppy"></i> Save
-          </button>
-
-          <button type="button" class="btn btn-outline-secondary btn-sm me-2" (click)="toggleEditMode(false)">
-            <i class="bi bi-x-circle"></i> Cancel
-          </button>
+          <input type="text" placeholder="{{image.name}}" class="form-control">
+        </span>
+        <span *ngIf="!isEditModeActive">
+          <span class="fw-bold">{{ image.name }}</span>
         </span>
 
         <span *ngIf="!isEditModeActive">
           <button type="button" class="btn btn-outline-primary btn-sm me-2" (click)="toggleEditMode(true)">
             <i class="bi bi-pencil-square"></i> Edit
+          </button>
+        </span>
+        <span *ngIf="isEditModeActive">
+          <button type="button" class="btn btn-outline-success btn-sm me-2" (click)="saveEditDetails()">
+            <i class="bi bi-floppy"></i> Save
+          </button>
+          <button type="button" class="btn btn-outline-secondary btn-sm me-2" (click)="toggleEditMode(false)">
+            <i class="bi bi-x-circle"></i> Cancel
           </button>
         </span>
 
@@ -28,11 +31,15 @@
       <div class="row">
 
         <div class="col">
-          <div class="input-group" *ngIf="image.url | urlSeparator as urlParts">
-            <span class="input-group-text">{{ urlParts[0] }}</span>
-            <input type="text" [placeholder]="urlParts[1]" class="form-control">
+          <div *ngIf="!isEditModeActive">
+            <p>{{ image.url }}</p>
           </div>
-          <!--          <p>Image URL: {{ image.url }}</p>-->
+          <div *ngIf="isEditModeActive">
+            <div class="input-group" *ngIf="image.url | urlSeparator as urlParts">
+              <span class="input-group-text">{{ urlParts[0] }}</span>
+              <input type="text" [placeholder]="urlParts[1]" class="form-control">
+            </div>
+          </div>
         </div>
 
         <div class="col">
