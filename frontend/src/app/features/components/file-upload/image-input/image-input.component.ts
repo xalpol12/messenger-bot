@@ -1,17 +1,13 @@
-import {Component, ElementRef, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ImagePreviewComponent} from "../image-preview/image-preview.component";
 import {NgClass, NgIf, NgStyle} from "@angular/common";
 import {
-  AbstractControl,
-  FormBuilder,
   FormGroup,
-  ReactiveFormsModule,
-  ValidationErrors,
-  ValidatorFn,
-  Validators
+  ReactiveFormsModule
 } from "@angular/forms";
 import {ImageService} from "../../../services/image.service";
 import {HttpEventType, HttpResponse} from "@angular/common/http";
+import {ImageFormDetailsService} from "../../../services/image-form-details.service";
 
 @Component({
   selector: 'app-image-input',
@@ -26,20 +22,18 @@ import {HttpEventType, HttpResponse} from "@angular/common/http";
   templateUrl: './image-input.component.html',
   styleUrl: './image-input.component.css'
 })
-export class ImageInputComponent {
-  @ViewChild('fileInput') fileInput!: ElementRef;
-
+export class ImageInputComponent implements OnInit {
   selectedFile: File | undefined;
-  imageDetailsForm: FormGroup;
+  imageDetailsForm!: FormGroup;
   progress = 0;
   message = '';
 
   constructor(private imageService: ImageService,
-              private fb: FormBuilder) {
-    this.imageDetailsForm = this.fb.group({
-      name: [null, [Validators.required, Validators.maxLength(80)]],
-      customUri: [null, [Validators.required, this.uriValidator()]]
-    })
+              private imageFormService: ImageFormDetailsService) {
+  }
+
+  ngOnInit() {
+    this.imageDetailsForm = this.imageFormService.createImageDetailsForm();
   }
 
   selectFile(event: any): void {
@@ -48,7 +42,6 @@ export class ImageInputComponent {
 
   cancelSelectedFile(): void {
     this.selectedFile = undefined;
-    this.fileInput.nativeElement.value = '';
   }
 
   upload(): void {
@@ -81,13 +74,6 @@ export class ImageInputComponent {
           this.selectedFile = undefined;
         }
       });
-    }
-  }
-
-  uriValidator(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const isValid = /^([a-z0-9]+-)*[a-z0-9]+$/.test(control.value);
-      return isValid ? null : { uriValidation: true };
     }
   }
 

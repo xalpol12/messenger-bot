@@ -4,7 +4,13 @@
       <div class="d-flex justify-content-between align-items-center">
 
         <span *ngIf="isEditModeActive">
-          <input type="text" placeholder="{{image.name}}" class="form-control">
+          <form [formGroup]="imageDetailsForm">
+          <input type="text" placeholder="{{image.name}}" class="form-control" formControlName="name">
+            <div *ngIf="isImageNameValid" [ngStyle]="{'color': 'red'}">
+                <!--              replace with warning toast?-->
+              <p class="fw-light">Maximum length is 80 characters</p>
+            </div>
+          </form>
         </span>
         <span *ngIf="!isEditModeActive">
           <span class="fw-bold">{{ image.name }}</span>
@@ -35,10 +41,16 @@
             <p>{{ image.url }}</p>
           </div>
           <div *ngIf="isEditModeActive">
-            <div class="input-group" *ngIf="image.url | urlSeparator as urlParts">
-              <span class="input-group-text">{{ urlParts[0] }}</span>
-              <input type="text" [placeholder]="urlParts[1]" class="form-control">
-            </div>
+            <form [formGroup]="imageDetailsForm">
+              <div class="input-group" *ngIf="image.url | urlSeparator as urlParts">
+                <span class="input-group-text">{{ urlParts[0] }}</span>
+                <input type="text" [placeholder]="urlParts[1]" class="form-control" formControlName="customUri">
+                <div *ngIf="isImageUrlValid" class="error-message" [ngStyle]="{'color': 'red'}">
+                  <!--              replace with warning toast?-->
+                  <p class="fw-light" >Please enter a valid URI (kebab-case-required)</p>
+                </div>
+              </div>
+            </form>
           </div>
         </div>
 

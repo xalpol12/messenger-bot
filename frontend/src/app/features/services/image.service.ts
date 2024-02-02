@@ -63,4 +63,24 @@ export class ImageService {
   deleteAll(): Observable<any> {
     return this.http.delete(`${this.imageUrl}s`);
   }
+
+  updateImage(id: string, formData: FormData) {
+    const url = `${this.imageUrl}/${id}`;
+    return this.http.put(url, formData);
+  }
+
+  patchDetails(id: string, details: string) {
+    const url = `${this.imageUrl}/${id}/details`;
+    const options = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+    };
+    return this.http.patch(url, details, options);
+  }
+
+  patchData(id: string, formData: FormData) {
+    const url = `${this.imageUrl}/${id}/data`;
+    return this.http.patch(url, formData);
+  }
 }
