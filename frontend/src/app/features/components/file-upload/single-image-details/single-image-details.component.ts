@@ -9,6 +9,7 @@ import {UrlSeparatorPipe} from "../../../../shared/pipes/uri-separator.pipe";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {ImageFormDetailsService} from "../../../services/image-form-details.service";
 import {FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {ImagePreviewComponent} from "../image-preview/image-preview.component";
 
 @Component({
   selector: 'app-single-image-details',
@@ -22,7 +23,8 @@ import {FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
     NgForOf,
     FormsModule,
     ReactiveFormsModule,
-    NgStyle
+    NgStyle,
+    ImagePreviewComponent
   ],
   templateUrl: './single-image-details.component.html',
   styleUrl: './single-image-details.component.css'
@@ -33,6 +35,8 @@ export class SingleImageDetailsComponent implements OnInit {
   modalService = inject(NgbModal);
   isEditModeActive: boolean = false;
   imageDetailsForm!: FormGroup;
+  selectedFile: File | undefined;
+  showUploadButton = false;
 
   constructor(private route: ActivatedRoute,
               private location: Location,
@@ -85,12 +89,27 @@ export class SingleImageDetailsComponent implements OnInit {
     this.isEditModeActive = state;
   }
 
+  selectFile(event: any): void {
+    this.selectedFile = event.target.files.item(0);
+    console.log(this.selectedFile?.name);
+  }
+
   saveEditDetails() {
     if (this.imageDetailsForm.valid) {
       console.log(this.imageDetailsForm.valid);
-      // switch http methods depending on provided update values (image, details, image and details)
-      this.patchDetails();
+      if (this.isFormModified() && this.selectedFile) {
+        this.updateEntry();
+      } else if (this.isFormModified() && !this.selectedFile) {
+        this.patchDetails();
+
+      } else if (!this.isFormModified() && this.selectedFile) {
+        this.patchData();
+      }
     }
+  }
+
+  updateEntry() {
+    console.log("update entry called");
   }
 
   patchDetails() {
@@ -107,6 +126,14 @@ export class SingleImageDetailsComponent implements OnInit {
           }
         })
     }
+  }
+
+  patchData() {
+    console.log("patch data called");
+  }
+
+  isFormModified() {
+    return !this.imageDetailsForm.pristine;
   }
 
   get isImageNameValid(): boolean {

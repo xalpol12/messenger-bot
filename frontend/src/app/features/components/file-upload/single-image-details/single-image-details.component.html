@@ -55,9 +55,13 @@
         </div>
 
         <div class="col">
-          <app-thumbnail [imageId]="image.imageId"> </app-thumbnail>
-          <p>Full resolution: <a href="{{image.url}}"><i class="bi-zoom-in"></i></a></p>
-          <p>Download: <a href="{{image.url + '/download'}}"><i class="bi-download"></i></a></p>
+          <div class="image-container" (mouseenter)="showUploadButton = true" (mouseleave)="showUploadButton = false">
+            <app-thumbnail *ngIf="!selectedFile" [imageId]="image.imageId" class="img-fluid" [class.dimmed]="showUploadButton && isEditModeActive"></app-thumbnail>
+            <app-image-preview *ngIf="selectedFile" [selectedFile]="selectedFile"></app-image-preview>
+            <input *ngIf="showUploadButton && isEditModeActive" type="file" (change)="selectFile($event)" class="btn btn-default btn-sm upload-button"/>
+            <p>Full resolution: <a href="{{image.url}}"><i class="bi-zoom-in"></i></a></p>
+            <p>Download: <a href="{{image.url + '/download'}}"><i class="bi-download"></i></a></p>
+          </div>
         </div>
 
         <app-image-details [imageEntry]="image"></app-image-details>
