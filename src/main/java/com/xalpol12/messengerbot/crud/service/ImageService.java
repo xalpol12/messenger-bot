@@ -1,10 +1,12 @@
 package com.xalpol12.messengerbot.crud.service;
 
 import com.xalpol12.messengerbot.crud.controller.ImageController;
-import com.xalpol12.messengerbot.crud.exception.ImageAccessException;
-import com.xalpol12.messengerbot.crud.exception.ImageNotFoundException;
+import com.xalpol12.messengerbot.crud.exception.customexception.ImageAccessException;
+import com.xalpol12.messengerbot.crud.exception.customexception.ImageNotFoundException;
+import com.xalpol12.messengerbot.crud.exception.customexception.InvalidThumbnailDimensionException;
 import com.xalpol12.messengerbot.crud.model.Image;
 import com.xalpol12.messengerbot.crud.model.ScheduledMessage;
+import com.xalpol12.messengerbot.crud.model.dto.image.ImageBatchDeleteRequest;
 import com.xalpol12.messengerbot.crud.model.dto.image.ImageDTO;
 import com.xalpol12.messengerbot.crud.model.dto.image.ImageUploadDetails;
 import com.xalpol12.messengerbot.crud.model.mapper.ImageMapper;
@@ -36,6 +38,7 @@ public class ImageService {
 
     private final ImageRepository imageRepository;
     private final ScheduledMessageRepository scheduledMessageRepository;
+    private final ThumbnailService thumbnailService;
     private final ImageMapper imageMapper;
 
     /**
@@ -49,11 +52,35 @@ public class ImageService {
         return findByCustomUriOrId(id);
     }
 
+    /**
+     * Generates thumbnail from image
+     * contained in the repository.
+     * @param id image identifier
+     * @param width desired width of the requested thumbnail,
+     *              must be less than original image width
+     *              and more or equal to one pixel
+     * @param height desired height of the requested thumbnail,
+     *               must be less than original image height
+     *               and more or equal to one pixel
+     * @return thumbnail byte array
+     */
+    @Cacheable(value = "thumbnailCache", key = "{#id, #width, #height}", unless = "#result == null")
+    public byte[] getThumbnail(String id, String width, String height) {
+        Image image = findByCustomUriOrId(id);
+        try {
+            int parsedWidth = Integer.parseInt(width);
+            int parsedHeight = Integer.parseInt(height);
+            validateThumbnailDimensions(image, parsedWidth, parsedHeight);
+            return thumbnailService.generateThumbnail(image.getData(), parsedWidth, parsedHeight);
+        } catch (NumberFormatException | InvalidThumbnailDimensionException e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
+    }
+
     private Image findByCustomUriOrId(String customUriOrId) {
         Image image;
         if (imageRepository.existsById(customUriOrId)) {
             image = imageRepository.findById(customUriOrId).get();
-            log.warn("No custom uri found for entity with id: {}", customUriOrId);
         } else {
             image = imageRepository.findImageByCustomUri(customUriOrId)
                     .orElseThrow(() -> new ImageNotFoundException("No image found for: " + customUriOrId));
@@ -61,12 +88,46 @@ public class ImageService {
         return image;
     }
 
+    private void validateThumbnailDimensions(Image image, int destinationWidth, int destinationHeight) {
+        int sourceWidth = image.getWidth();
+        int sourceHeight = image.getHeight();
+        String exceptionMessage = "";
+        if (destinationWidth > sourceWidth) {
+            exceptionMessage += "Invalid thumbnail width: " + destinationWidth +
+                    " is larger than original image width: " + sourceWidth + " ";
+        } else if (destinationWidth < 1) {
+            exceptionMessage += "Invalid thumbnail width: " + destinationWidth +
+                    " can't be less than 1 pixel.";
+        }
+        if (destinationHeight > sourceHeight) {
+            exceptionMessage += "Invalid thumbnail height: " + destinationHeight +
+                    " can't be larger than original image height: " + sourceHeight;
+        } else if (destinationHeight < 1) {
+            exceptionMessage += "Invalid thumbnail height: " + destinationHeight +
+                    " can't be less than 1 pixel.";
+        }
+
+        if (!exceptionMessage.equals("")) {
+            throw new InvalidThumbnailDimensionException(exceptionMessage);
+        }
+    }
+
+    /**
+     * Returns image details for single entity.
+     * @param customUriOrId image identifier
+     * @return ImageDTO object
+     */
+    public ImageDTO getImageInfo(String customUriOrId) {
+        Image image = findByCustomUriOrId(customUriOrId);
+        return imageMapper.mapToImageDTO(image);
+    }
+
     /**
      * Returns list of all Images mapped
      * to ImageDTO.
      * @return List<ImageDTO> representing all Image entities details
      */
-    public List<ImageDTO> getAllImages() {
+    public List<ImageDTO> getAllImageInfos() {
         Stream<Image> imageStream = imageRepository.findAll().stream();
         return imageStream
                 .map(imageMapper::mapToImageDTO)
@@ -84,7 +145,7 @@ public class ImageService {
      */
     @Cacheable("imageCache")
     public URI uploadImage(ImageUploadDetails fileDetails,
-                             MultipartFile imageData) throws ImageAccessException {
+                           MultipartFile imageData) throws ImageAccessException {
         Image newImage;
         try {
             newImage = imageMapper.mapToImage(fileDetails, imageData);
@@ -112,11 +173,39 @@ public class ImageService {
     public void deleteImage(String id) {
         Image image = findByCustomUriOrId(id);
         List<ScheduledMessage> messages = scheduledMessageRepository.findAllByImageEquals(image);
-        scheduledMessageRepository.deleteAll(messages);
+        scheduledMessageRepository.deleteAllInBatch(messages);
         log.info("All {} scheduled messages associated with image {} " +
                 "have been deleted", messages.size(), id);
         imageRepository.delete(image);
         log.info("Image with identifier: {} has been deleted", id);
+    }
+
+    /**
+     * Batch delete all entities from repository
+     * based on the provided list.
+     * @param deleteRequest Request containing list of entity ids marked for deletion
+     */
+    @Transactional
+    public void deleteSelectedImages(ImageBatchDeleteRequest deleteRequest) {
+        scheduledMessageRepository.deleteAllInImageIdList(deleteRequest.getImageIds());
+        log.info("All scheduled messages associated with " +
+                "provided image Ids have been deleted");
+        imageRepository.deleteAllInImageIdList(deleteRequest.getImageIds());
+        log.info("All images specified by " +
+                "image Ids list have been deleted");
+    }
+
+    /**
+     * Deletes all image entities
+     * from the database. Also deletes
+     * all ScheduledMessage entries that
+     * were associated with any Image entity.
+     */
+    @Transactional
+    public void deleteAllImages() {
+        List<ScheduledMessage> messages = scheduledMessageRepository.findAllByImageIsNotNull();
+        scheduledMessageRepository.deleteAllInBatch(messages);
+        imageRepository.deleteAllInBatch(); // avoid deleteAll which leads to N + 1
     }
 
     /**

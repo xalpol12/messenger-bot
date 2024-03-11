@@ -23,7 +23,7 @@ public class ImageUploadDetails {
         @Nullable
         @NotBlank
         @Length(max = 80)
-        @Schema(name = "Name",
+        @Schema(name = "name",
                 description = "New name that the Image entity will be updated with." +
                         "Must not be blank",
                 example = "image2",
@@ -34,7 +34,7 @@ public class ImageUploadDetails {
         @Nullable
         @NotBlank
         @Length(max = 30)
-        @Schema(name = "Custom URI",
+        @Schema(name = "customUri",
                 description = "New custom URI that the Image entity will be updated with, must be unique, " +
                         "not blank, kebab-case",
                 example = "new-custom-uri",

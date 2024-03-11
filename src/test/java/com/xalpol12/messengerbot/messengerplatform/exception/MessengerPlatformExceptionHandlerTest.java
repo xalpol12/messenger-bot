@@ -1,5 +1,10 @@
 package com.xalpol12.messengerbot.messengerplatform.exception;
 
+import com.xalpol12.messengerbot.core.exception.response.CustomErrorResponse;
+import com.xalpol12.messengerbot.messengerplatform.exception.customexception.IncorrectTokenException;
+import com.xalpol12.messengerbot.messengerplatform.exception.customexception.IncorrectWebhookModeException;
+import com.xalpol12.messengerbot.messengerplatform.exception.customexception.IncorrectWebhookObjectTypeException;
+import com.xalpol12.messengerbot.messengerplatform.exception.customexception.RequestSignatureValidationException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -22,11 +27,11 @@ class MessengerPlatformExceptionHandlerTest {
         String message = "Exception message";
         IncorrectWebhookModeException exception = new IncorrectWebhookModeException(message);
 
-        ResponseEntity<String> response = exceptionHandler.handleWebhookVerificationExceptions(exception);
+        ResponseEntity<CustomErrorResponse> response = exceptionHandler.handleWebhookVerificationExceptions(exception);
 
         assertAll(() -> {
             assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
-            assertEquals(message, response.getBody());
+            assertEquals(message, response.getBody().getMessage());
         });
     }
 
@@ -35,11 +40,11 @@ class MessengerPlatformExceptionHandlerTest {
         String message = "Exception message";
         IncorrectTokenException exception = new IncorrectTokenException(message);
 
-        ResponseEntity<String> response = exceptionHandler.handleWebhookVerificationExceptions(exception);
+        ResponseEntity<CustomErrorResponse> response = exceptionHandler.handleWebhookVerificationExceptions(exception);
 
         assertAll(() -> {
             assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
-            assertEquals(message, response.getBody());
+            assertEquals(message, response.getBody().getMessage());
         });
     }
 
@@ -48,11 +53,11 @@ class MessengerPlatformExceptionHandlerTest {
         String message = "Exception message";
         RequestSignatureValidationException exception = new RequestSignatureValidationException(message);
 
-        ResponseEntity<String> response = exceptionHandler.handleHashValidationException(exception);
+        ResponseEntity<CustomErrorResponse> response = exceptionHandler.handleHashValidationException(exception);
 
         assertAll(() -> {
             assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-            assertEquals(message, response.getBody());
+            assertEquals(message, response.getBody().getMessage());
         });
     }
 
@@ -61,11 +66,11 @@ class MessengerPlatformExceptionHandlerTest {
         String message = "Exception message";
         IncorrectWebhookObjectTypeException exception = new IncorrectWebhookObjectTypeException(message);
 
-        ResponseEntity<String> response = exceptionHandler.handleIncorrectWebhookObjectType(exception);
+        ResponseEntity<CustomErrorResponse> response = exceptionHandler.handleIncorrectWebhookObjectType(exception);
 
         assertAll(() -> {
             assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-            assertEquals(message, response.getBody());
+            assertEquals(message, response.getBody().getMessage());
         });
     }
 }

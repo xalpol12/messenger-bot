@@ -1,7 +1,7 @@
 package com.xalpol12.messengerbot.crud.service;
 
 import com.xalpol12.messengerbot.crud.controller.ImageController;
-import com.xalpol12.messengerbot.crud.exception.ImageNotFoundException;
+import com.xalpol12.messengerbot.crud.exception.customexception.ImageNotFoundException;
 import com.xalpol12.messengerbot.crud.model.Image;
 import com.xalpol12.messengerbot.crud.model.ScheduledMessage;
 import com.xalpol12.messengerbot.crud.model.dto.image.ImageDTO;
@@ -37,6 +37,8 @@ class ImageServiceTest {
     @Mock
     private static ScheduledMessageRepository messageRepository;
     @Mock
+    private static ThumbnailService thumbnailService;
+    @Mock
     private static ImageMapper imageMapper;
 
     private static ImageService imageService;
@@ -52,7 +54,7 @@ class ImageServiceTest {
     @BeforeEach
     public void init() {
         openMocks = MockitoAnnotations.openMocks(this);
-        imageService = new ImageService(imageRepository, messageRepository, imageMapper);
+        imageService = new ImageService(imageRepository, messageRepository, thumbnailService, imageMapper);
     }
 
     @AfterEach
@@ -110,7 +112,7 @@ class ImageServiceTest {
         when(imageRepository.findAll()).thenReturn(List.of(new Image(), new Image()));
         when(imageMapper.mapToImageDTO(any())).thenReturn(new ImageDTO());
 
-        List<ImageDTO> results = imageService.getAllImages();
+        List<ImageDTO> results = imageService.getAllImageInfos();
 
         assertAll(() -> {
             verify(imageMapper, times(2)).mapToImageDTO(any());
@@ -186,8 +188,23 @@ class ImageServiceTest {
         imageService.deleteImage(id);
 
         verify(messageRepository, times(1)).findAllByImageEquals(image);
-        verify(messageRepository, times(1)).deleteAll(messages);
+        verify(messageRepository, times(1)).deleteAllInBatch(messages);
         verify(imageRepository, times(1)).delete(image);
+    }
+
+
+    @Test
+    public void deleteAllImages_shouldCallDeleteAll() {
+        ScheduledMessage message = mock(ScheduledMessage.class);
+        List<ScheduledMessage> messages = List.of(message);
+
+        when(messageRepository.findAllByImageIsNotNull()).thenReturn(messages);
+
+        imageService.deleteAllImages();
+
+        verify(messageRepository, times(1)).findAllByImageIsNotNull();
+        verify(messageRepository, times(1)).deleteAllInBatch(messages);
+        verify(imageRepository, times(1)).deleteAllInBatch();
     }
 
     @Test

@@ -1,0 +1,15 @@
+<div *ngIf="imageEntry" (click)="handleDivClick($event)">
+  <span *ngIf="isItemSelectionActive">
+  <input #checkboxRef class="form-check-input me-2" type="checkbox" (change)="onSelectionChanged()">
+  </span>
+  <a [routerLink]="['/image/details', imageEntry.imageId]">{{imageEntry.name}}</a>
+
+  <div *ngIf="!isItemSelectionActive">
+    <div *ngIf="isExpanded" class="mb-2"></div>
+    <div [ngbCollapse]="!isExpanded">
+      <app-image-details [imageEntry]="imageEntry"></app-image-details>
+    </div>
+  </div>
+
+
+</div>

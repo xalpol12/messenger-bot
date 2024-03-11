@@ -1,12 +1,12 @@
 package com.xalpol12.messengerbot.crud.service;
 
-import com.xalpol12.messengerbot.crud.exception.ScheduledMessageNotFoundException;
+import com.xalpol12.messengerbot.crud.exception.customexception.ScheduledMessageNotFoundException;
 import com.xalpol12.messengerbot.crud.model.ScheduledMessage;
 import com.xalpol12.messengerbot.crud.model.dto.scheduledmessage.ScheduledMessageDTO;
 import com.xalpol12.messengerbot.crud.model.dto.scheduledmessage.ScheduledMessageDetails;
 import com.xalpol12.messengerbot.crud.model.mapper.ScheduledMessageMapper;
 import com.xalpol12.messengerbot.crud.repository.ScheduledMessageRepository;
-import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -74,6 +74,18 @@ public class ScheduledMessageService {
             throw new ScheduledMessageNotFoundException("No scheduled message found for entity with id: " + messageId);
         }
         log.info("Deleted scheduled image with identifier: {}", messageId);
+    }
+
+    /**
+     * Batch delete all entities from repository
+     * based on the provided list.
+     * @param messageIds List of entity ids marked for deletion
+     */
+    @Transactional
+    public void deleteSelectedMessages(List<Long> messageIds) {
+        scheduledMessageRepository.deleteAllInScheduledMessageIdList(messageIds);
+        log.info("All messages specified by " +
+                "message Ids list have been deleted");
     }
 
     /**

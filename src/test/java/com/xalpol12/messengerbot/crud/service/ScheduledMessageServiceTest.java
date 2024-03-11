@@ -1,6 +1,6 @@
 package com.xalpol12.messengerbot.crud.service;
 
-import com.xalpol12.messengerbot.crud.exception.ScheduledMessageNotFoundException;
+import com.xalpol12.messengerbot.crud.exception.customexception.ScheduledMessageNotFoundException;
 import com.xalpol12.messengerbot.crud.model.ScheduledMessage;
 import com.xalpol12.messengerbot.crud.model.dto.scheduledmessage.ScheduledMessageDTO;
 import com.xalpol12.messengerbot.crud.model.dto.scheduledmessage.ScheduledMessageDetails;

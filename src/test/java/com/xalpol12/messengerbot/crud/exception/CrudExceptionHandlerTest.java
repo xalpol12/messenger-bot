@@ -1,5 +1,8 @@
 package com.xalpol12.messengerbot.crud.exception;
 
+import com.xalpol12.messengerbot.crud.exception.customexception.ImageAccessException;
+import com.xalpol12.messengerbot.crud.exception.customexception.ImageNotFoundException;
+import com.xalpol12.messengerbot.core.exception.response.CustomErrorResponse;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.postgresql.util.PSQLException;
@@ -23,11 +26,11 @@ class CrudExceptionHandlerTest {
         String message = "Exception message";
         ImageAccessException exception = new ImageAccessException(message);
 
-        ResponseEntity<String> response = exceptionHandler.handleImageAccessException(exception);
+        ResponseEntity<CustomErrorResponse> response = exceptionHandler.handleImageAccessException(exception);
 
         assertAll(() -> {
             assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-            assertEquals(message, response.getBody());
+            assertEquals(message, response.getBody().getMessage());
         });
     }
 
@@ -36,11 +39,11 @@ class CrudExceptionHandlerTest {
         String message = "Exception message";
         ImageNotFoundException exception = new ImageNotFoundException(message);
 
-        ResponseEntity<String> response = exceptionHandler.handleImageNotFoundException(exception);
+        ResponseEntity<CustomErrorResponse> response = exceptionHandler.handleImageNotFoundException(exception);
 
         assertAll(() -> {
             assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-            assertEquals(message, response.getBody());
+            assertEquals(message, response.getBody().getMessage());
         });
     }
 
@@ -49,7 +52,7 @@ class CrudExceptionHandlerTest {
         PSQLState uniqueViolation = PSQLState.UNIQUE_VIOLATION;
         PSQLException exception = new PSQLException("Message", uniqueViolation);
 
-        ResponseEntity<String> response = exceptionHandler.handlePSQLException(exception);
+        ResponseEntity<CustomErrorResponse> response = exceptionHandler.handlePSQLException(exception);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }

@@ -1,0 +1,105 @@
+<div *ngIf="image">
+  <div class="card">
+    <div class="card-header">
+      <div class="d-flex justify-content-between align-items-center">
+
+        <span *ngIf="isEditModeActive">
+          <form [formGroup]="imageDetailsForm">
+          <input type="text" placeholder="{{image.name}}" class="form-control" formControlName="name">
+            <div *ngIf="isImageNameValid" [ngStyle]="{'color': 'red'}">
+                <!--              replace with warning toast?-->
+              <p class="fw-light">Maximum length is 80 characters</p>
+            </div>
+          </form>
+        </span>
+        <span *ngIf="!isEditModeActive">
+          <span class="fw-bold">{{ image.name }}</span>
+        </span>
+
+        <span *ngIf="!isEditModeActive">
+          <button type="button" class="btn btn-outline-primary btn-sm me-2" (click)="toggleEditMode(true)">
+            <i class="bi bi-pencil-square"></i> Edit
+          </button>
+        </span>
+        <span *ngIf="isEditModeActive">
+          <button type="button" class="btn btn-outline-success btn-sm me-2" (click)="saveEditDetails()">
+            <i class="bi bi-floppy"></i> Save
+          </button>
+          <button type="button" class="btn btn-outline-secondary btn-sm me-2" (click)="toggleEditMode(false)">
+            <i class="bi bi-x-circle"></i> Cancel
+          </button>
+        </span>
+
+      </div>
+
+    </div>
+    <div class="card-body">
+      <div class="row">
+
+        <div class="col">
+          <div *ngIf="!isEditModeActive">
+            <p>{{ image.url }}</p>
+          </div>
+          <div *ngIf="isEditModeActive">
+            <form [formGroup]="imageDetailsForm">
+              <div class="input-group" *ngIf="image.url | urlSeparator as urlParts">
+                <span class="input-group-text">{{ urlParts[0] }}</span>
+                <input type="text" [placeholder]="urlParts[1]" class="form-control" formControlName="customUri">
+                <div *ngIf="isImageUrlValid" class="error-message" [ngStyle]="{'color': 'red'}">
+                  <!--              replace with warning toast?-->
+                  <p class="fw-light" >Please enter a valid URI (kebab-case-required)</p>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="image-container" (mouseenter)="showUploadButton = true" (mouseleave)="showUploadButton = false">
+            <app-thumbnail *ngIf="!selectedFile" [imageId]="image.imageId" class="img-fluid" [class.dimmed]="showUploadButton && isEditModeActive"></app-thumbnail>
+            <app-image-preview *ngIf="selectedFile" [selectedFile]="selectedFile"></app-image-preview>
+            <input *ngIf="showUploadButton && isEditModeActive" type="file" (change)="selectFile($event)" class="btn btn-default btn-sm upload-button"/>
+            <p>Full resolution: <a href="{{image.url}}"><i class="bi-zoom-in"></i></a></p>
+            <p>Download: <a href="{{image.url + '/download'}}"><i class="bi-download"></i></a></p>
+          </div>
+        </div>
+
+        <app-image-details [imageEntry]="image"></app-image-details>
+
+      </div>
+    </div>
+
+    <div class="card-footer">
+      <div class="d-flex justify-content-center" >
+        <button type="button" class="btn btn-outline-danger btn-sm me-2" (click)="openModal(content)">
+          <i class="bi bi-trash"></i> Delete entry
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #content let-modal>
+  <div class="modal-content">
+
+    <div class="modal-header">
+      <h5 class="modal-title">Delete image confirmation</h5>
+      <button type="button" class="btn-close" (click)="modal.dismiss('Close click')" aria-label="Close"></button>
+    </div>
+
+    <div class="modal-body">
+      Are you sure you want to delete image: <b>{{this.image?.name}}</b>?
+      <span class="text-danger">This operation cannot be undone.</span>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="modal.dismiss('Cancel click')">
+        Cancel
+      </button>
+      <button type="button" class="btn btn-danger" (click)="deleteImage(); modal.close('Delete click')">
+        Delete
+      </button>
+    </div>
+
+  </div>
+</ng-template>

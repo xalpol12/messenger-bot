@@ -2,10 +2,10 @@ package com.xalpol12.messengerbot.messengerplatform.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xalpol12.messengerbot.messengerplatform.config.secrets.SecretsConfig;
-import com.xalpol12.messengerbot.messengerplatform.exception.IncorrectTokenException;
-import com.xalpol12.messengerbot.messengerplatform.exception.IncorrectWebhookModeException;
-import com.xalpol12.messengerbot.messengerplatform.exception.IncorrectWebhookObjectTypeException;
-import com.xalpol12.messengerbot.messengerplatform.exception.RequestSignatureValidationException;
+import com.xalpol12.messengerbot.messengerplatform.exception.customexception.IncorrectTokenException;
+import com.xalpol12.messengerbot.messengerplatform.exception.customexception.IncorrectWebhookModeException;
+import com.xalpol12.messengerbot.messengerplatform.exception.customexception.IncorrectWebhookObjectTypeException;
+import com.xalpol12.messengerbot.messengerplatform.exception.customexception.RequestSignatureValidationException;
 import com.xalpol12.messengerbot.messengerplatform.model.Webhook;
 import com.xalpol12.messengerbot.messengerplatform.model.composite.ChatEntry;
 import com.xalpol12.messengerbot.messengerplatform.model.composite.WebhookEntry;

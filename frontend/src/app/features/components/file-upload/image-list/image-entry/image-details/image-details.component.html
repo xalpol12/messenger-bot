@@ -1,0 +1,20 @@
+<div class="card">
+  <div class="card-body">
+    <div class="row">
+      <div class="col">
+        <span>Created at: </span> <p class="fw-light">{{imageEntry?.createdAt | date:'long'}}</p>
+      </div>
+      <div class="col">
+        <span>Last modified at:</span> <p class="fw-light">{{imageEntry?.lastModifiedAt | date:'long'}}</p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <span>Size:</span> <p class="fw-light">{{imageEntry?.size | sizeFormat }}</p>
+      </div>
+      <div class="col">
+        <span>Type: </span> <p class="fw-light">{{imageEntry?.type}}</p>
+      </div>
+    </div>
+  </div>
+</div>

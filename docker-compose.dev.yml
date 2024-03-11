@@ -1,9 +1,12 @@
 version: '3.8'
 services:
+
   messenger-bot:
+    container_name: bot-backend-app
+    image: bot-backend-image
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.backend
       target: development
     environment:
       - BASE_SERVER_ADDRESS=http://localhost:8080
@@ -11,7 +14,9 @@ services:
       - MESSENGER_APP_VERIFICATION_TOKEN=
       - MESSENGER_APP_SECRET_KEY=
     ports:
-      - "18080:8080"
+      - 18080:8080
+    expose:
+      - 8080
     volumes:
       - ./:/app
     depends_on:
@@ -19,10 +24,23 @@ services:
     networks:
       - db-network
 
+  bot-dashboard:
+    container_name: bot-dashboard-app
+    image: bot-dashboard-image
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile.frontend
+    ports:
+      - 14200:80
+    expose:
+      - 80
+    networks:
+      - db-network
+
   pg-db:
     image: postgres:alpine
     ports:
-      - '15432:5432'
+      - 15432:5432
     environment:
       - 'POSTGRES_DB=ms-bot'
       - 'POSTGRES_USER=postgres'

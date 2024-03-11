@@ -1,5 +1,11 @@
 package com.xalpol12.messengerbot.messengerplatform.exception;
 
+import com.xalpol12.messengerbot.core.exception.response.CustomErrorResponse;
+import com.xalpol12.messengerbot.core.exception.utils.ExceptionUtils;
+import com.xalpol12.messengerbot.messengerplatform.exception.customexception.IncorrectTokenException;
+import com.xalpol12.messengerbot.messengerplatform.exception.customexception.IncorrectWebhookModeException;
+import com.xalpol12.messengerbot.messengerplatform.exception.customexception.IncorrectWebhookObjectTypeException;
+import com.xalpol12.messengerbot.messengerplatform.exception.customexception.RequestSignatureValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,46 +24,49 @@ public class MessengerPlatformExceptionHandler {
     /**
      * Raised when service couldn't correctly verify
      * the incoming webhook request.
-      * @param e RuntimeException
-     * @return ResponseEntity<String> with exception details
-     * and error code 403
+     * @param e RuntimeException
+     * @return ResponseEntity with CustomErrorResponse and exception details
+     * with error code 403
      */
     @ExceptionHandler(value = {
             IncorrectWebhookModeException.class,
             IncorrectTokenException.class
     })
-    public ResponseEntity<String> handleWebhookVerificationExceptions(RuntimeException e) {
-        String message = extractMessageAndLog(e);
-        return new ResponseEntity<>(message, HttpStatus.FORBIDDEN);
+    public ResponseEntity<CustomErrorResponse> handleWebhookVerificationExceptions(RuntimeException e) {
+        HttpStatus status = HttpStatus.FORBIDDEN;
+        String errorCode = ExceptionUtils.getErrorCode(e);
+        String message = ExceptionUtils.getMessageAndLog(e);
+        CustomErrorResponse response = CustomErrorResponse.create(status, errorCode, message);
+        return new ResponseEntity<>(response, status);
     }
 
     /**
      * Raised when request signature validation failed.
      * @param e RequestSignatureValidationException
-     * @return ResponseEntity<String> with exception details
-     * and error code 400
+     * @return ResponseEntity with CustomErrorResponse and exception details
+     * with error code 400
      */
     @ExceptionHandler(value = {RequestSignatureValidationException.class})
-    public ResponseEntity<String> handleHashValidationException(RequestSignatureValidationException e) {
-        String message = extractMessageAndLog(e);
-        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<CustomErrorResponse> handleHashValidationException(RequestSignatureValidationException e) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        String errorCode = ExceptionUtils.getErrorCode(e);
+        String message = ExceptionUtils.getMessageAndLog(e);
+        CustomErrorResponse response = CustomErrorResponse.create(status, errorCode, message);
+        return new ResponseEntity<>(response, status);
     }
 
     /**
      * Raised when service received unexpected webhook object structure.
      * @param e IncorrectWebhookObjectTypeException
-     * @return ResponseEntity<String> with exception details
-     * and error code 404
+     * @return ResponseEntity with CustomErrorResponse and exception details
+     * with error code 404
      */
     @ExceptionHandler(value = {IncorrectWebhookObjectTypeException.class})
-    public ResponseEntity<String> handleIncorrectWebhookObjectType(IncorrectWebhookObjectTypeException e) {
-        String message = extractMessageAndLog(e);
-        return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
-    }
-
-    private String extractMessageAndLog(RuntimeException e) {
-        String message = e.getMessage();
-        log.error("Encountered {} with message: {}", e.getClass().getName(), message);
-        return message;
+    public ResponseEntity<CustomErrorResponse> handleIncorrectWebhookObjectType(IncorrectWebhookObjectTypeException e) {
+        HttpStatus status = HttpStatus.NOT_FOUND;
+        String errorCode = ExceptionUtils.getErrorCode(e);
+        String message = ExceptionUtils.getMessageAndLog(e);
+        CustomErrorResponse response = CustomErrorResponse.create(status, errorCode, message);
+        return new ResponseEntity<>(response, status);
     }
 }

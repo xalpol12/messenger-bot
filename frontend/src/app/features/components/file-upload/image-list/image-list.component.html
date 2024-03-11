@@ -1,0 +1,83 @@
+<div class="card mt-3">
+  <div class="card-header">
+
+    <div class="d-flex justify-content-between align-items-center">
+      <span class="me-auto">List of images</span>
+
+      <span *ngIf="isItemSelectionActive">
+      <button type="button" class="btn btn-outline-danger btn-sm me-2" (click)="deleteSelectedImages()">
+        <i class="bi bi-trash"></i> Delete {{selectedImagesIds.length}}
+      </button>
+
+      <button type="button" class="btn btn-outline-secondary btn-sm me-2" (click)="toggleItemSelectionState(false)">
+        <i class="bi bi-x-circle"></i> Cancel
+      </button>
+      </span>
+
+      <span *ngIf="!isItemSelectionActive">
+      <button type="button" class="btn btn-outline-secondary btn-sm me-2" (click)="toggleItemSelectionState(true)">
+        <i class="bi bi-hand-index-thumb"></i> Select
+      </button>
+      </span>
+
+      <button type="button" class="btn btn-outline-success btn-sm" (click)="loadImagesInfo()">
+        <i class="bi bi-arrow-clockwise"></i> Refresh
+      </button>
+    </div>
+
+  </div>
+
+  <ul class="list-group list-group-flush">
+    <li *ngFor="let imageInfo of imageInfos | async"
+        class="list-group-item clickable"
+        [class.active]="selectedImageInfo === imageInfo"
+        (click)="toggleDetails(imageInfo)"
+    >
+      <app-image-entry
+        [imageEntry]="imageInfo"
+        [isExpanded]="imageInfo === selectedImageInfo"
+        [isItemSelectionActive]="isItemSelectionActive"
+      (selectionChanged)="onEntrySelectionChanged($event)">
+      </app-image-entry>
+    </li>
+  </ul>
+
+  <div class="card-footer">
+    <div class="d-flex justify-content-center" >
+      <button type="button" class="btn btn-outline-danger btn-sm me-2" (click)="openModal(content)">
+        <i class="bi bi-trash"></i> Delete all
+      </button>
+    </div>
+  </div>
+
+</div>
+
+
+<ng-template #content let-modal>
+  <div class="modal-content">
+
+    <div class="modal-header">
+      <h5 class="modal-title">Delete all confirmation</h5>
+      <button type="button" class="btn-close" (click)="modal.dismiss('Close click')" aria-label="Close"></button>
+    </div>
+
+    <div class="modal-body">
+      <div *ngIf="(imageInfos | async) as images; else loading">
+        Are you sure you want to delete {{images?.length}} images?
+        <span class="text-danger">This operation cannot be undone.</span>
+      </div>
+    </div>
+    <ng-template #loading>Loading...</ng-template>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="modal.dismiss('Cancel click')">Cancel</button>
+      <button
+        type="button"
+        class="btn btn-danger"
+        (click)="deleteAllImages(); modal.close('Delete click')">
+        Delete
+      </button>
+    </div>
+
+  </div>
+</ng-template>
