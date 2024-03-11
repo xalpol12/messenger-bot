@@ -31,7 +31,7 @@ class MessengerPlatformExceptionHandlerTest {
 
         assertAll(() -> {
             assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
-            assertEquals(message, response.getBody());
+            assertEquals(message, response.getBody().getMessage());
         });
     }
 
@@ -44,7 +44,7 @@ class MessengerPlatformExceptionHandlerTest {
 
         assertAll(() -> {
             assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
-            assertEquals(message, response.getBody());
+            assertEquals(message, response.getBody().getMessage());
         });
     }
 
@@ -57,7 +57,7 @@ class MessengerPlatformExceptionHandlerTest {
 
         assertAll(() -> {
             assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-            assertEquals(message, response.getBody());
+            assertEquals(message, response.getBody().getMessage());
         });
     }
 
@@ -70,7 +70,7 @@ class MessengerPlatformExceptionHandlerTest {
 
         assertAll(() -> {
             assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-            assertEquals(message, response.getBody());
+            assertEquals(message, response.getBody().getMessage());
         });
     }
 }

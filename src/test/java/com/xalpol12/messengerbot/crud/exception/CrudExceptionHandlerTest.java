@@ -30,7 +30,7 @@ class CrudExceptionHandlerTest {
 
         assertAll(() -> {
             assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-            assertEquals(message, response.getBody());
+            assertEquals(message, response.getBody().getMessage());
         });
     }
 
@@ -43,7 +43,7 @@ class CrudExceptionHandlerTest {
 
         assertAll(() -> {
             assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-            assertEquals(message, response.getBody());
+            assertEquals(message, response.getBody().getMessage());
         });
     }
 
